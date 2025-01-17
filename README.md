@@ -1,13 +1,13 @@
-# zupbank
-História de Usuário: ZupBank
+# TaahjjimBank
+História de Usuário: 
 
 Visão Geral do Produto
-O ZupBank será uma solução bancária digital para oferecer serviços básicos inicialmente, permitindo que o time de desenvolvimento treine habilidades de Java, Orientação a Objetos, e, futuramente, Spring Framework. As funcionalidades iniciais visam fornecer uma base sólida para expandir o sistema conforme o time avança em complexidade.
+O TaahjjimBank será uma solução bancária digital para oferecer serviços básicos inicialmente, permitindo que o time de desenvolvimento treine habilidades de Java, Orientação a Objetos, e, futuramente, Spring Framework. As funcionalidades iniciais visam fornecer uma base sólida para expandir o sistema conforme o time avança em complexidade.
 
 Histórias de Usuário
 
 1. Cadastro e Validação de Usuário
-Como cliente do ZupBank,  
+Como cliente do TaahjjimBank,  
 quero criar uma conta vinculada ao meu CPF, nome, email e senha,  
 para acessar os serviços bancários e gerenciar minhas finanças.
 
@@ -18,7 +18,7 @@ Critérios de Aceitação:
 - A senha será armazenada de forma simples (sem hash ou salt neste momento).
 
 2. Login
-Como cliente do ZupBank,  
+Como cliente do TaahjjimBank,  
 quero acessar minha conta usando email e senha,  
 para garantir que apenas eu tenha acesso aos meus dados bancários.
 
@@ -58,7 +58,7 @@ Critérios de Aceitação:
 
 6. Transferência entre Contas
 Como cliente,  
-quero transferir dinheiro da minha conta para outra conta do ZupBank,  
+quero transferir dinheiro da minha conta para outra conta do TaahjjimBank,  
 para facilitar pagamentos e transações com outros usuários.
 
 Critérios de Aceitação:
@@ -97,7 +97,7 @@ Classes Básicas do Sistema
 1. Usuário: Representa os clientes do banco, com informações pessoais e credenciais (email e senha).
 2. Conta (Abstrata): Classe base para diferentes tipos de conta (Corrente e Poupança).
 3. ContaCorrente e ContaPoupanca: Especializações com comportamentos específicos.
-4. ZupBank: Gerenciador central para todas as operações do banco.
+4. TaahjjimBank: Gerenciador central para todas as operações do banco.
 
 Objetivos do Time
 - Treinar conceitos de Orientação a Objetos, como herança, polimorfismo, e encapsulamento.

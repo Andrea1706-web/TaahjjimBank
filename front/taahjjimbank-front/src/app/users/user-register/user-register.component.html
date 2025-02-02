@@ -1,0 +1,29 @@
+<h2>Cadastro de Usuário</h2>
+
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <fieldset>
+        <legend>Preencha os dados abaixo</legend>
+
+        <label for="name">Nome:</label>
+        <input id="name" type="text" formControlName="name" required aria-describedby="name-error" />
+        <div id="name-error" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched" aria-live="polite">
+            <span>O nome é obrigatório e deve ter pelo menos 3 caracteres.</span>
+        </div>
+
+        <label for="email">E-mail:</label>
+        <input id="email" type="email" formControlName="email" required aria-describedby="email-error" />
+        <div id="email-error" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+            aria-live="polite">
+            <span>Informe um e-mail válido.</span>
+        </div>
+
+        <label for="password">Senha:</label>
+        <input id="password" type="password" formControlName="password" required aria-describedby="password-error" />
+        <div id="password-error" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+            aria-live="polite">
+            <span>A senha deve ter pelo menos 6 caracteres.</span>
+        </div>
+
+        <button type="submit" [disabled]="userForm.invalid">Cadastrar</button>
+    </fieldset>
+</form>

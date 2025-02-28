@@ -12,7 +12,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/contas")
-public class ContaBancariaC {
+public class ContaBancariaController {
 
 //    @Autowired
 //    private S3Service s3Service;

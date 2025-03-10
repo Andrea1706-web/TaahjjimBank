@@ -20,7 +20,7 @@ jobs:
         java-version: '21'
 
     - name: build with Maven
-      run: mvn package -f ./pom.xml
+      run: mvn package -f ./TaahjjimBank/pom.xml
 
     - name: create zip package
       run: zip -j backendZupBank.zip target/*.jar

@@ -29,7 +29,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-acess-key-id: "AKIAWIJIUXNFG3HFQSZZ"
-        aws-secret-acess-key: ${{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}}
+        aws-secret-acess-key: "7JWu7UymwMEUpnGFPOHbaX237WKU4DA+M5cP279B"
         aws-region: sa-east-1
 
     - name: Deploy to AWS Lambda

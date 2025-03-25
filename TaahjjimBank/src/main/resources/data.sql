@@ -9,3 +9,6 @@ CREATE TABLE IF NOT EXISTS TB_CARTOES (
 
 INSERT INTO TB_CARTOES (id, numero_cartao, validade, codigo, numero_conta)
 VALUES (1, '123546877', '1024', '123', '1243569812');
+
+INSERT INTO TB_CARTOES (id, numero_cartao, validade, codigo, numero_conta)
+VALUES (2, '123546899', '2430', '123', '1243569813');

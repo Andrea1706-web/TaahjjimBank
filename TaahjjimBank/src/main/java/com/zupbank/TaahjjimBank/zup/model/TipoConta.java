@@ -1,5 +1,5 @@
 package com.zupbank.TaahjjimBank.zup.model;
 
-public enum TipConta {
+public enum TipoConta {
     UNICLASS, PERSONALITE, UNIVERSITARIA, BLUE
 }

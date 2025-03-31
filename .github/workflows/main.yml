@@ -32,8 +32,8 @@ jobs:
         aws-secret-access-key: "7JWu7UymwMEUpnGFPOHbaX237WKU4DA+M5cP279B"
         aws-region: sa-east-1
 
-    - name: Upload to S336
-      run: aws s3 cp backendZupBank.zip s3://zupbankdatabase/backendZupBank.zip37
+    - name: Upload to S3
+      run: aws s3 cp backendZupBank.zip s3://zupbankdatabase/backendZupBank.zip
 
     - name: Deploy to AWS Lambda
       run: aws lambda update-function-code --function-name backendZupBank --s3-bucket zupbankdatabase --s3-key backendZupBank.zip

@@ -33,4 +33,4 @@ jobs:
         aws-region: sa-east-1
 
     - name: Deploy to AWS Lambda
-      run: aws lambda update-function-code --function-name backendZupBank --zip-file fileb://backendZupBank.zip
+      run: aws lambda update-function-code --function-name backendZupBank --s3-bucket zupbankdatabase --s3-key backendZupBank.zip

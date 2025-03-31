@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,8 +22,9 @@ public class CartaoController {
 
     @Operation(summary = "Permite cadastrar novo cartão", description = "Cadastrar Cartões")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cadastro realizado com sucesso!"),
-            @ApiResponse(responseCode = "405", description = "Not found - Erro ao cadastrar cartão!")
+            @ApiResponse(responseCode = "201", description = "Cartão criado com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos")
+
     })
 
     @PostMapping
@@ -34,7 +36,8 @@ public class CartaoController {
     @Operation(summary = "Permite listar todos os cartões cadastrados", description = "Listar Cartões")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso!"),
-            @ApiResponse(responseCode = "405", description = "Not found - Nenhum cartão encontrado!")
+            @ApiResponse(responseCode = "201", description = "Busca realizada com sucesso!"),
+            @ApiResponse(responseCode = "405", description = "Nenhum cartão encontrado!")
     })
 
     @GetMapping
@@ -42,4 +45,9 @@ public class CartaoController {
         return cartaoService.exibirTodos();
     }
 
+    @GetMapping("/existe/{numeroCartao}")
+    public ResponseEntity<Boolean> verificarSeCartaoExiste(@PathVariable String numeroCartao) {
+        boolean existe = cartaoService.verificarSeCartaoExiste(numeroCartao);
+        return ResponseEntity.ok(existe);
+    }
 }

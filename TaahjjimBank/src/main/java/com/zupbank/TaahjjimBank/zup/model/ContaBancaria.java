@@ -7,9 +7,9 @@ public class ContaBancaria {
     private String numeroCC;
     private BigDecimal saldo;
     private String cpfProprietario;
-    private TipConta tipConta;
+    private TipoConta tipConta;
 
-    public ContaBancaria(int agencia, String numeroCC, BigDecimal saldo, String cpfProprietario, TipConta tipoConta) {
+    public ContaBancaria(int agencia, String numeroCC, BigDecimal saldo, String cpfProprietario, TipoConta tipoConta) {
         this.agencia = agencia;
         this.numeroCC = numeroCC;
         this.saldo = saldo;
@@ -50,11 +50,11 @@ public class ContaBancaria {
         this.cpfProprietario = cpfProprietario;
     }
 
-    public TipConta getTipoConta() {
+    public TipoConta getTipoConta() {
         return tipConta;
     }
 
-    public void setTipoConta(TipConta tipoConta) {
+    public void setTipoConta(TipoConta tipoConta) {
         this.tipConta = tipConta;
     }
 }

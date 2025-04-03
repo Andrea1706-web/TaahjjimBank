@@ -38,4 +38,12 @@ public class CartaoModel {
 
     @Column(name = "numero_conta", length = 10, nullable = true)
     private String numeroConta;
+
+    public String getNumeroCartao() {
+        return numeroCartao;
+    }
+
+    public void setNumeroCartao(String numeroCartao) {
+        this.numeroCartao = numeroCartao;
+    }
 }

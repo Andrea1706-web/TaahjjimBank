@@ -29,7 +29,7 @@ public class CartaoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CartaoModel inserir(@RequestBody CartaoModel cartaoModel){
+    public CartaoModel criarCartao(@RequestBody CartaoModel cartaoModel){
         return cartaoService.inserir(cartaoModel);
     }
 

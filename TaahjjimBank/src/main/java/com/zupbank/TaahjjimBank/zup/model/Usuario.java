@@ -3,13 +3,16 @@ package com.zupbank.TaahjjimBank.zup.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.GenerationType;
 import javax.persistence.GeneratedValue;
 
-public class Usuario {
     @Entity
     @Table(name = "usuarios")
-    public static class Usuario1 {
+
+    public class Usuario {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -50,5 +53,5 @@ public class Usuario {
             this.documento = documento;
         }
     }
-}
+
 

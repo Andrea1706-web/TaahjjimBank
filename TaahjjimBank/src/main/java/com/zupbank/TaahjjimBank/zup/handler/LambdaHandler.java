@@ -23,7 +23,6 @@ public class LambdaHandler {
     @Autowired
     private CartaoController cartaoController;
 
-    @Override
     public ResponseEntity<?> handleRequest(Map<String, Object> event) {
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");

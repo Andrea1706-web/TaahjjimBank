@@ -19,6 +19,9 @@ jobs:
         distribution: 'adopt'
         java-version: '21'
 
+    - name: clean maven package
+      run: mvn clean package
+
     - name: build with Maven
       run: mvn package -f ./TaahjjimBank/pom.xml
 

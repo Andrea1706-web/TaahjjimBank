@@ -1,5 +1,5 @@
 # TaahjjimBank
-História de Usuário: 
+História de Usuário:
 
 Visão Geral do Produto
 O TaahjjimBank será uma solução bancária digital para oferecer serviços básicos inicialmente, permitindo que o time de desenvolvimento treine habilidades de Java, Orientação a Objetos, e, futuramente, Spring Framework. As funcionalidades iniciais visam fornecer uma base sólida para expandir o sistema conforme o time avança em complexidade.
@@ -103,3 +103,4 @@ Objetivos do Time
 - Treinar conceitos de Orientação a Objetos, como herança, polimorfismo, e encapsulamento.
 - Praticar boas práticas de desenvolvimento, como validações, segurança básica, e testes unitários.
 - Gradualmente introduzir Spring Boot para transformar o sistema em uma API escal
+- 

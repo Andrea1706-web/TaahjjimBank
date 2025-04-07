@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class LambdaHandler implements RequestHandler<Map<String, Object>, ResponseEntity<?>> {
+public class LambdaHandler {
 
     @Autowired
     private ContaBancariaController contaBancariaController;
@@ -24,7 +24,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Respon
     private CartaoController cartaoController;
 
     @Override
-    public ResponseEntity<?> handleRequest(Map<String, Object> event, Context context) {
+    public ResponseEntity<?> handleRequest(Map<String, Object> event) {
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");
         Map<String, Object> body = (Map<String, Object>) event.get("body");

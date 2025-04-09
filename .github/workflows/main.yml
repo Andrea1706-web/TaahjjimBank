@@ -50,4 +50,4 @@ jobs:
       run: sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket zupbankdatabase
   
     - name: Deploy SAM application
-      run: sam deploy --template-file packaged.yaml --stack-name backendZupBank --capabilities CAPABILITY_IAM
+      run: sam deploy --template-file packaged.yaml --stack-name backendZupBank --capabilities CAPABILITY_IAM --region sa-east-1

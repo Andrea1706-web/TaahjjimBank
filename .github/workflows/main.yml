@@ -1,13 +1,13 @@
-name: Deploy to AWS Lambda
+name: Deploy to AWS Lambda using SAM
 
 on:
   push:
     branches:
-      - main
+      - main 
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
 
     steps:
     - name: Checkout Code
@@ -21,20 +21,33 @@ jobs:
 
     - name: build with Maven
       run: mvn clean package -f ./TaahjjimBank/pom.xml
+ 
+    - name: create SAM template
+      run: |
+        cat <<EOF > template.yaml
+        AWSTemplateFormatVersion: '2010-09-09'
+        Transform: AWS::Serverless-2016-10-31
+        Resources:
+          BackendZupBankFunction:
+            Type: AWS::Serverless::Function
+            Properties:
+              Handler: com.zupbank.TaahjjimBank.zup.handler.LambdaHandler
+              Runtime: java21
+              CodeUri: ./TaahjjimBank/target/TaahjjimBank-0.0.1-SNAPSHOT.jar
+              MemorySize: 512
+              Timeout: 15
+              Role: arn:aws:iam::430118845258:role/service-role/backendZupBank-role-652whdcm
+        EOF
 
-    - name: create zip package
-      run: zip -j backendZupBank.zip TaahjjimBank/target/TaahjjimBank-0.0.1-SNAPSHOT.jar
-     
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: "AKIAWIJIUXNFG3HFQSZZ"
-        aws-secret-access-key: "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"
-        aws-region: sa-east-1
+    - name: Install AWS SAM CLI
+      run: |
+        sudo apt-get update && sudo apt-get install -y unzip
+        curl -Lo sam-cli.zip https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
+        unzip sam-cli.zip -d sam-installation
+        sudo ./sam-installation/install
 
-    - name: Upload to S3
-      run: aws s3 cp backendZupBank.zip s3://zupbankdatabase/backendZupBank.zip
+    - name: Package SAM application
+      run: sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket zupbankdatabase
 
-    - name: Deploy to AWS Lambda
-      run: aws lambda update-function-code --function-name backendZupBank --s3-bucket zupbankdatabase --s3-key backendZupBank.zip
-
+    - name: Deploy SAM application
+      run: sam deploy --template-file packaged.yaml --stack-name backendZupBank --capabilities CAPABILITY_IAM

@@ -47,6 +47,8 @@ jobs:
         sudo ./sam-installation/install --update # Adicionada a flag --update    
       
     - name: Package SAM application
+      env: # Adiciona a região como variável de ambiente
+        AWS_REGION: sa-east-1
       run: sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket zupbankdatabase
   
     - name: Deploy SAM application

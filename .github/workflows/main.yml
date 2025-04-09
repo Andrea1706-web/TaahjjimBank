@@ -41,6 +41,8 @@ jobs:
 
     - name: Install AWS SAM CLI
       run: |
+        echo "Forçando atualização do AWS SAM CLI..."
+        sudo rm -rf /usr/local/bin/sam
         sudo apt-get update && sudo apt-get install -y unzip
         curl -Lo sam-cli.zip https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
         unzip sam-cli.zip -d sam-installation
@@ -48,6 +50,6 @@ jobs:
 
     - name: Package SAM application
       run: sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket zupbankdatabase
-
+  
     - name: Deploy SAM application
       run: sam deploy --template-file packaged.yaml --stack-name backendZupBank --capabilities CAPABILITY_IAM

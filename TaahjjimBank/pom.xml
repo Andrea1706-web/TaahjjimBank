@@ -15,9 +15,20 @@
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<version>3.1.4</version>
+		</dependency>
+		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>javax.persistence-api</artifactId>
 			<version>2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.30</version> <!-- ou a versão mais recente -->
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.amazonaws</groupId>
@@ -43,6 +54,11 @@
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>s3</artifactId>
 			<version>2.28.29</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>3.1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>io.swagger.core.v3</groupId>

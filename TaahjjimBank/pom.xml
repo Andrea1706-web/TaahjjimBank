@@ -55,7 +55,11 @@
 			<version>1.15.11</version>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>com.amazonaws.serverless</groupId>
+			<artifactId>aws-serverless-java-container-springboot2</artifactId>
+			<version>1.9.4</version>
+		</dependency>
 
 	</dependencies>
 

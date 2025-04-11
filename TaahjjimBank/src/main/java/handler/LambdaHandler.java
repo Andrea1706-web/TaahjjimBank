@@ -29,7 +29,7 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
             drivesS3.save(key, cartao);
             return "Cartao salvo com sucesso no S3";
         } catch (Exception e) {
-            return "Erro ao salvar cartão no S3: " + e.getMessage();
+            throw e;
         }
 
     }

@@ -32,9 +32,9 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
             throw e;
         }
         try {
-        Optional<CartaoModel> cartao2 = driverS3.read(key);
-        return cartao2;
-            
-    } catch (Exception e){
-     trow e;
+            Optional<CartaoModel> cartao2 = driverS3.read(key);
+            return cartao2;
+        } catch (Exception e) {
+            throw e; // Lança a exceção para o chamador
+        }
 }

@@ -7,6 +7,7 @@ import model.CartoesModel;
 import service.DriverS3;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class LambdaHandler implements RequestHandler<Map<String,Object>, String> {
 
@@ -22,7 +23,7 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
         String key = "dados/cartao-teste.json";
 
         //Cria uma instância do Driver S3 para CartaoModel
-        DriverS3<CartoesModel> drivesS3 = new DriverS3<>(bucketName, CartoesModel.class);
+        DriverS3<CartoesModel> driverS3 = new DriverS3<>(bucketName, CartoesModel.class);
 
         //Salva o objeto CartaoModel no S3
         try {
@@ -32,7 +33,7 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
             throw e;
         }
         try {
-            Optional<CartaoModel> cartao2 = driverS3.read(key);
+            Optional<CartoesModel> cartao2 = driverS3.read(key);
             return cartao2;
         } catch (Exception e) {
             throw e;

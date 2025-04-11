@@ -30,7 +30,8 @@ public class DriverS3 <T>{
             String json = objectMapper.writeValueAsString(object);
 
             // Converte a string JSON para um InputStream
-            InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+            byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+            InputStream inputStream = new ByteArrayInputStream(jsonBytes);
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(jsonBytes.length);

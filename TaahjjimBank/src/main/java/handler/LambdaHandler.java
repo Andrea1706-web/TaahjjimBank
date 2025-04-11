@@ -18,7 +18,7 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
         cartao.setNumeroConta("987654321");
 
         //Define o nome do bucket e a chave para o objeto
-        String bucketName = "seu-bucket-s3";
+        String bucketName = "zupbankdatabase";
         String key = "dados/cartao-teste.json";
 
         //Cria uma instância do Driver S3 para CartaoModel

@@ -12,9 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class CartoesModel {
+public class CartaoModel {
 
-    private Long id;
+    private String id;
 
     private String numeroCartao;
 
@@ -24,27 +24,7 @@ public class CartoesModel {
 
     private String numeroConta;
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getNumeroCartao() {
-        return numeroCartao;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public String getValidade() {
-        return validade;
-    }
-
-    public String getNumeroConta() {
-        return numeroConta;
-    }
-
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -2,6 +2,7 @@ package service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,10 +30,14 @@ public class DriverS3 <T>{
             String json = objectMapper.writeValueAsString(object);
 
             // Converte a string JSON para um InputStream
-            InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+            byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);
+            InputStream inputStream = new ByteArrayInputStream(jsonBytes);
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(jsonBytes.length);
 
             // Envia o objeto para o S3
-            s3Client.putObject(bucketName, key, inputStream, null);
+            s3Client.putObject(bucketName, key, inputStream, metadata);
 
             inputStream.close();
         } catch (Exception e) {

@@ -6,7 +6,6 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import model.CartoesModel;
 import service.DriverS3;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Map;
 import java.util.Optional;
@@ -14,7 +13,7 @@ import java.util.Optional;
 public class LambdaHandler implements RequestHandler<Map<String,Object>, String> {
 
     @Override
-    public String handleRequest(Map<String, Object> event, Context context) throws JsonProcessingException {
+    public String handleRequest(Map<String, Object> event, Context context) {
         CartoesModel cartao = new CartoesModel();
         cartao.setValidade("12/25");
         cartao.setCodigo("123");
@@ -36,14 +35,17 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
         try {
             Optional<CartoesModel> cartao2 = driverS3.read(key);
             if (cartao2.isPresent()) {
-               ObjectMapper objectMapper = new ObjectMapper();
-        // Converte o objeto para uma string JSON
+            ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.writeValueAsString(cartao2.get());
             }
+        } catch (JsonProcessingException e) {
+        // Trate a exceção de processamento JSON aqui
+            e.printStackTrace();
+            return "Erro ao processar JSON";
+
         } catch (Exception e) {
             throw e;
         }
-            return "Objeto não encontrado";
-        
+    return "Objeto não encontrado";
     }
 }

@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import model.CartoesModel;
 import service.DriverS3;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 import java.util.Optional;
@@ -27,14 +28,20 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
 
         //Salva o objeto CartaoModel no S3
         try {
-            drivesS3.save(key, cartao);
+            driverS3.save(key, cartao);
             return "Cartao salvo com sucesso no S3";
         } catch (Exception e) {
             throw e;
         }
         try {
             Optional<CartoesModel> cartao2 = driverS3.read(key);
-            return cartao2;
+            if (cartao2.isPresent()) {
+               ObjectMapper objectMapper = new ObjectMapper();
+        // Converte o objeto para uma string JSON
+            return objectMapper.writeValueAsString(cartao2.get());
+            } else {
+                throw new RuntimeException("Objeto não encontrado no S3");
+            }
         } catch (Exception e) {
             throw e;
         }

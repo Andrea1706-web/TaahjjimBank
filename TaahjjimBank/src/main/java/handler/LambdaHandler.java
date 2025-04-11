@@ -3,15 +3,34 @@ package handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import model.CartoesModel;
+import service.DriverS3;
 
 import java.util.Map;
 
 public class LambdaHandler implements RequestHandler<Map<String,Object>, String> {
 
-
     @Override
     public String handleRequest(Map<String, Object> event, Context context) {
-        return "Hello, lambda";
-    }
+        CartoesModel cartao = new CartoesModel();
+        cartao.setValidade("12/25");
+        cartao.setCodigo("123");
+        cartao.setNumeroConta("987654321");
 
+        //Define o nome do bucket e a chave para o objeto
+        String bucketName = "seu-bucket-s3";
+        String key = "dados/cartao-teste.json";
+
+        //Cria uma instância do Driver S3 para CartaoModel
+        DriverS3<CartoesModel> drivesS3 = new DriverS3<>(bucketName, CartoesModel.class);
+
+        //Salva o objeto CartaoModel no S3
+        try {
+            drivesS3.save(key, cartao);
+            return "Cartao salvo com sucesso no S3";
+        } catch (Exception e) {
+            return "Erro ao salvar cartão no S3: " + e.getMessage();
+        }
+
+    }
 }

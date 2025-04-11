@@ -13,7 +13,7 @@ import java.util.Optional;
 public class LambdaHandler implements RequestHandler<Map<String,Object>, String> {
 
     @Override
-    public String handleRequest(Map<String, Object> event, Context context) {
+    public String handleRequest(Map<String, Object> event, Context context) throws JsonProcessingException {
         CartoesModel cartao = new CartoesModel();
         cartao.setValidade("12/25");
         cartao.setCodigo("123");
@@ -38,9 +38,11 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
                ObjectMapper objectMapper = new ObjectMapper();
         // Converte o objeto para uma string JSON
             return objectMapper.writeValueAsString(cartao2.get());
-            } 
+            }
         } catch (Exception e) {
             throw e;
         }
+            return "Objeto não encontrado";
+        
     }
 }

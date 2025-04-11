@@ -31,8 +31,11 @@ public class DriverS3 <T>{
             // Converte a string JSON para um InputStream
             InputStream inputStream = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
 
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(jsonBytes.length);
+            
             // Envia o objeto para o S3
-            s3Client.putObject(bucketName, key, inputStream, null);
+            s3Client.putObject(bucketName, key, inputStream, metadata);
 
             inputStream.close();
         } catch (Exception e) {

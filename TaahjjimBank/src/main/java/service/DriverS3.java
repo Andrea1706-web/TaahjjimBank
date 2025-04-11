@@ -2,6 +2,7 @@ package service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -9,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 
 public class DriverS3 <T>{
     private final AmazonS3 s3Client;
@@ -35,7 +35,7 @@ public class DriverS3 <T>{
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(jsonBytes.length);
-            
+
             // Envia o objeto para o S3
             s3Client.putObject(bucketName, key, inputStream, metadata);
 

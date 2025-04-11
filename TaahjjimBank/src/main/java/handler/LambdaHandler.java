@@ -37,5 +37,5 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
         } catch (Exception e) {
             throw e;
         }
-}
+    }
 }

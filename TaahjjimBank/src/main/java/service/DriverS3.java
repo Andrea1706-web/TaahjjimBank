@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 
 public class DriverS3 <T>{
     private final AmazonS3 s3Client;

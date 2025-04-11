@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 
 //criando getters, setters e constructors
 @Getter
@@ -13,24 +12,55 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-// indicando que a classe é uma entidade do banco de dados e uma tabela
-@Entity
-@Table(name = "TB_CARTOES")
 public class CartoesModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
-    @Column(name = "numero_cartao", length = 16, nullable = false)
     private String numeroCartao;
 
-    @Column(name = "validade", length = 4, nullable = false)
     private String validade;
 
-    @Column(name = "codigo", length = 3, nullable = false)
     private String codigo;
 
-    @Column(name = "numero_conta", length = 10, nullable = true)
     private String numeroConta;
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getNumeroCartao() {
+        return numeroCartao;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getValidade() {
+        return validade;
+    }
+
+    public String getNumeroConta() {
+        return numeroConta;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setNumeroCartao(String numeroCartao) {
+        this.numeroCartao = numeroCartao;
+    }
+
+    public void setValidade(String validade) {
+        this.validade = validade;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public void setNumeroConta(String numeroConta) {
+        this.numeroConta = numeroConta;
+    }
 }

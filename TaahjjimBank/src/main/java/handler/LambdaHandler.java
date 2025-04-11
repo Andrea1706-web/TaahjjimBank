@@ -29,7 +29,6 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
         //Salva o objeto CartaoModel no S3
         try {
             driverS3.save(key, cartao);
-            return "Cartao salvo com sucesso no S3";
         } catch (Exception e) {
             throw e;
         }
@@ -39,9 +38,7 @@ public class LambdaHandler implements RequestHandler<Map<String,Object>, String>
                ObjectMapper objectMapper = new ObjectMapper();
         // Converte o objeto para uma string JSON
             return objectMapper.writeValueAsString(cartao2.get());
-            } else {
-                throw new RuntimeException("Objeto não encontrado no S3");
-            }
+            } 
         } catch (Exception e) {
             throw e;
         }

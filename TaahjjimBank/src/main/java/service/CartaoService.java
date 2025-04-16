@@ -23,7 +23,7 @@ private LambdaHandler lambdaHandler;
     public List<CartaoModel> exibirTodos() {
         // Configura o evento para chamar o LambdaHandler
         Map<String, Object> event = Map.of(
-                "path", "/cartoes",
+                "path", "/cartao",
                 "httpMethod", "GET"
         );
         Context context = null; // Pode ser um mock de Context, se necessário
@@ -43,7 +43,7 @@ private LambdaHandler lambdaHandler;
     public CartaoModel cadastrarCartao(CartaoModel cartaoModel) {
         // Configura o evento para chamar o LambdaHandler
         Map<String, Object> event = Map.of(
-                "path", "/cartoes",
+                "path", "/cartao",
                 "httpMethod", "POST",
                 "body", Map.of(
                         "numeroCartao", cartaoModel.getNumeroCartao(),

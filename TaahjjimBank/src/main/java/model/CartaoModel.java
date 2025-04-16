@@ -16,6 +16,26 @@ public class CartaoModel {
 
     private String id;
 
+    public String getNumeroCartao() {
+        return numeroCartao;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getValidade() {
+        return validade;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNumeroConta() {
+        return numeroConta;
+    }
+
     private String numeroCartao;
 
     private String validade;
@@ -23,6 +43,9 @@ public class CartaoModel {
     private String codigo;
 
     private String numeroConta;
+
+    public CartaoModel(Object o, String numeroCartao, String validade, String codigo, String numeroConta) {
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -43,4 +66,5 @@ public class CartaoModel {
     public void setNumeroConta(String numeroConta) {
         this.numeroConta = numeroConta;
     }
+
 }

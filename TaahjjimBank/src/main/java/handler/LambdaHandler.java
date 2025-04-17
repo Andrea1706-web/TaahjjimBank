@@ -64,6 +64,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");
+        return event;
 
         try {
             context.getLogger().log("Variável Path" + path);

@@ -64,9 +64,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");
-        return event;
+        return criarResposta(200, event);
 
-        // try {
+         // try {
         //     context.getLogger().log("Variável Path" + path);
         //     context.getLogger().log("Variável httpMethod" + httpMethod);
         //     context.getLogger().log("Object event" + event);
@@ -83,6 +83,15 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         //     e.printStackTrace();
         //     return "Erro ao processar requisição: " + e.getMessage();
         // }
+    }
+
+    public Map<String, Object> criarResposta(int statusCode, String body){
+        Map<String, Object> response = new HashMap<>();
+        response.put("statusCode", statusCode);
+        response.put("headers", Map.of("Content-Type", "application/json"));
+        response.put("body", body);
+        response.put("isBase64Encoded", false);
+        return response;
     }
 
     private String exibirTodos() throws JsonProcessingException {

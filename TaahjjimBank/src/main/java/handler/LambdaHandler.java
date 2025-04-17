@@ -54,14 +54,14 @@ import java.util.Optional;
 //    }
 //}
 
-public class LambdaHandler implements RequestHandler<Map<String, Object>, String> {
+public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
 
     private final String bucketName = "zupbankdatabase";
     private final DriverS3<CartaoModel> driverS3 = new DriverS3<>(bucketName, CartaoModel.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String handleRequest(Map<String, Object> event, Context context) {
+    public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");
 

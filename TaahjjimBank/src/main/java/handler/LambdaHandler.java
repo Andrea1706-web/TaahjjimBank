@@ -66,7 +66,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, String
         String httpMethod = (String) event.get("httpMethod");
 
         try {
-            if ("/cartoes".equals(path)) {
+            if ("/cartao".equals(path)) {
                 if ("GET".equals(httpMethod)) {
                     return exibirTodos();
                 } else if ("POST".equals(httpMethod)) {

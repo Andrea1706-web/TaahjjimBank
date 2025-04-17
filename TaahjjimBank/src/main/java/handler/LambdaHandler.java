@@ -66,23 +66,23 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         String httpMethod = (String) event.get("httpMethod");
         return event;
 
-        try {
-            context.getLogger().log("Variável Path" + path);
-            context.getLogger().log("Variável httpMethod" + httpMethod);
-            context.getLogger().log("Object event" + event);
-            if ("/cartao".equals(path)) {
-                if ("GET".equals(httpMethod)) {
-                    return exibirTodos();
-                } else if ("POST".equals(httpMethod)) {
-                    Map<String, Object> body = (Map<String, Object>) event.get("body");
-                    return cadastrarCartao(body);
-                }
-            }
-            return "Endpoint ou método não suportado.";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Erro ao processar requisição: " + e.getMessage();
-        }
+        // try {
+        //     context.getLogger().log("Variável Path" + path);
+        //     context.getLogger().log("Variável httpMethod" + httpMethod);
+        //     context.getLogger().log("Object event" + event);
+        //     if ("/cartao".equals(path)) {
+        //         if ("GET".equals(httpMethod)) {
+        //             return exibirTodos();
+        //         } else if ("POST".equals(httpMethod)) {
+        //             Map<String, Object> body = (Map<String, Object>) event.get("body");
+        //             return cadastrarCartao(body);
+        //         }
+        //     }
+        //     return "Endpoint ou método não suportado.";
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        //     return "Erro ao processar requisição: " + e.getMessage();
+        // }
     }
 
     private String exibirTodos() throws JsonProcessingException {

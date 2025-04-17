@@ -29,7 +29,7 @@ public class CartaoService {
         Context context = null; // Pode ser um mock de Context, se necessário
 
         // Chama o LambdaHandler e processa a resposta
-        // String response = lambdaHandler.handleRequest(event, context);
+        String response = "teste";
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -55,7 +55,7 @@ public class CartaoService {
         Context context = null; // Pode ser um mock de Context, se necessário
 
         // Chama o LambdaHandler e processa a resposta
-        // String response = lambdaHandler.handleRequest(event, context);
+       String response = "teste 2";
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();

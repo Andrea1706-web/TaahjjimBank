@@ -61,6 +61,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
+    public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
     String path = (String) event.get("path");
     String httpMethod = (String) event.get("httpMethod");
     try {

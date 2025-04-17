@@ -16,8 +16,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 @Service
 public class CartaoService {
 
-@Autowired
-private LambdaHandler lambdaHandler;
+// @Autowired
+// private LambdaHandler lambdaHandler;
 
 // Método para exibir todos os cartões
     public List<CartaoModel> exibirTodos() {
@@ -29,7 +29,7 @@ private LambdaHandler lambdaHandler;
         Context context = null; // Pode ser um mock de Context, se necessário
 
         // Chama o LambdaHandler e processa a resposta
-        String response = lambdaHandler.handleRequest(event, context);
+        // String response = lambdaHandler.handleRequest(event, context);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -55,7 +55,7 @@ private LambdaHandler lambdaHandler;
         Context context = null; // Pode ser um mock de Context, se necessário
 
         // Chama o LambdaHandler e processa a resposta
-        String response = lambdaHandler.handleRequest(event, context);
+        // String response = lambdaHandler.handleRequest(event, context);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();

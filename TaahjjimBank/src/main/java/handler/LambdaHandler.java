@@ -61,10 +61,15 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
-        String path = (String) event.get("path");
-        String httpMethod = (String) event.get("httpMethod");
-        return criarResposta(200, event);
+    String path = (String) event.get("path");
+    String httpMethod = (String) event.get("httpMethod");
+    try {
+        String eventJson = objectMapper.writeValueAsString(event);
+        return criarResposta(200, eventJson);
+    } catch (JsonProcessingException e) {
+        e.printStackTrace();
+        return criarResposta(500, "Erro ao processar JSON");
+    }
 
          // try {
         //     context.getLogger().log("Variável Path" + path);
@@ -94,6 +99,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         return response;
     }
 
+    
     private String exibirTodos() throws JsonProcessingException {
         // Lê todos os cartões do S3 (simulação)
         List<CartaoModel> cartoes = List.of(

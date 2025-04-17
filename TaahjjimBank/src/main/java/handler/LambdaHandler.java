@@ -85,7 +85,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         // }
     }
 
-    public Map<String, Object> criarResposta(int statusCode, String body){
+    private Map<String, Object> criarResposta(int statusCode, String body){
         Map<String, Object> response = new HashMap<>();
         response.put("statusCode", statusCode);
         response.put("headers", Map.of("Content-Type", "application/json"));

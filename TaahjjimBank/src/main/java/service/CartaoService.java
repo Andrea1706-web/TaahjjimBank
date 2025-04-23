@@ -1,67 +1,50 @@
 package service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import handler.LambdaHandler;
 import model.CartaoModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import com.amazonaws.services.lambda.runtime.Context;
 
 @Service
 public class CartaoService {
 
-// @Autowired
-// private LambdaHandler lambdaHandler;
+    private final DriverS3<CartaoModel> driverS3;
+    private final ObjectMapper objectMapper;
 
-// Método para exibir todos os cartões
-    public List<CartaoModel> exibirTodos() {
-        // Configura o evento para chamar o LambdaHandler
-        Map<String, Object> event = Map.of(
-                "path", "/cartao",
-                "httpMethod", "GET"
-        );
-        Context context = null; // Pode ser um mock de Context, se necessário
-
-        // Chama o LambdaHandler e processa a resposta
-        String response = "teste";
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response, new TypeReference<List<CartaoModel>>() {});
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao processar JSON: " + e.getMessage());
-        }
+    public CartaoService(String bucketName) {
+        this.driverS3 = new DriverS3<>(bucketName, CartaoModel.class);
+        this.objectMapper = new ObjectMapper();
     }
 
-    // Método para cadastrar um novo cartão
-    public CartaoModel cadastrarCartao(CartaoModel cartaoModel) {
-        // Configura o evento para chamar o LambdaHandler
-        Map<String, Object> event = Map.of(
-                "path", "/cartao",
-                "httpMethod", "POST",
-                "body", Map.of(
-                        "numeroCartao", cartaoModel.getNumeroCartao(),
-                        "validade", cartaoModel.getValidade(),
-                        "codigo", cartaoModel.getCodigo(),
-                        "numeroConta", cartaoModel.getNumeroConta()
-                )
+    public String obter() throws JsonProcessingException {
+    // Lê todos os cartões do S3 (simulação)
+        List<CartaoModel> cartoes = List.of(
+                new CartaoModel("1", "1234-5678-9012-3456", "12/25", "123", "987654321"),
+                new CartaoModel("2", "9876-5432-1098-7654", "11/24", "456", "123456789")
         );
-        Context context = null; // Pode ser um mock de Context, se necessário
+        return objectMapper.writeValueAsString(cartoes);
+    }
 
-        // Chama o LambdaHandler e processa a resposta
-       String response = "teste 2";
+    public String criar(Map<String, Object> body) throws JsonProcessingException {
+    // Cria um novo cartão a partir do corpo da requisição
+        CartaoModel cartao = new CartaoModel(
+                null,
+                (String) body.get("numeroCartao"),
+                (String) body.get("validade"),
+                (String) body.get("codigo"),
+                (String) body.get("numeroConta")
+        );
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(response, CartaoModel.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao processar JSON: " + e.getMessage());
-        }
+    // Define a chave para salvar no S3
+        String key = "dados/" + cartao.getNumeroCartao() + ".json";
+
+    // Salva o cartão no S3
+        driverS3.save(key, cartao);
+
+    // Retorna o cartão salvo como JSON
+        return objectMapper.writeValueAsString(cartao);
     }
 }

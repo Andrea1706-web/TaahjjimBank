@@ -1,17 +1,11 @@
-
 package handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import model.CartaoModel;
 import service.CartaoService;
-import service.DriverS3;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.HashMap;
 
 public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
@@ -28,9 +22,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         try {
             String response;
             if ("GET".equalsIgnoreCase(httpMethod)) {
-                response = cartaoService.exibirTodos();
+                response = cartaoService.obter();
             } else if ("POST".equalsIgnoreCase(httpMethod)) {
-                response = cartaoService.cadastrarCartao((Map<String, Object>) event.get("body"));
+                response = cartaoService.criar((Map<String, Object>) event.get("body"));
             } else {
                 return criarResposta(405, "Método não permitido");
             }

@@ -1,17 +1,12 @@
 package service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import handler.LambdaHandler;
 import model.CartaoModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import com.amazonaws.services.lambda.runtime.Context;
 
 @Service
 public class CartaoService {
@@ -24,7 +19,7 @@ public class CartaoService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public String exibirTodos() throws JsonProcessingException {
+    public String obter() throws JsonProcessingException {
     // Lê todos os cartões do S3 (simulação)
         List<CartaoModel> cartoes = List.of(
                 new CartaoModel("1", "1234-5678-9012-3456", "12/25", "123", "987654321"),
@@ -33,7 +28,7 @@ public class CartaoService {
         return objectMapper.writeValueAsString(cartoes);
     }
 
-    public String cadastrarCartao(Map<String, Object> body) throws JsonProcessingException {
+    public String criar(Map<String, Object> body) throws JsonProcessingException {
     // Cria um novo cartão a partir do corpo da requisição
         CartaoModel cartao = new CartaoModel(
                 null,

@@ -20,12 +20,16 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");
+        ObjectMapper objectMapper = new ObjectMapper();
+        
         try {
             String response;
             if ("GET".equalsIgnoreCase(httpMethod)) {
                 response = cartaoService.obter();
             } else if ("POST".equalsIgnoreCase(httpMethod)) {
-                response = cartaoService.criar((Map<String, Object>) event.get("body"));
+                String body = (String) event.get("body");
+                Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
+                response = cartaoService.criar(bodyMap);
             } else {
                 return criarResposta(405, "Método não permitido");
             }

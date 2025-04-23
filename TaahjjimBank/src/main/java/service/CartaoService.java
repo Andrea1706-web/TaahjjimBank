@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CartaoService {
@@ -19,13 +19,18 @@ public class CartaoService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public String obter() throws JsonProcessingException {
-    // Lê todos os cartões do S3 (simulação)
-        List<CartaoModel> cartoes = List.of(
-                new CartaoModel("1", "1234-5678-9012-3456", "12/25", "123", "987654321"),
-                new CartaoModel("2", "9876-5432-1098-7654", "11/24", "456", "123456789")
-        );
-        return objectMapper.writeValueAsString(cartoes);
+    public String obter(String numeroCartao) throws JsonProcessingException {
+        // Define a chave para buscar no S3
+        String key = "dados/cartoes/" + numeroCartao + ".json";
+        // Busca o cartão no S3
+        Optional<CartaoModel> cartao = driverS3.read(key);
+        // Verifica se o cartão foi encontrado e retorna como JSON
+        if (cartao.isPresent()) {
+            return objectMapper.writeValueAsString(cartao.get());
+        } else {
+            // Retorna uma mensagem de erro ou um JSON vazio
+            return "{\"error\": \"Cartão não encontrado\"}";
+        }
     }
 
     public String criar(Map<String, Object> body) throws JsonProcessingException {
@@ -39,7 +44,7 @@ public class CartaoService {
         );
 
     // Define a chave para salvar no S3
-        String key = "dados/" + cartao.getNumeroCartao() + ".json";
+        String key = "dados/cartoes" + cartao.getNumeroCartao() + ".json";
 
     // Salva o cartão no S3
         driverS3.save(key, cartao);

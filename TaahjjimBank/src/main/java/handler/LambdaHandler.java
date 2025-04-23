@@ -1,4 +1,3 @@
-
 package handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -20,10 +19,12 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");
+
         try {
             String response;
             if ("GET".equalsIgnoreCase(httpMethod)) {
-                response = cartaoService.obter();
+                String numeroCartao = (String) event.get("numeroCartao");
+                response = cartaoService.obter(numeroCartao);
             } else if ("POST".equalsIgnoreCase(httpMethod)) {
                 response = cartaoService.criar((Map<String, Object>) event.get("body"));
             } else {

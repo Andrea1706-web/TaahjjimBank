@@ -44,7 +44,7 @@ public class CartaoService {
         );
 
     // Define a chave para salvar no S3
-        String key = "dados/cartoes" + cartao.getNumeroCartao() + ".json";
+        String key = "dados/cartoes/" + cartao.getNumeroCartao() + ".json";
 
     // Salva o cartão no S3
         driverS3.save(key, cartao);

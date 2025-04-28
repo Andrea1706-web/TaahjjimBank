@@ -13,9 +13,9 @@ public class ContaBancariaService {
     private final DriverS3<ContaBancariaModel> driverContaBancaria;
     private final ObjectMapper objectMapper;
 
-    public ContaBancariaService(DriverS3<ContaBancariaModel> driverContaBancaria, ObjectMapper objectMapper) {
-        this.driverContaBancaria = driverContaBancaria;
-        this.objectMapper = objectMapper;
+    public ContaBancariaService(String bucketName) {
+        this.driverContaBancaria = new DriverS3<>(bucketName, ContaBancariaModel.class);
+        this.objectMapper = new ObjectMapper();
     }
 
     public String criar(Map<String, Object> payload) throws JsonProcessingException {
@@ -28,7 +28,8 @@ public class ContaBancariaService {
                 (TipoConta) payload.get("tipoConta")
         );
 
-        String key = "dados/" + contaBancaria.getCpf() + ".json";
+        String path = "dados/contaBancaria";
+        String key = path + contaBancaria.getNumeroCC() + ".json";
         driverContaBancaria.save(key, contaBancaria);
         return objectMapper.writeValueAsString(contaBancaria);
     }

@@ -28,7 +28,7 @@ public class ContaBancariaService {
                 (TipoConta) payload.get("tipoConta")
         );
 
-        String path = "dados/contaBancaria";
+        String path = "dados/contaBancaria/";
         String key = path + contaBancaria.getNumeroCC() + ".json";
         driverContaBancaria.save(key, contaBancaria);
         return objectMapper.writeValueAsString(contaBancaria);

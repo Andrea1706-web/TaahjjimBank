@@ -6,15 +6,18 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import service.CartaoService;
+import service.ContaBancariaService;
 
 import java.util.Map;
 import java.util.HashMap;
 
 public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
     private final CartaoService cartaoService;
+    private final ContaBancariaService contaBancariaService;
 
     public LambdaHandler() {
         this.cartaoService = new CartaoService("zupbankdatabase");
+        this.contaBancariaService = new ContaBancariaService("zupbankdatabase");
     }
 
     @Override
@@ -25,6 +28,18 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         
         try {
             String response;
+
+            if (path.equalsIgnoreCase("/contabancaria")) {
+                if ("POST".equalsIgnoreCase(httpMethod)) {
+                    String body = (String) event.get("body");
+                    Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
+                    response = contaBancariaService.criar(bodyMap);
+                } else {
+                    return criarResposta(405, "Método não permitido");
+                }
+                return criarResposta(201, response);
+            }
+
             if ("GET".equalsIgnoreCase(httpMethod)) {
                 response = cartaoService.obter();
             } else if ("POST".equalsIgnoreCase(httpMethod)) {

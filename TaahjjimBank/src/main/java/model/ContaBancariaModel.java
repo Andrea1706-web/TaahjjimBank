@@ -1,8 +1,6 @@
 package model;
 
-import javax.validation.*;
 import javax.validation.constraints.*;
-import java.util.Set;
 
 public class ContaBancariaModel {
 
@@ -30,7 +28,6 @@ public class ContaBancariaModel {
         this.saldo = saldo;
         this.cpf = cpf;
         this.tipoConta = tipoConta;
-        validar(this);
     }
 
     public String getId() {
@@ -79,19 +76,5 @@ public class ContaBancariaModel {
 
     public void setTipoConta(TipoConta tipoConta) {
         this.tipoConta = tipoConta;
-    }
-
-    private void validar(ContaBancariaModel conta) {
-        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
-            Validator validator = factory.getValidator();
-            Set<ConstraintViolation<ContaBancariaModel>> violations = validator.validate(conta);
-            if (!violations.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                for (ConstraintViolation<ContaBancariaModel> v : violations) {
-                    sb.append(v.getPropertyPath()).append(": ").append(v.getMessage()).append("\n");
-                }
-                throw new IllegalArgumentException(sb.toString());
-            }
-        }
     }
 }

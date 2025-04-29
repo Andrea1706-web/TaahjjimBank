@@ -5,12 +5,12 @@ public class ContaBancariaModel {
     private String id;
     private int agencia;
     private String numeroCC;
-    private float saldo;
+    private double saldo;
     private String cpf;
     private TipoConta tipoConta;
 
     public ContaBancariaModel(String id, int agencia, String numeroCC,
-                              float saldo, String cpf, TipoConta tipoConta) {
+                              double saldo, String cpf, TipoConta tipoConta) {
         this.id = id;
         this.agencia = agencia;
         this.numeroCC = numeroCC;
@@ -43,11 +43,11 @@ public class ContaBancariaModel {
         this.numeroCC = numeroCC;
     }
 
-    public float getSaldo() {
+    public double getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(float saldo) {
+    public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
 

@@ -7,7 +7,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import service.CartaoService;
 import service.ContaBancariaService;
+import util.Validation;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -33,6 +35,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
                 if ("POST".equalsIgnoreCase(httpMethod)) {
                     String body = (String) event.get("body");
                     Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
+                    Validation.validar(bodyMap);
                     response = contaBancariaService.criar(bodyMap);
                 } else {
                     return criarResposta(405, "Método não permitido");
@@ -50,6 +53,8 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
                 return criarResposta(405, "Método não permitido");
             }
             return criarResposta(200, response);
+        } catch (ConstraintViolationException e) {
+            return criarResposta(400, e.getMessage());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return criarResposta(500, "Erro ao processar JSON");

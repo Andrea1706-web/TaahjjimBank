@@ -1,12 +1,25 @@
 package model;
 
+import javax.validation.*;
+import javax.validation.constraints.*;
+import java.util.Set;
+
 public class ContaBancariaModel {
 
+    @NotNull(message = "Id é obrigatório")
     private String id;
+    @NotNull(message = "Agencia é obrigatória")
     private int agencia;
+    @NotNull(message = "Número Conta bancária é obrigatório")
     private String numeroCC;
+    @NotNull(message = "Saldo é obrigatório")
+    @Min(value = 0, message = "Saldo deve ser maior ou igual a zero")
+    @Max(value = 1000000, message = "Saldo não pode exceder 1.000.000")
     private double saldo;
+    @NotNull
+    @Pattern(regexp = "\\d{11}", message = "CPF deve conter exatamente 11 dígitos")
     private String cpf;
+    @NotNull(message = "Tipo Conta é obrigatório")
     private TipoConta tipoConta;
 
     public ContaBancariaModel(String id, int agencia, String numeroCC,
@@ -17,6 +30,7 @@ public class ContaBancariaModel {
         this.saldo = saldo;
         this.cpf = cpf;
         this.tipoConta = tipoConta;
+        validar(this);
     }
 
     public String getId() {
@@ -65,5 +79,19 @@ public class ContaBancariaModel {
 
     public void setTipoConta(TipoConta tipoConta) {
         this.tipoConta = tipoConta;
+    }
+
+    private void validar(ContaBancariaModel conta) {
+        try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<ContaBancariaModel>> violations = validator.validate(conta);
+            if (!violations.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (ConstraintViolation<ContaBancariaModel> v : violations) {
+                    sb.append(v.getPropertyPath()).append(": ").append(v.getMessage()).append("\n");
+                }
+                throw new IllegalArgumentException(sb.toString());
+            }
+        }
     }
 }

@@ -1,36 +1,34 @@
 package service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.ContaBancariaModel;
-import model.TipoConta;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+/*
+Implementa a interface CrudService<ContaBancariaModel>, definindo os métodos obter(String numeroConta) e criar(ContaBancariaModel conta).
+A persistência no S3 é realizada diretamente nesses métodos, onde:
+- obter: busca a conta bancária no S3 usando o número da conta como chave.
+- criar: salva uma nova conta bancária no S3, utilizando o número da conta como chave para armazená-la.
+*/
 
 @Service
-public class ContaBancariaService {
-    private final DriverS3<ContaBancariaModel> driverContaBancaria;
+public class ContaBancariaService implements CrudService<ContaBancariaModel> {
+    private final DriverS3<ContaBancariaModel> driverS3;
     private final ObjectMapper objectMapper;
 
     public ContaBancariaService(String bucketName) {
-        this.driverContaBancaria = new DriverS3<>(bucketName, ContaBancariaModel.class);
+        this.driverS3 = new DriverS3<>(bucketName, ContaBancariaModel.class);
         this.objectMapper = new ObjectMapper();
     }
+    @Override
+    public ContaBancariaModel obter(String numeroConta) {
+        String key = "dados/contaBancaria/" + numeroConta + ".json";
+        return driverS3.read(key).orElse(null);
+    }
 
-    public String criar(Map<String, Object> payload) throws JsonProcessingException {
-        ContaBancariaModel contaBancaria = new ContaBancariaModel(
-                null,
-                (int) payload.get("agencia"),
-                (String) payload.get("numeroCC"),
-                (float) payload.get("saldo"),
-                (String) payload.get("cpf"),
-                (TipoConta) payload.get("tipoConta")
-        );
-
-        String path = "dados/contaBancaria/";
-        String key = path + contaBancaria.getNumeroCC() + ".json";
-        driverContaBancaria.save(key, contaBancaria);
-        return objectMapper.writeValueAsString(contaBancaria);
+    @Override
+    public void criar(ContaBancariaModel conta) {
+        String key = "dados/contaBancaria/" + conta.getNumeroCC() + ".json";
+        driverS3.save(key, conta);
     }
 }

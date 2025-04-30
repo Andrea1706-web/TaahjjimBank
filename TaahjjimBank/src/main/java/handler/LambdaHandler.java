@@ -5,8 +5,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.CartaoModel;
+import model.ContaBancariaModel;
 import service.CartaoService;
 import service.ContaBancariaService;
+import util.MapperUtil;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -25,7 +28,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         String path = (String) event.get("path");
         String httpMethod = (String) event.get("httpMethod");
         ObjectMapper objectMapper = new ObjectMapper();
-        
+
         try {
             String response;
 
@@ -33,23 +36,39 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
                 if ("POST".equalsIgnoreCase(httpMethod)) {
                     String body = (String) event.get("body");
                     Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
-                    response = contaBancariaService.criar(bodyMap);
+
+                    ContaBancariaModel conta = MapperUtil.toModel(bodyMap, ContaBancariaModel.class);
+                    contaBancariaService.criar(conta);
+
+                    response = objectMapper.writeValueAsString(conta);
+                    return criarResposta(201, response);
                 } else {
                     return criarResposta(405, "Método não permitido");
                 }
-                return criarResposta(201, response);
             }
 
-            if ("GET".equalsIgnoreCase(httpMethod)) {
-                response = cartaoService.obter();
-            } else if ("POST".equalsIgnoreCase(httpMethod)) {
-                String body = (String) event.get("body");
-                Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
-                response = cartaoService.criar(bodyMap);
-            } else {
-                return criarResposta(405, "Método não permitido");
+            if (path.equalsIgnoreCase("/cartao")) {
+                if ("GET".equalsIgnoreCase(httpMethod)) {
+                    Map<String, String> queryParams = (Map<String, String>) event.get("queryStringParameters");
+                    String numeroCartao = queryParams.get("numeroCartao");
+                    CartaoModel cartao = cartaoService.obter(numeroCartao);
+                    response = objectMapper.writeValueAsString(cartao);
+                    return criarResposta(200, response);
+                } else if ("POST".equalsIgnoreCase(httpMethod)) {
+                    String body = (String) event.get("body");
+                    Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
+
+                    CartaoModel cartao = MapperUtil.toModel(bodyMap, CartaoModel.class);
+                    cartaoService.criar(cartao);
+
+                    response = objectMapper.writeValueAsString(cartao);
+                    return criarResposta(201, response);
+                } else {
+                    return criarResposta(405, "Método não permitido");
+                }
             }
-            return criarResposta(200, response);
+
+            return criarResposta(404, "Path não encontrado");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return criarResposta(500, "Erro ao processar JSON");

@@ -1,5 +1,7 @@
 package model;
 
+import util.Validation;
+
 import javax.validation.constraints.*;
 
 public class ContaBancariaModel {
@@ -28,6 +30,7 @@ public class ContaBancariaModel {
         this.saldo = saldo;
         this.cpf = cpf;
         this.tipoConta = tipoConta;
+        Validation.validar(this);
     }
 
     public String getId() {

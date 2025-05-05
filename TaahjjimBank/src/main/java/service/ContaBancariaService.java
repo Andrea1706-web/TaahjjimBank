@@ -19,15 +19,7 @@ public class ContaBancariaService {
         this.objectMapper = new ObjectMapper();
     }
 
-    public String criar(Map<String, Object> payload) throws JsonProcessingException {
-        ContaBancariaModel contaBancaria = new ContaBancariaModel(
-                null,
-                (int) payload.get("agencia"),
-                (String) payload.get("numeroCC"),
-                (double) payload.get("saldo"),
-                (String) payload.get("cpf"),
-                (TipoConta) payload.get("tipoConta")
-        );
+    public String criar(ContaBancariaModel contaBancaria) throws JsonProcessingException {
 
         String key = PATH + contaBancaria.getNumeroCC() + ".json";
         driverContaBancaria.save(key, contaBancaria);

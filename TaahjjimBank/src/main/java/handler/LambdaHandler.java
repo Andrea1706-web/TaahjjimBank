@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.ContaBancariaModel;
 import service.CartaoService;
 import service.ContaBancariaService;
 import util.Validation;
@@ -34,9 +35,10 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             if (path.equalsIgnoreCase("/contabancaria")) {
                 if ("POST".equalsIgnoreCase(httpMethod)) {
                     String body = (String) event.get("body");
-                    Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
-                    Validation.validar(bodyMap);
-                    response = contaBancariaService.criar(bodyMap);
+//                    Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
+                    ContaBancariaModel conta = objectMapper.readValue(body, ContaBancariaModel.class);
+                    Validation.validar(conta);
+                    response = contaBancariaService.criar(conta);
                 } else {
                     return criarResposta(405, "Método não permitido");
                 }

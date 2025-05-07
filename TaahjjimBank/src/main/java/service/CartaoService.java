@@ -1,25 +1,30 @@
 package service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
+import util.MapperUtil;
 
-/*
-Implementa a interface CrudService<CartaoModel>, definindo os métodos obter(String numeroCartao) e criar(CartaoModel cartao).
-A persistência no S3 é realizada diretamente nesses métodos, onde:
-- "obter": busca o cartão no S3 usando o número do cartão como chave.
-- "criar": salva um novo cartão no S3, utilizando o número do cartão como chave para armazená-lo.
-*/
+import java.util.Map;
 
 @Service
 public class CartaoService implements CrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;
+    private final CartaoModel model;
 
-    public CartaoService(String bucketName) {
+    public CartaoService(String bucketName, String body) {
         this.driverS3 = new DriverS3<>(bucketName, CartaoModel.class);
         this.objectMapper = new ObjectMapper();
+        CartaoModel bodyMap;
+        try {
+            bodyMap = objectMapper.readValue(body, CartaoModel.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Erro ao deserializar bodyJson", e);
+        }
+        this.model = bodyMap;
     }
 
     @Override
@@ -29,8 +34,8 @@ public class CartaoService implements CrudService<CartaoModel> {
     }
 
     @Override
-    public void criar(CartaoModel cartao) {
-        String key = "dados/" + cartao.getNumeroCartao() + ".json";
-        driverS3.save(key, cartao);
+    public void criar() {
+        String key = "dados/" + this.model.getNumeroCartao() + ".json";
+        driverS3.save(key, this.model);
     }
 }

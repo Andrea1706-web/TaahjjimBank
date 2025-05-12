@@ -1,22 +1,36 @@
 package model;
 
+import util.Validation;
+
+import javax.validation.constraints.*;
+
 public class ContaBancariaModel {
 
+    @NotNull(message = "Id é obrigatório")
     private String id;
+    @NotNull(message = "Agencia é obrigatória")
     private int agencia;
+    @NotNull(message = "Número Conta bancária é obrigatório")
     private String numeroCC;
-    private float saldo;
+    @NotNull(message = "Saldo é obrigatório")
+    @Min(value = 0, message = "Saldo deve ser maior ou igual a zero")
+    @Max(value = 1000000, message = "Saldo não pode exceder 1.000.000")
+    private double saldo;
+    @NotNull
+    @Pattern(regexp = "\\d{11}", message = "CPF deve conter exatamente 11 dígitos")
     private String cpf;
+    @NotNull(message = "Tipo Conta é obrigatório")
     private TipoConta tipoConta;
 
     public ContaBancariaModel(String id, int agencia, String numeroCC,
-                              float saldo, String cpf, TipoConta tipoConta) {
+                              double saldo, String cpf, TipoConta tipoConta) {
         this.id = id;
         this.agencia = agencia;
         this.numeroCC = numeroCC;
         this.saldo = saldo;
         this.cpf = cpf;
         this.tipoConta = tipoConta;
+        Validation.validar(this);
     }
 
     public String getId() {
@@ -43,11 +57,11 @@ public class ContaBancariaModel {
         this.numeroCC = numeroCC;
     }
 
-    public float getSaldo() {
+    public double getSaldo() {
         return saldo;
     }
 
-    public void setSaldo(float saldo) {
+    public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
 

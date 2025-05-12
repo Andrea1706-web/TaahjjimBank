@@ -3,26 +3,37 @@ package service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.ContaBancariaModel;
-import model.TipoConta;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-
 @Service
-public class ContaBancariaService {
-    private final DriverS3<ContaBancariaModel> driverContaBancaria;
+public class ContaBancariaService implements CrudService<ContaBancariaModel> {
+    private final DriverS3<ContaBancariaModel> driverS3;
     private final ObjectMapper objectMapper;
     private final String PATH = "dados/contaBancaria/";
+    private final ContaBancariaModel model;
 
-    public ContaBancariaService(String bucketName) {
-        this.driverContaBancaria = new DriverS3<>(bucketName, ContaBancariaModel.class);
+    public ContaBancariaService(String bucketName, String body) {
+        this.driverS3 = new DriverS3<>(bucketName, ContaBancariaModel.class);
         this.objectMapper = new ObjectMapper();
+        ContaBancariaModel bodyMap;
+        try {
+            bodyMap = objectMapper.readValue(body, ContaBancariaModel.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Erro ao deserializar bodyJson", e);
+        }
+
+        this.model = bodyMap;
     }
 
-    public String criar(ContaBancariaModel contaBancaria) throws JsonProcessingException {
+    @Override
+    public ContaBancariaModel obter(String numeroConta) {
+        String key = PATH + numeroConta + ".json";
+        return driverS3.read(key).orElse(null);
+    }
 
-        String key = PATH + contaBancaria.getNumeroCC() + ".json";
-        driverContaBancaria.save(key, contaBancaria);
-        return objectMapper.writeValueAsString(contaBancaria);
+    @Override
+    public void criar() {
+        String key = PATH + this.model.getNumeroCC() + ".json";
+        driverS3.save(key, this.model);
     }
 }

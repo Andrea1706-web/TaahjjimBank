@@ -1,66 +1,53 @@
-
 package handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.ContaBancariaModel;
 import service.CartaoService;
 import service.ContaBancariaService;
-import util.Validation;
+import service.CrudService;
 
-import javax.validation.ConstraintViolationException;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
-    private final CartaoService cartaoService;
-    private final ContaBancariaService contaBancariaService;
-
-    public LambdaHandler() {
-        this.cartaoService = new CartaoService("zupbankdatabase");
-        this.contaBancariaService = new ContaBancariaService("zupbankdatabase");
-    }
 
     @Override
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
-        String path = (String) event.get("path");
-        String httpMethod = (String) event.get("httpMethod");
+
         ObjectMapper objectMapper = new ObjectMapper();
-        
-        try {
-            String response;
 
-            if (path.equalsIgnoreCase("/contabancaria")) {
-                if ("POST".equalsIgnoreCase(httpMethod)) {
-                    String body = (String) event.get("body");
-//                    Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
-                    ContaBancariaModel conta = objectMapper.readValue(body, ContaBancariaModel.class);
-                    Validation.validar(conta);
-                    response = contaBancariaService.criar(conta);
-                } else {
-                    return criarResposta(405, "Método não permitido");
-                }
-                return criarResposta(201, response);
-            }
+        String httpMethod = (String) event.get("httpMethod");
+        String chave = (String) event.get("chave");
 
-            if ("GET".equalsIgnoreCase(httpMethod)) {
-                response = cartaoService.obter();
-            } else if ("POST".equalsIgnoreCase(httpMethod)) {
-                String body = (String) event.get("body");
-                Map<String, Object> bodyMap = objectMapper.readValue(body, Map.class);
-                response = cartaoService.criar(bodyMap);
-            } else {
-                return criarResposta(405, "Método não permitido");
-            }
-            return criarResposta(200, response);
-        } catch (ConstraintViolationException e) {
-            return criarResposta(400, e.getMessage());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return criarResposta(500, "Erro ao processar JSON");
+        CrudService service = serviceFactory(event);
+        if (service == null) {
+            return criarResposta(404, "Serviço não encontrado");
         }
+        try {
+            if ("GET".equalsIgnoreCase(httpMethod)) {
+                Object resultado = service.obter(chave);
+                return criarResposta(200, objectMapper.writeValueAsString(resultado));
+            } else if ("POST".equalsIgnoreCase(httpMethod)) {
+                service.criar();
+                return criarResposta(201, "Criado com sucesso");
+            }
+            return criarResposta(405, "Método HTTP não suportado");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return criarResposta(500, "Erro interno: " + e.getMessage());
+        }
+    }
+
+    private CrudService serviceFactory(Map<String, Object> event) {
+        String path = (String) event.get("path");
+        String bodyJson = (String) event.get("body");
+        if (path.contains("cartao")) {
+            return new CartaoService("zupbankdatabase", bodyJson);
+        } else if (path.contains("conta-bancaria")) {
+            return new ContaBancariaService("zupbankdatabase", bodyJson);
+        }
+        return null;
     }
 
     private Map<String, Object> criarResposta(int statusCode, String body) {

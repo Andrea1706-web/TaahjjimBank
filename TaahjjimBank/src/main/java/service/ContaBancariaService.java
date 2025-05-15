@@ -32,8 +32,13 @@ public class ContaBancariaService implements CrudService<ContaBancariaModel> {
     }
 
     @Override
-    public void criar() {
-        String key = PATH + this.model.getNumeroCC() + ".json";
-        driverS3.save(key, this.model);
+    public ContaBancariaModel criar(ContaBancariaModel model) {
+        return null;
     }
+
+//    @Override
+//    public void criar() {
+//        String key = PATH + this.model.getNumeroCC() + ".json";
+//        driverS3.save(key, this.model);
+//    }
 }

@@ -3,6 +3,8 @@ package handler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import model.CartaoModel;
+import model.ContaBancariaModel;
 import service.CartaoService;
 import service.ContaBancariaService;
 import service.CrudService;
@@ -28,8 +30,15 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             if ("GET".equalsIgnoreCase(httpMethod)) {
                 Object resultado = service.obter(chave);
                 return criarResposta(200, objectMapper.writeValueAsString(resultado));
-            } else if ("POST".equalsIgnoreCase(httpMethod)) {
-                service.criar();
+            } if ("POST".equalsIgnoreCase(httpMethod)) {
+                String bodyJson = (String) event.get("body");
+                if (service instanceof CartaoService) {
+                    CartaoModel cartao = objectMapper.readValue(bodyJson, CartaoModel.class);
+                    ((CartaoService) service).criar(cartao);
+                } else if (service instanceof ContaBancariaService) {
+                    ContaBancariaModel conta = objectMapper.readValue(bodyJson, ContaBancariaModel.class);
+                    ((ContaBancariaService) service).criar(conta);
+                }
                 return criarResposta(201, "Criado com sucesso");
             }
             return criarResposta(405, "Método HTTP não suportado");

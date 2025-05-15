@@ -3,5 +3,8 @@ package service;
 public interface CrudService<T> {
     T obter(String chave);
 
-    void criar();
+    T criar(T model);
+
+
+    //CartaoModel criarCartao(CartaoModel cartaoModel);
 }

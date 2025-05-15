@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
-import util.MapperUtil;
 
-import java.util.Map;
+import java.io.IOException;
 
 @Service
 public class CartaoService implements CrudService<CartaoModel> {
@@ -34,8 +33,15 @@ public class CartaoService implements CrudService<CartaoModel> {
     }
 
     @Override
-    public void criar() {
-        String key = "dados/" + this.model.getNumeroCartao() + ".json";
-        driverS3.save(key, this.model);
+    public CartaoModel criar(CartaoModel model) {
+        String key = "dados/" + model.getNumeroCartao() + ".json";
+        String json = String.valueOf(driverS3.read(key));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(json, CartaoModel.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao desserializar CartaoModel", e);
+        }
     }
 }

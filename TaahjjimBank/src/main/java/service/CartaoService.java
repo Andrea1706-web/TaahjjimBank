@@ -12,6 +12,7 @@ public class CartaoService implements CrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;
+    private final String PATH = "dados/cartao/";
     private final CartaoModel model;
 
     public CartaoService(String bucketName, String body) {
@@ -28,13 +29,13 @@ public class CartaoService implements CrudService<CartaoModel> {
 
     @Override
     public CartaoModel obter(String numeroCartao) {
-        String key = "dados/" + numeroCartao + ".json";
+        String key = PATH + numeroCartao + ".json";
         return driverS3.read(key).orElse(null);
     }
 
     @Override
     public CartaoModel criar(CartaoModel model) {
-        String key = "dados/" + model.getNumeroCartao() + ".json";
+        String key = PATH + model.getNumeroCartao() + ".json";
         String json = String.valueOf(driverS3.read(key));
 
         ObjectMapper objectMapper = new ObjectMapper();

@@ -35,6 +35,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         try {
             if ("GET".equalsIgnoreCase(httpMethod)) {
                 Object resultado = service.obter(cartaoId);
+                if (resultado == null) {
+                    return criarResposta(404, "{\"message\": \"Cartão não encontrado\"}");
+                }
                 return criarResposta(200, objectMapper.writeValueAsString(resultado));
             } if ("POST".equalsIgnoreCase(httpMethod)) {
                 String bodyJson = (String) event.get("body");
@@ -57,11 +60,17 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     private CrudService serviceFactory(Map<String, Object> event) {
         String path = (String) event.get("path");
         String bodyJson = (String) event.get("body");
+
         if (path.contains("cartao")) {
-            return new CartaoService("zupbankdatabase", bodyJson);
+            if (bodyJson != null) {
+                return new CartaoService("zupbankdatabase", bodyJson);
+            } else {
+                return new CartaoService("zupbankdatabase");
+            }
         } else if (path.contains("conta-bancaria")) {
             return new ContaBancariaService("zupbankdatabase", bodyJson);
         }
+
         return null;
     }
 

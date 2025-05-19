@@ -12,18 +12,20 @@ public class CartaoService implements CrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;
-    private final CartaoModel model;
+    private CartaoModel model;
 
-    public CartaoService(String bucketName, String body) {
+    public CartaoService(String bucketName) {
         this.driverS3 = new DriverS3<>(bucketName, CartaoModel.class);
         this.objectMapper = new ObjectMapper();
-        CartaoModel bodyMap;
+    }
+
+    public CartaoService(String bucketName, String body) {
+        this(bucketName);
         try {
-            bodyMap = objectMapper.readValue(body, CartaoModel.class);
+            this.model = objectMapper.readValue(body, CartaoModel.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Erro ao deserializar bodyJson", e);
         }
-        this.model = bodyMap;
     }
 
     @Override

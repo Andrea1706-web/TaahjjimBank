@@ -3,11 +3,11 @@ package model;
 import util.Validation;
 
 import javax.validation.constraints.*;
+import java.util.UUID;
 
 public class ContaBancariaModel {
 
-    @NotNull(message = "Id é obrigatório")
-    private String id;
+    private final UUID id;
     @NotNull(message = "Agencia é obrigatória")
     private int agencia;
     @NotNull(message = "Número Conta bancária é obrigatório")
@@ -22,9 +22,9 @@ public class ContaBancariaModel {
     @NotNull(message = "Tipo Conta é obrigatório")
     private TipoConta tipoConta;
 
-    public ContaBancariaModel(String id, int agencia, String numeroCC,
+    public ContaBancariaModel(int agencia, String numeroCC,
                               double saldo, String cpf, TipoConta tipoConta) {
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.agencia = agencia;
         this.numeroCC = numeroCC;
         this.saldo = saldo;
@@ -33,12 +33,8 @@ public class ContaBancariaModel {
         Validation.validar(this);
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public int getAgencia() {

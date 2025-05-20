@@ -1,7 +1,7 @@
 package service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ContaBancariaModel;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +32,9 @@ public class ContaBancariaService implements CrudService<ContaBancariaModel> {
     }
 
     @Override
-    public void criar() {
+    public ContaBancariaModel criar() {
         String key = PATH + this.model.getNumeroCC() + ".json";
         driverS3.save(key, this.model);
+        return this.model;
     }
 }

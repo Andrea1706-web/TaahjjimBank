@@ -15,14 +15,16 @@ public class ContaBancariaService implements CrudService<ContaBancariaModel> {
     public ContaBancariaService(String bucketName, String body) {
         this.driverS3 = new DriverS3<>(bucketName, ContaBancariaModel.class);
         this.objectMapper = new ObjectMapper();
-        ContaBancariaModel bodyMap;
-        try {
-            bodyMap = objectMapper.readValue(body, ContaBancariaModel.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao deserializar bodyJson", e);
-        }
 
-        this.model = bodyMap;
+        if (body != null && !body.trim().isEmpty()) {
+            try {
+                this.model = objectMapper.readValue(body, ContaBancariaModel.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Erro ao deserializar bodyJson", e);
+            }
+        } else {
+            this.model = null;
+        }
     }
 
     @Override

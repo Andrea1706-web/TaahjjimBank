@@ -16,18 +16,25 @@ public class CartaoService implements CrudService<CartaoModel> {
     public CartaoService(String bucketName, String body) {
         this.driverS3 = new DriverS3<>(bucketName, CartaoModel.class);
         this.objectMapper = new ObjectMapper();
-        CartaoModel bodyMap;
-        try {
-            bodyMap = objectMapper.readValue(body, CartaoModel.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Erro ao deserializar bodyJson", e);
+
+        if (body == null || body.trim().isEmpty()) {
+            this.model = null;
+        } else {
+            CartaoModel model;
+            try {
+                model = objectMapper.readValue(body, CartaoModel.class);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                model = null;
+            }
+            this.model = model;
         }
-        this.model = bodyMap;
+
     }
 
     @Override
     public CartaoModel obter(String numeroCartao) {
-        String key = "dados/" + numeroCartao + ".json";
+        String key = PATH + numeroCartao + ".json";
         return driverS3.read(key).orElse(null);
     }
 

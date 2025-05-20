@@ -20,9 +20,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         String httpMethod = (String) event.get("httpMethod");
 
         Map<String, String> pathParameters = (Map<String, String>) event.get("pathParameters");
-        String cartaoId = null;
+        String idRegistro = null;
         if (pathParameters != null) {
-            cartaoId = pathParameters.get("id");
+            idRegistro = pathParameters.get("id");
         }
 
 
@@ -32,12 +32,12 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         }
         try {
             if ("GET".equalsIgnoreCase(httpMethod)) {
-                Object resultado = service.obter(cartaoId);
+                Object resultado = service.obter(idRegistro);
                 return criarResposta(200, objectMapper.writeValueAsString(resultado));
             }
             if ("POST".equalsIgnoreCase(httpMethod)) {
-                service.criar();
-                return criarResposta(201, "Criado com sucesso");
+                Object novoObjeto = service.criar();
+                return criarResposta(201, objectMapper.writeValueAsString(novoObjeto));
             }
             return criarResposta(405, "Método HTTP não suportado");
         } catch (Exception e) {

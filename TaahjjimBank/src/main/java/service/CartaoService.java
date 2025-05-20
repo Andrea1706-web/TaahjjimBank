@@ -17,17 +17,14 @@ public class CartaoService implements CrudService<CartaoModel> {
         this.driverS3 = new DriverS3<>(bucketName, CartaoModel.class);
         this.objectMapper = new ObjectMapper();
 
-        if (body == null || body.trim().isEmpty()) {
-            this.model = null;
-        } else {
-            CartaoModel model;
+        if (body != null && !body.trim().isEmpty()) {
             try {
-                model = objectMapper.readValue(body, CartaoModel.class);
+                this.model = objectMapper.readValue(body, CartaoModel.class);
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                model = null;
+                throw new RuntimeException("Erro ao deserializar bodyJson", e);
             }
-            this.model = model;
+        } else {
+            this.model = null;
         }
 
     }

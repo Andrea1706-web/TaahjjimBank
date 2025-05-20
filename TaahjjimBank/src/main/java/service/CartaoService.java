@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 @Service
 public class CartaoService implements CrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;
+    private final String PATH = "dados/cartao/";
     private final CartaoModel model;
 
     public CartaoService(String bucketName, String body) {
@@ -33,15 +32,10 @@ public class CartaoService implements CrudService<CartaoModel> {
     }
 
     @Override
-    public CartaoModel criar(CartaoModel model) {
-        String key = "dados/" + model.getNumeroCartao() + ".json";
-        String json = String.valueOf(driverS3.read(key));
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(json, CartaoModel.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao desserializar CartaoModel", e);
-        }
+    public CartaoModel criar() {
+        String key = PATH + this.model.getNumeroCartao() + ".json";
+        driverS3.save(key, this.model);
+        return this.model;
     }
+
 }

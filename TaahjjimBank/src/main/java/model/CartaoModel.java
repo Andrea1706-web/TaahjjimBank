@@ -1,27 +1,42 @@
 package model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import util.Validation;
+import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 //criando getters, setters e constructors
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 
 public class CartaoModel {
 
-    private String id;
+    private final UUID id;
+
+    @NotNull(message = "Número de cartão é obrigatório")
+    private String numeroCartao;
+
+    @NotNull(message = "Validade do cartão é obrigatório")
+    private String validade;
+
+    @NotNull(message = "Número do código cartão é obrigatório")
+    private String codigo;
+
+    @NotNull(message = "Número de conta é obrigatório")
+    private String numeroConta;
+
+    public CartaoModel(String numeroCartao, String validade, String codigo, String numeroConta) {
+        this.id = UUID.randomUUID();
+        this.numeroCartao = numeroCartao;
+        this.validade = validade;
+        this.codigo = codigo;
+        this.numeroConta = numeroConta;
+        Validation.validar(this);
+    }
+
+    public UUID getId() {
+        return id;
+    }
 
     public String getNumeroCartao() {
         return numeroCartao;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getValidade() {
@@ -34,21 +49,6 @@ public class CartaoModel {
 
     public String getNumeroConta() {
         return numeroConta;
-    }
-
-    private String numeroCartao;
-
-    private String validade;
-
-    private String codigo;
-
-    private String numeroConta;
-
-    public CartaoModel(Object o, String numeroCartao, String validade, String codigo, String numeroConta) {
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public void setNumeroCartao(String numeroCartao) {

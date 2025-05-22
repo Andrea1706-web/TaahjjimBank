@@ -25,7 +25,6 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             idRegistro = pathParameters.get("id");
         }
 
-
         CrudService service = serviceFactory(event);
         if (service == null) {
             return criarResposta(404, "Serviço não encontrado");

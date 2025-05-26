@@ -1,0 +1,50 @@
+package service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import model.ProdutoModel;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProdutoService implements ListarService {
+
+    private final DriverS3<ProdutoModel> driverS3;
+    private final ObjectMapper objectMapper;
+    private final ProdutoModel model;
+    private static final String PATH = "dados/produto/";
+
+    public ProdutoService(String bucketName, String bodyJson) {
+        this.driverS3 = new DriverS3<>(bucketName, ProdutoModel.class);
+        this.objectMapper = new ObjectMapper();
+
+        if (bodyJson != null && !bodyJson.trim().isEmpty()) {
+            try {
+                this.model = objectMapper.readValue(bodyJson, ProdutoModel.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Erro ao desserializar JSON do Produto", e);
+            }
+        } else {
+            this.model = null;
+        }
+    }
+
+    @Override
+    public ProdutoModel obter(String id) {
+        String key = PATH + id + ".json";
+        return driverS3.read(key).orElse(null);
+    }
+
+    @Override
+    public List<ProdutoModel> listar() {
+        return driverS3.readAll(PATH);
+    }
+
+    @Override
+    public ProdutoModel criar() {
+        String key = PATH + model.getId().toString() + ".json";
+        driverS3.save(key, model);
+        return model;
+    }
+}

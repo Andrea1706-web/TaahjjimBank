@@ -3,9 +3,7 @@ package handler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import service.CartaoService;
-import service.ContaBancariaService;
-import service.CrudService;
+import service.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +29,14 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         }
         try {
             if ("GET".equalsIgnoreCase(httpMethod)) {
-                Object resultado = service.obter(idRegistro);
+                Object resultado = (idRegistro == null && service instanceof ListarService)
+                        ? ((ListarService<?>) service).listar()
+                        : service.obter(idRegistro);
+
+                if (resultado == null) {
+                    return criarResposta(404, "Registro não encontrado");
+                }
+
                 return criarResposta(200, objectMapper.writeValueAsString(resultado));
             }
             if ("POST".equalsIgnoreCase(httpMethod)) {
@@ -52,7 +57,9 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             return new CartaoService("zupbankdatabase", bodyJson);
         } else if (path.contains("conta-bancaria")) {
             return new ContaBancariaService("zupbankdatabase", bodyJson);
-        }
+        } else if (path.contains("produto")) {
+        return new ProdutoService("zupbankdatabase", bodyJson);
+    }
         return null;
     }
 

@@ -1,5 +1,7 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -7,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ProdutoModel {
+
     @NotNull(message = "ID é obrigatório")
     private UUID id;
 
@@ -29,14 +32,23 @@ public class ProdutoModel {
     @NotNull(message = "Tipo de produto é obrigatório")
     private TipoProduto tipoProduto;
 
-    public ProdutoModel(UUID id, String nome, String descricao, BigDecimal taxaAdministracao, GrauRisco grauRisco, CategoriaProduto categoria, TipoProduto tipoProduto) {
-     this.id = id;
-     this.nome = nome;
-     this.descricao = descricao;
-     this.taxaAdministracao = taxaAdministracao;
-     this.grauRisco = grauRisco;
-     this.categoria = categoria;
-     this.tipoProduto = tipoProduto;
+    @JsonCreator
+    public ProdutoModel(
+            @JsonProperty("id") UUID id,
+            @JsonProperty("nome") String nome,
+            @JsonProperty("descricao") String descricao,
+            @JsonProperty("taxaAdministracao") BigDecimal taxaAdministracao,
+            @JsonProperty("grauRisco") GrauRisco grauRisco,
+            @JsonProperty("categoria") CategoriaProduto categoria,
+            @JsonProperty("tipoProduto") TipoProduto tipoProduto
+    ) {
+        this.id = id;
+        this.nome = nome;
+        this.descricao = descricao;
+        this.taxaAdministracao = taxaAdministracao;
+        this.grauRisco = grauRisco;
+        this.categoria = categoria;
+        this.tipoProduto = tipoProduto;
     }
 
     public UUID getId() {

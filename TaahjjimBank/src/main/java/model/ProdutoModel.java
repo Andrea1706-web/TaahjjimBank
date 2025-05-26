@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class ProdutoModel {
     @NotNull(message = "ID é obrigatório")
-    private final UUID id;
+    private UUID id;
 
     @NotBlank(message = "Nome é obrigatório")
     private String nome;

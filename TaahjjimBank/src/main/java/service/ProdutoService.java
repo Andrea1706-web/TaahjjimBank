@@ -43,7 +43,7 @@ public class ProdutoService implements iListarService {
 
     @Override
     public ProdutoModel criar() {
-        String key = PATH + model.getId().toString() + ".json";
+        String key = PATH + model.getNome() + ".json";
         driverS3.save(key, model);
         return model;
     }

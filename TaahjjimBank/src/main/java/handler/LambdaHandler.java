@@ -23,14 +23,14 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             idRegistro = pathParameters.get("id");
         }
 
-        CrudService service = serviceFactory(event);
+        iCrudService service = serviceFactory(event);
         if (service == null) {
             return criarResposta(404, "Serviço não encontrado");
         }
         try {
             if ("GET".equalsIgnoreCase(httpMethod)) {
-                Object resultado = (idRegistro == null && service instanceof ListarService)
-                        ? ((ListarService<?>) service).listar()
+                Object resultado = (idRegistro == null && service instanceof iListarService)
+                        ? ((iListarService<?>) service).listar()
                         : service.obter(idRegistro);
 
                 if (resultado == null) {
@@ -50,7 +50,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
         }
     }
 
-    private CrudService serviceFactory(Map<String, Object> event) {
+    private iCrudService serviceFactory(Map<String, Object> event) {
         String path = (String) event.get("path");
         String bodyJson = (String) event.get("body");
         if (path.contains("cartao")) {

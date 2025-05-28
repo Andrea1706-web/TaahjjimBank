@@ -6,7 +6,7 @@ import model.ContaBancariaModel;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ContaBancariaService implements CrudService<ContaBancariaModel> {
+public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
     private final DriverS3<ContaBancariaModel> driverS3;
     private final ObjectMapper objectMapper;
     private final String PATH = "dados/contaBancaria/";

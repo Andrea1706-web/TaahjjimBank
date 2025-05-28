@@ -24,13 +24,13 @@ public class ProdutoModel {
     private BigDecimal taxaAdministracao;
 
     @NotNull(message = "Grau de risco é obrigatório")
-    private GrauRisco grauRisco;
+    private eGrauRisco grauRisco;
 
     // Pode ser null, categoria é opcional
-    private CategoriaProduto categoria;
+    private eCategoriaProduto categoria;
 
     @NotNull(message = "Tipo de produto é obrigatório")
-    private TipoProduto tipoProduto;
+    private eTipoProduto tipoProduto;
 
     @JsonCreator
     public ProdutoModel(
@@ -38,9 +38,9 @@ public class ProdutoModel {
             @JsonProperty("nome") String nome,
             @JsonProperty("descricao") String descricao,
             @JsonProperty("taxaAdministracao") BigDecimal taxaAdministracao,
-            @JsonProperty("grauRisco") GrauRisco grauRisco,
-            @JsonProperty("categoria") CategoriaProduto categoria,
-            @JsonProperty("tipoProduto") TipoProduto tipoProduto
+            @JsonProperty("grauRisco") eGrauRisco grauRisco,
+            @JsonProperty("categoria") eCategoriaProduto categoria,
+            @JsonProperty("tipoProduto") eTipoProduto tipoProduto
     ) {
         this.id = id;
         this.nome = nome;
@@ -79,27 +79,27 @@ public class ProdutoModel {
         this.taxaAdministracao = taxaAdministracao;
     }
 
-    public GrauRisco getGrauRisco() {
+    public eGrauRisco getGrauRisco() {
         return grauRisco;
     }
 
-    public void setGrauRisco(GrauRisco grauRisco) {
+    public void setGrauRisco(eGrauRisco grauRisco) {
         this.grauRisco = grauRisco;
     }
 
-    public CategoriaProduto getCategoria() {
+    public eCategoriaProduto getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(CategoriaProduto categoria) {
+    public void setCategoria(eCategoriaProduto categoria) {
         this.categoria = categoria;
     }
 
-    public TipoProduto getTipoProduto() {
+    public eTipoProduto getTipoProduto() {
         return tipoProduto;
     }
 
-    public void setTipoProduto(TipoProduto tipoProduto) {
+    public void setTipoProduto(eTipoProduto tipoProduto) {
         this.tipoProduto = tipoProduto;
     }
 }

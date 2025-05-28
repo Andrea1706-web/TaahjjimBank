@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProdutoService implements ListarService {
+public class ProdutoService implements iListarService {
 
     private final DriverS3<ProdutoModel> driverS3;
     private final ObjectMapper objectMapper;
@@ -31,8 +31,8 @@ public class ProdutoService implements ListarService {
     }
 
     @Override
-    public ProdutoModel obter(String id) {
-        String key = PATH + id + ".json";
+    public ProdutoModel obter(String nome) {
+        String key = PATH + nome + ".json";
         return driverS3.read(key).orElse(null);
     }
 

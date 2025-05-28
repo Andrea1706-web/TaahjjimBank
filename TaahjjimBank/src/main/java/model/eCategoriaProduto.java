@@ -1,6 +1,6 @@
 package model;
 
-public enum CategoriaProduto {
+public enum eCategoriaProduto {
     RENDA_FIXA,
     RENDA_VARIAVEL,
     MULTI_MERCADO,

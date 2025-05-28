@@ -1,6 +1,6 @@
 package model;
 
-public enum GrauRisco {
+public enum eGrauRisco {
     BAIXO,
     MEDIO,
     ALTO

@@ -20,10 +20,10 @@ public class ContaBancariaModel {
     @Pattern(regexp = "\\d{11}", message = "CPF deve conter exatamente 11 dígitos")
     private String cpf;
     @NotNull(message = "Tipo Conta é obrigatório")
-    private TipoConta tipoConta;
+    private eTipoConta tipoConta;
 
     public ContaBancariaModel(int agencia, String numeroCC,
-                              double saldo, String cpf, TipoConta tipoConta) {
+                              double saldo, String cpf, eTipoConta tipoConta) {
         this.id = UUID.randomUUID();
         this.agencia = agencia;
         this.numeroCC = numeroCC;
@@ -69,11 +69,11 @@ public class ContaBancariaModel {
         this.cpf = cpf;
     }
 
-    public TipoConta getTipoConta() {
+    public eTipoConta getTipoConta() {
         return tipoConta;
     }
 
-    public void setTipoConta(TipoConta tipoConta) {
+    public void setTipoConta(eTipoConta tipoConta) {
         this.tipoConta = tipoConta;
     }
 }

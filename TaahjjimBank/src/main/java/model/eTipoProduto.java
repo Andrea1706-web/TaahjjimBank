@@ -1,6 +1,6 @@
 package model;
 
-public enum TipoProduto {
+public enum eTipoProduto {
     FUNDO_INVESTIMENTO,
     CREDITO_IMOBILIARIO
 }

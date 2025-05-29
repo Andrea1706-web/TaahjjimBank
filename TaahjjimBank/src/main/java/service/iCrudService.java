@@ -1,6 +1,6 @@
 package service;
 
-public interface CrudService<T> {
+public interface iCrudService<T> {
     T obter(String chave);
 
     T criar();

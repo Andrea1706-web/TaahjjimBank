@@ -22,13 +22,8 @@ public class CartaoModel {
     @NotNull(message = "Número de conta é obrigatório")
     private String numeroConta;
 
-    public CartaoModel(String numeroCartao, String validade, String codigo, String numeroConta) {
+    public CartaoModel() {
         this.id = UUID.randomUUID();
-        this.numeroCartao = numeroCartao;
-        this.validade = validade;
-        this.codigo = codigo;
-        this.numeroConta = numeroConta;
-        Validation.validar(this);
     }
 
     public UUID getId() {

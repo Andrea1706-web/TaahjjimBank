@@ -1,6 +1,6 @@
 package model;
 
-public enum TipoConta {
+public enum eTipoConta {
     UNICLASS,
     PERSONALITE,
     UNIVERSITARIA,

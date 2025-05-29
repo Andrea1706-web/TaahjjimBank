@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import util.Validation;
 
 @Service
-public class CartaoService implements CrudService<CartaoModel> {
+public class CartaoService implements iCrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ProdutoModel;
 import org.springframework.stereotype.Service;
+import util.Validation;
 
 import java.util.List;
 
@@ -43,6 +44,8 @@ public class ProdutoService implements iListarService {
 
     @Override
     public ProdutoModel criar() {
+        Validation.validar(this.model);
+
         validarDuplicidade(this.model);
         String key = PATH + model.getNome() + ".json";
         driverS3.save(key, model);

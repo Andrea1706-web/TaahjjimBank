@@ -1,6 +1,6 @@
 package model;
 
-import util.Validation;
+import util.ValidationUtil;
 
 import jakarta.validation.constraints.*;
 import java.util.UUID;
@@ -30,7 +30,7 @@ public class ContaBancariaModel {
         this.saldo = saldo;
         this.cpf = cpf;
         this.tipoConta = tipoConta;
-        Validation.validar(this);
+        ValidationUtil.validar(this);
     }
 
     public UUID getId() {

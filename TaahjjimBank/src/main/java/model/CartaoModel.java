@@ -1,7 +1,7 @@
 package model;
 
-import util.Validation;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+
 import java.util.UUID;
 
 //criando getters, setters e constructors

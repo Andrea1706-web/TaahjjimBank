@@ -2,7 +2,7 @@ package model;
 
 import util.Validation;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.util.UUID;
 
 public class ContaBancariaModel {

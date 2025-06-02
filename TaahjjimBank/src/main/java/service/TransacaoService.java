@@ -30,8 +30,8 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
     }
 
     @Override
-    public List<TransacaoModel> obter(String id) {
-        String key = PATH + this.model.getIdContaOrigem() + ".json";
+    public List<TransacaoModel> obter(String contaOrigem) {
+        String key = PATH + contaOrigem + ".json";
         return driverS3.read(key).orElse(null);
     }
 

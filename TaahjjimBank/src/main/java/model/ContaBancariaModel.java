@@ -1,5 +1,6 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import util.Validation;
 
 import javax.validation.constraints.*;
@@ -22,6 +23,7 @@ public class ContaBancariaModel {
     @NotNull(message = "Tipo Conta é obrigatório")
     private eTipoConta tipoConta;
 
+    @JsonCreator
     public ContaBancariaModel(int agencia, String numeroCC,
                               double saldo, String cpf, eTipoConta tipoConta) {
         this.id = UUID.randomUUID();

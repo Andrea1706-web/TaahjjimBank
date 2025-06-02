@@ -1,5 +1,8 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,21 +16,29 @@ public class TransacaoModel {
     private String tipoTransacao;
     private String localidade;
     private String dispositivo;
-    private boolean ehFralde = false;
+    private boolean ehFraude = false;
 
-    public TransacaoModel(ContaBancariaModel idContaOrigem, ContaBancariaModel idContaDestino, LocalDateTime dataTransacao,
-                          LocalDateTime dataAgendamento, double valorTransacao, String tipoTransacao,
-                          String localidade, String dispositivo, boolean ehFralde) {
+    @JsonCreator
+    public TransacaoModel(
+            @JsonProperty("idContaOrigem") UUID idContaOrigem,
+            @JsonProperty("idContaDestino") UUID idContaDestino,
+            @JsonProperty("dataTransacao") LocalDateTime dataTransacao,
+            @JsonProperty("dataAgendamento") LocalDateTime dataAgendamento,
+            @JsonProperty("valorTransacao") double valorTransacao,
+            @JsonProperty("tipoTransacao") String tipoTransacao,
+            @JsonProperty("localidade") String localidade,
+            @JsonProperty("dispositivo") String dispositivo,
+            @JsonProperty("ehFraude") boolean ehFraude) {
         this.id = UUID.randomUUID();
-        this.idContaOrigem = idContaOrigem.getId();
-        this.idContaDestino = idContaDestino.getId();
+        this.idContaOrigem = idContaOrigem;
+        this.idContaDestino = idContaDestino;
         this.dataTransacao = dataTransacao;
         this.dataAgendamento = dataAgendamento;
         this.valorTransacao = valorTransacao;
         this.tipoTransacao = tipoTransacao;
         this.localidade = localidade;
         this.dispositivo = dispositivo;
-        this.ehFralde = ehFralde;
+        this.ehFraude = ehFraude;
     }
 
     public UUID getId() {
@@ -103,10 +114,10 @@ public class TransacaoModel {
     }
 
     public boolean isEhFralde() {
-        return ehFralde;
+        return ehFraude;
     }
 
     public void setEhFralde(boolean ehFralde) {
-        this.ehFralde = ehFralde;
+        this.ehFraude = ehFralde;
     }
 }

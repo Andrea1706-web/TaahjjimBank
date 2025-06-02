@@ -5,9 +5,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import model.TransacaoModel;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Service
-public class TransacaoService implements iCrudService<TransacaoModel> {
-    private final DriverS3<TransacaoModel> driverS3;
+public class TransacaoService implements iCrudService<List<TransacaoModel>> {
+    private final DriverS3<List<TransacaoModel>> driverS3;
     private final ObjectMapper objectMapper;
     private final String PATH = "dados/transacao/";
     private final TransacaoModel model;
@@ -28,15 +32,28 @@ public class TransacaoService implements iCrudService<TransacaoModel> {
     }
 
     @Override
-    public TransacaoModel obter(String id) {
+    public List<TransacaoModel> obter(String id) {
         String key = PATH + id + ".json";
         return driverS3.read(key).orElse(null);
     }
 
     @Override
-    public TransacaoModel criar() {
-        String key = PATH + this.model.getId() + ".json";
-        driverS3.save(key, this.model);
-        return this.model;
+    public List<TransacaoModel> criar() {
+        String key1 = PATH + this.model.getIdContaOrigem() + ".json";
+        List<TransacaoModel> contaOrigemList = driverS3.read(key1).orElse(new ArrayList<>());
+        this.model.setValorTransacao(this.model.getValorTransacao() * -1);
+        contaOrigemList.add(this.model);
+        driverS3.save(key1, contaOrigemList);
+
+        String key2 = PATH + this.model.getIdContaDestino() + ".json";
+        List<TransacaoModel> contaDestinoList = driverS3.read(key1).orElse(new ArrayList<>());
+        this.model.setValorTransacao(this.model.getValorTransacao());
+        contaDestinoList.add(this.model);
+        driverS3.save(key2, contaDestinoList);
+
+        List<TransacaoModel> resultado = new ArrayList<>();
+        resultado.addAll(contaOrigemList);
+        resultado.addAll(contaDestinoList);
+        return resultado;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
+import util.ValidationUtil;
 
 @Service
 public class CartaoService implements iCrudService<CartaoModel> {
@@ -37,6 +38,7 @@ public class CartaoService implements iCrudService<CartaoModel> {
 
     @Override
     public CartaoModel criar() {
+        ValidationUtil.validar(this.model); // Valida o model antes de persistir
         String key = PATH + this.model.getNumeroCartao() + ".json";
         driverS3.save(key, this.model);
         return this.model;

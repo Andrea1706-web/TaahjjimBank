@@ -10,8 +10,7 @@ import java.util.UUID;
 
 public class ProdutoModel {
 
-    @NotNull(message = "ID é obrigatório")
-    private final UUID id;
+     private final UUID id;
 
     @NotBlank(message = "Nome é obrigatório")
     private String nome;
@@ -34,7 +33,6 @@ public class ProdutoModel {
 
     @JsonCreator
     public ProdutoModel(
-            @JsonProperty("id") UUID id,
             @JsonProperty("nome") String nome,
             @JsonProperty("descricao") String descricao,
             @JsonProperty("taxaAdministracao") BigDecimal taxaAdministracao,
@@ -42,7 +40,7 @@ public class ProdutoModel {
             @JsonProperty("categoria") eCategoriaProduto categoria,
             @JsonProperty("tipoProduto") eTipoProduto tipoProduto
     ) {
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.nome = nome;
         this.descricao = descricao;
         this.taxaAdministracao = taxaAdministracao;

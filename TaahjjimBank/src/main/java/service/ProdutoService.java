@@ -55,10 +55,7 @@ public class ProdutoService implements iListarService {
     private void validarDuplicidade(ProdutoModel model) {
         List<ProdutoModel> produtos = listar();
 
-        if (produtos.stream().anyMatch(p -> p.getId().equals(model.getId()))) {
-            throw new IllegalArgumentException("ID já existente: " + model.getId());
-        }
-        if (produtos.stream().anyMatch(p -> p.getNome().equalsIgnoreCase(model.getNome()))) {
+         if (produtos.stream().anyMatch(p -> p.getNome().equalsIgnoreCase(model.getNome()))) {
             throw new IllegalArgumentException("Nome já existente: " + model.getNome());
         }
     }

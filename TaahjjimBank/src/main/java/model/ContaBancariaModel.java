@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import util.Validation;
 
 import javax.validation.constraints.*;
+import java.util.List;
 import java.util.UUID;
 
 public class ContaBancariaModel {
@@ -77,5 +78,10 @@ public class ContaBancariaModel {
 
     public void setTipoConta(eTipoConta tipoConta) {
         this.tipoConta = tipoConta;
+    }
+
+    public boolean existeContaComId(UUID id, List<ContaBancariaModel> contas) {
+        if (id == null || contas == null) return false;
+        return contas.stream().anyMatch(conta -> conta.getId().equals(id));
     }
 }

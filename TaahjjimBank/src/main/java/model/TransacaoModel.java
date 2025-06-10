@@ -3,6 +3,7 @@ package model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import util.ContaExistente;
+import util.Validation;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -42,6 +43,7 @@ public class TransacaoModel {
         this.localidade = localidade;
         this.dispositivo = dispositivo;
         this.ehFraude = ehFraude;
+        Validation.validar(this);
     }
 
     public UUID getId() {

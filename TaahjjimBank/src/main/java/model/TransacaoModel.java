@@ -2,13 +2,16 @@ package model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import util.ContaExistente;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class TransacaoModel {
     private UUID id;
+    @ContaExistente
     private UUID idContaOrigem;
+    @ContaExistente
     private UUID idContaDestino;
     private LocalDateTime dataTransacao;
     private LocalDateTime dataAgendamento;

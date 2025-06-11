@@ -1,25 +1,44 @@
 package model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import util.ContaExistente;
 import util.Validation;
-
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class TransacaoModel {
     private UUID id;
+
+    @NotNull(message = "idContaOrigem é obrigatório")
     @ContaExistente
     private UUID idContaOrigem;
+
+    @NotNull(message = "idContaDestino é obrigatório")
     @ContaExistente
     private UUID idContaDestino;
+
+    @NotNull(message = "dataTransacao é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dataTransacao;
+
+    @NotNull(message = "dataAgendamento é obrigatória")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dataAgendamento;
-    private double valorTransacao;
-    private String tipoTransacao;
+
+    @NotNull(message = "valorTransacao é obrigatório")
+    @Positive(message = "O valor da transação deve ser maior que zero")
+    private Double valorTransacao;
+
+    @NotNull(message = "tipoTransacao é obrigatório")
+    private eTipoTransacao tipoTransacao;
+
+    @NotNull(message = "localidade é obrigatório")
     private String localidade;
-    private String dispositivo;
+
+    @NotNull(message = "dispositivo é obrigatório")
+    private eDispositivo dispositivo;
+
     private boolean ehFraude = false;
 
     @JsonCreator
@@ -29,10 +48,9 @@ public class TransacaoModel {
             @JsonProperty("dataTransacao") LocalDateTime dataTransacao,
             @JsonProperty("dataAgendamento") LocalDateTime dataAgendamento,
             @JsonProperty("valorTransacao") double valorTransacao,
-            @JsonProperty("tipoTransacao") String tipoTransacao,
+            @JsonProperty("tipoTransacao") eTipoTransacao tipoTransacao,
             @JsonProperty("localidade") String localidade,
-            @JsonProperty("dispositivo") String dispositivo,
-            @JsonProperty("ehFraude") boolean ehFraude) {
+            @JsonProperty("dispositivo") eDispositivo dispositivo) {
         this.id = UUID.randomUUID();
         this.idContaOrigem = idContaOrigem;
         this.idContaDestino = idContaDestino;
@@ -42,7 +60,6 @@ public class TransacaoModel {
         this.tipoTransacao = tipoTransacao;
         this.localidade = localidade;
         this.dispositivo = dispositivo;
-        this.ehFraude = ehFraude;
         Validation.validar(this);
     }
 
@@ -94,11 +111,11 @@ public class TransacaoModel {
         this.valorTransacao = valorTransacao;
     }
 
-    public String getTipoTransacao() {
+    public eTipoTransacao getTipoTransacao() {
         return tipoTransacao;
     }
 
-    public void setTipoTransacao(String tipoTransacao) {
+    public void setTipoTransacao(eTipoTransacao tipoTransacao) {
         this.tipoTransacao = tipoTransacao;
     }
 
@@ -110,19 +127,19 @@ public class TransacaoModel {
         this.localidade = localidade;
     }
 
-    public String getDispositivo() {
+    public eDispositivo getDispositivo() {
         return dispositivo;
     }
 
-    public void setDispositivo(String dispositivo) {
+    public void setDispositivo(eDispositivo dispositivo) {
         this.dispositivo = dispositivo;
     }
 
-    public boolean isEhFralde() {
+    public boolean isEhFraude() {
         return ehFraude;
     }
 
-    public void setEhFralde(boolean ehFralde) {
-        this.ehFraude = ehFralde;
+    public void setEhFraude(boolean ehFraude) {
+        this.ehFraude = ehFraude;
     }
 }

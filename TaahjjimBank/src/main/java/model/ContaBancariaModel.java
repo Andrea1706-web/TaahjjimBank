@@ -1,8 +1,10 @@
 package model;
 
-import util.ValidationUtil;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import util.Validation;
 
-import jakarta.validation.constraints.*;
+import javax.validation.constraints.*;
+import java.util.List;
 import java.util.UUID;
 
 public class ContaBancariaModel {
@@ -22,6 +24,7 @@ public class ContaBancariaModel {
     @NotNull(message = "Tipo Conta é obrigatório")
     private eTipoConta tipoConta;
 
+    @JsonCreator
     public ContaBancariaModel(int agencia, String numeroCC,
                               double saldo, String cpf, eTipoConta tipoConta) {
         this.id = UUID.randomUUID();
@@ -75,5 +78,10 @@ public class ContaBancariaModel {
 
     public void setTipoConta(eTipoConta tipoConta) {
         this.tipoConta = tipoConta;
+    }
+
+    public boolean existeContaComId(UUID id, List<ContaBancariaModel> contas) {
+        if (id == null || contas == null) return false;
+        return contas.stream().anyMatch(conta -> conta.getId().equals(id));
     }
 }

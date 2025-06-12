@@ -1,12 +1,17 @@
 package util;
-import javax.validation.*;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+
 import java.util.Set;
 
-public class Validation {
-    private static final ValidatorFactory factory = javax.validation.Validation.buildDefaultValidatorFactory();
+public class ValidationUtil {  // Renomeei para ValidationUtil para evitar conflito com jakarta.validation.Validation
+    private static final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private static final Validator validator = factory.getValidator();
 
-    private Validation() {} // Utilitário, não instanciar
+    private ValidationUtil() {} // Utilitário, não instanciar
 
     public static <T> void validar(T objeto) {
         Set<ConstraintViolation<T>> violations = validator.validate(objeto);

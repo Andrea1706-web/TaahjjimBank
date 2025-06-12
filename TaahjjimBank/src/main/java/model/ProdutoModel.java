@@ -2,16 +2,13 @@ package model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ProdutoModel {
 
-    @NotNull(message = "ID é obrigatório")
-    private UUID id;
+    private final UUID id;
 
     @NotBlank(message = "Nome é obrigatório")
     private String nome;
@@ -34,7 +31,6 @@ public class ProdutoModel {
 
     @JsonCreator
     public ProdutoModel(
-            @JsonProperty("id") UUID id,
             @JsonProperty("nome") String nome,
             @JsonProperty("descricao") String descricao,
             @JsonProperty("taxaAdministracao") BigDecimal taxaAdministracao,
@@ -42,7 +38,7 @@ public class ProdutoModel {
             @JsonProperty("categoria") eCategoriaProduto categoria,
             @JsonProperty("tipoProduto") eTipoProduto tipoProduto
     ) {
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.nome = nome;
         this.descricao = descricao;
         this.taxaAdministracao = taxaAdministracao;

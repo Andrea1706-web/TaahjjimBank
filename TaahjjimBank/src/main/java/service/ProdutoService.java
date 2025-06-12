@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ProdutoModel;
 import org.springframework.stereotype.Service;
-
+import util.ValidationUtil;
 import java.util.List;
 
 @Service
@@ -43,8 +43,19 @@ public class ProdutoService implements iListarService {
 
     @Override
     public ProdutoModel criar() {
+        ValidationUtil.validar(this.model);
+
+        validarDuplicidade(this.model);
         String key = PATH + model.getNome() + ".json";
         driverS3.save(key, model);
         return model;
+    }
+
+    private void validarDuplicidade(ProdutoModel model) {
+        List<ProdutoModel> produtos = listar();
+
+         if (produtos.stream().anyMatch(p -> p.getNome().equalsIgnoreCase(model.getNome()))) {
+            throw new IllegalArgumentException("Nome já existente: " + model.getNome());
+        }
     }
 }

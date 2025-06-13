@@ -2,8 +2,8 @@ package model;
 
 import com.fasterxml.jackson.annotation.*;
 import util.ContaExistente;
-import util.Validation;
-import javax.validation.constraints.*;
+import util.ValidationUtil;
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -60,7 +60,7 @@ public class TransacaoModel {
         this.tipoTransacao = tipoTransacao;
         this.localidade = localidade;
         this.dispositivo = dispositivo;
-        Validation.validar(this);
+        ValidationUtil.validar(this);
     }
 
     public UUID getId() {

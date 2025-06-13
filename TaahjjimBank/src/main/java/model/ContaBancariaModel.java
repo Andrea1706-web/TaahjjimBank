@@ -1,9 +1,9 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import util.Validation;
+import util.ValidationUtil;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.util.List;
 import java.util.UUID;
 

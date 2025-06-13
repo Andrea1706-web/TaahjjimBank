@@ -1,9 +1,9 @@
 package util;
 
 import model.ContaBancariaModel;
+import jakarta.validation.*;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+
 import java.util.List;
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
 package util;
-import javax.validation.Constraint;
-import javax.validation.Payload;
+
 import java.lang.annotation.*;
+import jakarta.validation.*;
 
 @Documented
 @Constraint(validatedBy = ContaExistenteValidator.class)

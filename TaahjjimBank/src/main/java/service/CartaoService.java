@@ -6,12 +6,14 @@ import model.CartaoModel;
 import org.springframework.stereotype.Service;
 import util.ValidationUtil;
 
+import java.util.List;
+
 @Service
 public class CartaoService implements iCrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;
-    private final String PATH = "dados/cartao/";
+    private static final String PATH = "dados/cartao/";
     private final CartaoModel model;
 
     public CartaoService(String bucketName, String body) {
@@ -40,8 +42,20 @@ public class CartaoService implements iCrudService<CartaoModel> {
     public CartaoModel criar() {
         ValidationUtil.validar(this.model); // Valida o model antes de persistir
         String key = PATH + this.model.getNumeroCartao() + ".json";
-        driverS3.save(key, this.model);
-        return this.model;
+        validarDuplicidade(this.model);
+        driverS3.save(key, model);
+        return model;
+    }
+
+    // Validação de duplicidade
+    private void validarDuplicidade(CartaoModel model) {
+        List<CartaoModel> cartoes = driverS3.readAll(PATH);
+        if (cartoes.stream().anyMatch(c -> c.getId().equals(model.getId()))) {
+            throw new IllegalArgumentException("ID já existente: " + model.getId());
+        }
+        if (cartoes.stream().anyMatch(c -> c.getNumeroCartao().equalsIgnoreCase(model.getNumeroCartao()))) {
+            throw new IllegalArgumentException("Número do cartão já existente: " + model.getNumeroCartao());
+        }
     }
 
 }

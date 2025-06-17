@@ -13,7 +13,7 @@ public class CartaoService implements iCrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;
-    private final String PATH = "dados/cartao/";
+    private static final String PATH = "dados/cartao/";
     private final CartaoModel model;
 
     public CartaoService(String bucketName, String body) {

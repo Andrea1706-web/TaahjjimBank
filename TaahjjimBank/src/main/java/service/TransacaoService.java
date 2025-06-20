@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import model.TransacaoModel;
 import org.springframework.stereotype.Service;
+import util.ValidationUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
     @Override
     public List<TransacaoModel> criar() {
+        ValidationUtil.validar(this);
         String key1 = PATH + this.model.getIdContaOrigem() + ".json";
         List<TransacaoModel> contaOrigemList = driverS3.read(key1).orElse(new ArrayList<>());
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);

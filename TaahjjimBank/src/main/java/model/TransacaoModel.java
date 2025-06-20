@@ -60,7 +60,6 @@ public class TransacaoModel {
         this.tipoTransacao = tipoTransacao;
         this.localidade = localidade;
         this.dispositivo = dispositivo;
-        ValidationUtil.validar(this);
     }
 
     public UUID getId() {

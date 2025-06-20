@@ -1,9 +1,11 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import util.ValidationUtil;
 
 import jakarta.validation.constraints.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -25,15 +27,18 @@ public class ContaBancariaModel {
     private eTipoConta tipoConta;
 
     @JsonCreator
-    public ContaBancariaModel(int agencia, String numeroCC,
-                              double saldo, String cpf, eTipoConta tipoConta) {
+    public ContaBancariaModel(
+            @JsonProperty("agencia") int agencia,
+            @JsonProperty("numeroCC") String numeroCC,
+            @JsonProperty("saldo") double saldo,
+            @JsonProperty("cpf") String cpf,
+            @JsonProperty("tipoConta") eTipoConta tipoConta) {
         this.id = UUID.randomUUID();
         this.agencia = agencia;
         this.numeroCC = numeroCC;
         this.saldo = saldo;
         this.cpf = cpf;
         this.tipoConta = tipoConta;
-        ValidationUtil.validar(this);
     }
 
     public UUID getId() {

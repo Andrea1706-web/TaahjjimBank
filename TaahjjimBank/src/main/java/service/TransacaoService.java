@@ -22,7 +22,12 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
         if (body != null && !body.trim().isEmpty()) {
             try {
-                this.model = objectMapper.readValue(body, TransacaoModel.class);
+                // Deserializar como uma lista de TransacaoModel
+                List<TransacaoModel> models = objectMapper.readValue(
+                        body,
+                        objectMapper.getTypeFactory().constructCollectionType(List.class, TransacaoModel.class)
+                );
+                this.model = models.isEmpty() ? null : models.get(0);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Erro ao deserializar bodyJson", e);
             }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ContaBancariaModel;
 import org.springframework.stereotype.Service;
+import util.ValidationUtil;
 
 @Service
 public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
@@ -35,6 +36,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
 
     @Override
     public ContaBancariaModel criar() {
+        ValidationUtil.validar(this);
         String key = PATH + this.model.getNumeroCC() + ".json";
         driverS3.save(key, this.model);
         return this.model;

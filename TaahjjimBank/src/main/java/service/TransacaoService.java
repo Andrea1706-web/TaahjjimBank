@@ -52,7 +52,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         driverS3.save(key1, contaOrigemList);
 
         String key2 = PATH + this.model.getIdContaDestino() + ".json";
-        List<TransacaoModel> contaDestinoList = driverS3.read(key1).orElse(new ArrayList<>());
+        List<TransacaoModel> contaDestinoList = driverS3.read(key2).orElse(new ArrayList<>());
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);
         contaDestinoList.add(this.model);
         driverS3.save(key2, contaDestinoList);

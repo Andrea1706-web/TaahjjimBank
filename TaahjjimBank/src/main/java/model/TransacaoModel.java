@@ -2,7 +2,6 @@ package model;
 
 import com.fasterxml.jackson.annotation.*;
 import util.ContaExistente;
-import util.ValidationUtil;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -18,8 +17,6 @@ public class TransacaoModel {
     @ContaExistente
     private UUID idContaDestino;
 
-    @NotNull(message = "dataTransacao é obrigatória")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dataTransacao;
 
     @NotNull(message = "dataAgendamento é obrigatória")
@@ -33,7 +30,7 @@ public class TransacaoModel {
     @NotNull(message = "tipoTransacao é obrigatório")
     private eTipoTransacao tipoTransacao;
 
-    @NotNull(message = "localidade é obrigatório")
+    @NotBlank(message = "localidade é obrigatório")
     private String localidade;
 
     @NotNull(message = "dispositivo é obrigatório")
@@ -45,7 +42,6 @@ public class TransacaoModel {
     public TransacaoModel(
             @JsonProperty("idContaOrigem") UUID idContaOrigem,
             @JsonProperty("idContaDestino") UUID idContaDestino,
-            @JsonProperty("dataTransacao") LocalDateTime dataTransacao,
             @JsonProperty("dataAgendamento") LocalDateTime dataAgendamento,
             @JsonProperty("valorTransacao") double valorTransacao,
             @JsonProperty("tipoTransacao") eTipoTransacao tipoTransacao,
@@ -54,7 +50,7 @@ public class TransacaoModel {
         this.id = UUID.randomUUID();
         this.idContaOrigem = idContaOrigem;
         this.idContaDestino = idContaDestino;
-        this.dataTransacao = dataTransacao;
+        this.dataTransacao = LocalDateTime.now();
         this.dataAgendamento = dataAgendamento;
         this.valorTransacao = valorTransacao;
         this.tipoTransacao = tipoTransacao;

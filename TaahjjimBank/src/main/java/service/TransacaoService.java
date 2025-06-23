@@ -46,7 +46,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
     @Override
     public List<TransacaoModel> criar() {
-        ValidationUtil.validar(this);
+        ValidationUtil.validar(this.model);
 
         String key1 = PATH + this.model.getIdContaOrigem() + ".json";
         List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)

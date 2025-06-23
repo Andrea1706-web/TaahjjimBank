@@ -3,8 +3,11 @@ package handler;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import service.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +17,7 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
 
         String httpMethod = (String) event.get("httpMethod");
 
@@ -46,7 +50,13 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             return criarResposta(405, "Método HTTP não suportado");
         } catch (Exception e) {
             e.printStackTrace();
-            return criarResposta(500, "Erro interno: " + e.getMessage());
+            // Para log detalhado (stack trace completo):
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String stackTrace = sw.toString();
+
+            return criarResposta(500, "Erro interno: " + stackTrace);
         }
     }
 

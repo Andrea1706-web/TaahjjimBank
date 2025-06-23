@@ -5,17 +5,16 @@ import model.ProdutoModel;
 import model.eCategoriaProduto;
 import model.eGrauRisco;
 import model.eTipoProduto;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedConstruction;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class ProdutoServiceTest {
 
@@ -25,17 +24,12 @@ public class ProdutoServiceTest {
     private List<ProdutoModel> listaProdutos;
     private String produtoValidoJson;
 
-    // Converte ProdutoModel para JSON
-    private String toJson(ProdutoModel produto) {
-        try {
-            return mapper.writeValueAsString(produto);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao serializar JSON", e);
-        }
-    }
-
+    // 🔧 Setup mock antes de cada teste
     @BeforeEach
-    public void setUp() {
+    void setup() {
+        DriverS3MockSetup.startMock();
+        DriverS3MockSetup.clearStorage();
+
         produto1 = new ProdutoModel(
                 "TesouroDireto",
                 "Investimento em títulos públicos",
@@ -58,24 +52,38 @@ public class ProdutoServiceTest {
         produtoValidoJson = toJson(produto1);
     }
 
-    @Test
-    @DisplayName("Cria produto com sucesso quando dados são válidos")
-    public void criaProdutoComSucesso() {
-        try (MockedConstruction<DriverS3> mocked = mockConstruction(DriverS3.class,
-                (mock, context) -> when(mock.readAll("dados/produto/")).thenReturn(List.of()))) {
+    // 🔥 Finaliza o mock após cada teste
+    @AfterEach
+    void teardown() {
+        DriverS3MockSetup.stopMock();
+    }
 
-            ProdutoService produtoService = new ProdutoService("mockBucket", produtoValidoJson);
-            ProdutoModel resultado = produtoService.criar();
-
-            DriverS3 driverMock = mocked.constructed().get(0);
-            verify(driverMock).save(eq("dados/produto/TesouroDireto.json"), any(ProdutoModel.class));
-            assertEquals("TesouroDireto", resultado.getNome());
+    private String toJson(ProdutoModel produto) {
+        try {
+            return mapper.writeValueAsString(produto);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao serializar JSON", e);
         }
     }
 
     @Test
+    @DisplayName("Cria produto com sucesso quando dados são válidos")
+    void criaProdutoComSucesso() {
+        ProdutoService produtoService = new ProdutoService("mockBucket", produtoValidoJson);
+        ProdutoModel resultado = produtoService.criar();
+
+        assertNotNull(resultado);
+        assertEquals("TesouroDireto", resultado.getNome());
+
+        Optional<Object> salvo = DriverS3MockSetup.get("dados/produto/TesouroDireto.json");
+        assertTrue(salvo.isPresent());
+    }
+
+    @Test
     @DisplayName("Lança exceção quando tenta criar produto com nome duplicado")
-    public void lançaExcecaoQuandoNomeDuplicado() {
+    void lançaExcecaoQuandoNomeDuplicado() {
+        DriverS3MockSetup.insert("dados/produto/TesouroDireto.json", produto1);
+
         ProdutoModel produtoDuplicado = new ProdutoModel(
                 "TesouroDireto",
                 "Outro investimento com mesmo nome",
@@ -86,17 +94,10 @@ public class ProdutoServiceTest {
         );
         String jsonDuplicado = toJson(produtoDuplicado);
 
-        try (MockedConstruction<DriverS3> mocked = mockConstruction(DriverS3.class,
-                (mock, context) -> when(mock.readAll("dados/produto/")).thenReturn(List.of(produto1)))) {
+        ProdutoService produtoService = new ProdutoService("mockBucket", jsonDuplicado);
 
-            ProdutoService produtoService = new ProdutoService("mockBucket", jsonDuplicado);
-
-            IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, produtoService::criar);
-            assertEquals("Nome já existente: TesouroDireto", excecao.getMessage());
-
-            DriverS3 driverMock = mocked.constructed().get(0);
-            verify(driverMock, never()).save(anyString(), any(ProdutoModel.class));
-        }
+        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, produtoService::criar);
+        assertEquals("Nome já existente: TesouroDireto", excecao.getMessage());
     }
 
     @Test
@@ -113,27 +114,21 @@ public class ProdutoServiceTest {
             }
             """;
 
-        try (MockedConstruction<DriverS3> mocked = mockConstruction(DriverS3.class,
-                (mock, context) -> when(mock.readAll("dados/produto/")).thenReturn(List.of()))) {
+        ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
 
-            ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
-            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, produtoService::criar);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, produtoService::criar);
 
-            String msg = ex.getMessage().toLowerCase();
+        String msg = ex.getMessage().toLowerCase();
 
-            assertTrue(
-                    msg.contains("nome") &&
-                            msg.contains("descricao") &&
-                            msg.contains("taxaadministracao") &&
-                            msg.contains("graurisco") &&
-                            msg.contains("tipoproduto") &&
-                            msg.contains("obrigatório"),
-                    "Mensagem deve conter indicações de campos obrigatórios violados"
-            );
-
-            DriverS3<?> driverMock = mocked.constructed().get(0);
-            verify(driverMock, never()).save(anyString(), any());
-        }
+        assertTrue(
+                msg.contains("nome") &&
+                        msg.contains("descricao") &&
+                        msg.contains("taxaadministracao") &&
+                        msg.contains("graurisco") &&
+                        msg.contains("tipoproduto") &&
+                        msg.contains("obrigatório"),
+                "Mensagem deve conter campos obrigatórios"
+        );
     }
 
     @Test
@@ -150,74 +145,48 @@ public class ProdutoServiceTest {
             }
             """;
 
-        try (MockedConstruction<DriverS3> mocked = mockConstruction(DriverS3.class,
-                (mock, context) -> when(mock.readAll("dados/produto/")).thenReturn(List.of()))) {
+        ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
+        ProdutoModel resultado = produtoService.criar();
 
-            ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
-            ProdutoModel resultado = produtoService.criar();
+        assertEquals("Tesouro Direto Categoria Nula", resultado.getNome());
 
-            assertEquals("Tesouro Direto Categoria Nula", resultado.getNome());
-
-            DriverS3 driverMock = mocked.constructed().get(0);
-            verify(driverMock).save(eq("dados/produto/Tesouro Direto Categoria Nula.json"), any(ProdutoModel.class));
-        }
+        Optional<Object> salvo = DriverS3MockSetup.get("dados/produto/Tesouro Direto Categoria Nula.json");
+        assertTrue(salvo.isPresent());
     }
 
     @Test
     @DisplayName("Retorna produto quando nome existe")
     void retornaProdutoQuandoNomeExiste() {
-        String nomeProduto = produto1.getNome();
-        String keyEsperada = "dados/produto/" + nomeProduto + ".json";
+        DriverS3MockSetup.insert("dados/produto/TesouroDireto.json", produto1);
 
-        try (MockedConstruction<DriverS3> mocked = mockConstruction(DriverS3.class,
-                (mock, context) -> when(mock.read(keyEsperada)).thenReturn(Optional.of(produto1)))) {
+        ProdutoService service = new ProdutoService("mockBucket", null);
+        ProdutoModel resultado = service.obter("TesouroDireto");
 
-            ProdutoService service = new ProdutoService("mockBucket", null);
-            ProdutoModel resultado = service.obter(nomeProduto);
-
-            assertNotNull(resultado);
-            assertEquals(nomeProduto, resultado.getNome());
-
-            DriverS3<?> driverMock = mocked.constructed().get(0);
-            verify(driverMock).read(keyEsperada);
-        }
+        assertNotNull(resultado);
+        assertEquals("TesouroDireto", resultado.getNome());
     }
 
     @Test
     @DisplayName("Retorna null quando produto não existe")
     void retornaNullQuandoProdutoNaoExiste() {
-        String nomeProduto = "ProdutoInexistente";
-        String keyEsperada = "dados/produto/" + nomeProduto + ".json";
+        ProdutoService service = new ProdutoService("mockBucket", null);
+        ProdutoModel resultado = service.obter("ProdutoInexistente");
 
-        try (MockedConstruction<DriverS3> mocked = mockConstruction(DriverS3.class,
-                (mock, context) -> when(mock.read(keyEsperada)).thenReturn(Optional.empty()))) {
-
-            ProdutoService service = new ProdutoService("mockBucket", null);
-            ProdutoModel resultado = service.obter(nomeProduto);
-
-            assertNull(resultado);
-
-            DriverS3<?> driverMock = mocked.constructed().get(0);
-            verify(driverMock).read(keyEsperada);
-        }
+        assertNull(resultado);
     }
 
     @Test
     @DisplayName("Lista todos os produtos cadastrados")
     void listaTodosOsProdutos() {
-        try (MockedConstruction<DriverS3> mocked = mockConstruction(DriverS3.class,
-                (mock, context) -> when(mock.readAll("dados/produto/")).thenReturn(listaProdutos))) {
+        DriverS3MockSetup.insert("dados/produto/TesouroDireto.json", produto1);
+        DriverS3MockSetup.insert("dados/produto/CDBBancoX.json", produto2);
 
-            ProdutoService produtoService = new ProdutoService("mockBucket", null);
-            List<ProdutoModel> resultado = produtoService.listar();
+        ProdutoService produtoService = new ProdutoService("mockBucket", null);
+        List<ProdutoModel> resultado = produtoService.listar();
 
-            assertNotNull(resultado);
-            assertEquals(2, resultado.size());
-            assertTrue(resultado.contains(produto1));
-            assertTrue(resultado.contains(produto2));
-
-            DriverS3<?> driverMock = mocked.constructed().get(0);
-            verify(driverMock).readAll("dados/produto/");
-        }
+        assertNotNull(resultado);
+        assertEquals(2, resultado.size());
+        assertTrue(resultado.contains(produto1));
+        assertTrue(resultado.contains(produto2));
     }
 }

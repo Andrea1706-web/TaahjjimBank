@@ -1,7 +1,6 @@
 package model;
 
 import com.fasterxml.jackson.annotation.*;
-import util.ContaExistente;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,11 +9,9 @@ public class TransacaoModel {
     private UUID id;
 
     @NotNull(message = "idContaOrigem é obrigatório")
-    @ContaExistente
     private UUID idContaOrigem;
 
     @NotNull(message = "idContaDestino é obrigatório")
-    @ContaExistente
     private UUID idContaDestino;
 
     private LocalDateTime dataTransacao;

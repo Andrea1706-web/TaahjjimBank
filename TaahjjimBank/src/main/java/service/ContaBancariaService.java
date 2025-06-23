@@ -36,7 +36,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
 
     @Override
     public ContaBancariaModel criar() {
-        ValidationUtil.validar(this);
+        ValidationUtil.validar(this.model);
         String key = PATH + this.model.getNumeroCC() + ".json";
         driverS3.save(key, this.model);
         return this.model;

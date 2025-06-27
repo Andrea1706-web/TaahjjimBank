@@ -39,6 +39,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
     @Override
     public ContaBancariaModel criar() {
         ValidationUtil.validar(this.model);
+        validarDuplicidade(this.model);
         String key = PATH + this.model.getNumeroCC() + ".json";
         driverS3.save(key, this.model);
         return this.model;
@@ -48,4 +49,15 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
         return driverS3.readAll(PATH);
     }
 
+    public boolean contaExiste(String numeroCC) {
+        DriverS3<ContaBancariaModel> driver = new DriverS3<>("zupbankdatabase", ContaBancariaModel.class);
+        return driver.read(numeroCC + ".json").isPresent();
+    }
+
+    private void validarDuplicidade(ContaBancariaModel model) {
+        List<ContaBancariaModel> contas = listar();
+        if (contas.stream().anyMatch(c -> c.getNumeroCC().equalsIgnoreCase(model.getNumeroCC()))) {
+            throw new IllegalArgumentException("Conta já existente: " + model.getNumeroCC());
+        }
+    }
 }

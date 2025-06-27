@@ -3,14 +3,12 @@ package service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import model.ContaBancariaModel;
 import model.TransacaoModel;
 import org.springframework.stereotype.Service;
 import util.ValidationUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class TransacaoService implements iCrudService<List<TransacaoModel>> {
@@ -49,16 +47,25 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
     @Override
     public List<TransacaoModel> criar() {
         ValidationUtil.validar(this.model);
-        validarContas(this.model.getIdContaOrigem(), this.model.getIdContaDestino());
 
-        String key1 = PATH + this.model.getIdContaOrigem() + ".json";
+        ContaBancariaService contaService = new ContaBancariaService("zupbankdatabase", null);
+
+        // Validação de existência das contas
+        if (!contaService.contaExiste(this.model.getNumeroContaOrigem())) {
+            throw new IllegalArgumentException("Conta origem não existe: " + this.model.getNumeroContaOrigem());
+        }
+        if (!contaService.contaExiste(this.model.getNumeroContaDestino())) {
+            throw new IllegalArgumentException("Conta destino não existe: " + this.model.getNumeroContaDestino());
+        }
+
+        String key1 = PATH + this.model.getNumeroContaOrigem() + ".json";
         List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada: " + key1));
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);
         contaOrigemList.add(this.model);
         driverS3.saveList(key1, contaOrigemList);
 
-        String key2 = PATH + this.model.getIdContaDestino() + ".json";
+        String key2 = PATH + this.model.getNumeroContaDestino() + ".json";
         List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada: " + key2));
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);
@@ -69,21 +76,4 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         resultado.add(this.model);
         return resultado;
     }
-
-    private void validarContas(UUID idContaOrigem, UUID idContaDestino) {
-        // Instancia o service de conta bancária
-        ContaBancariaService contaBancariaService = new ContaBancariaService("zupbankdatabase", "");
-        List<ContaBancariaModel> contas = contaBancariaService.listar();
-
-        boolean contaOrigemExiste = contas.stream().anyMatch(conta -> conta.getId().equals(idContaOrigem));
-        boolean contaDestinoExiste = contas.stream().anyMatch(conta -> conta.getId().equals(idContaDestino));
-
-        if (!contaOrigemExiste) {
-            throw new IllegalArgumentException("Conta origem não existe: " + idContaOrigem);
-        }
-        if (!contaDestinoExiste) {
-            throw new IllegalArgumentException("Conta destino não existe: " + idContaDestino);
-        }
-    }
-
 }

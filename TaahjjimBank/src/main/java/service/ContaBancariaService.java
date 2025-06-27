@@ -51,7 +51,8 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
 
     public boolean contaExiste(String numeroCC) {
         DriverS3<ContaBancariaModel> driver = new DriverS3<>("zupbankdatabase", ContaBancariaModel.class);
-        return driver.read(numeroCC + ".json").isPresent();
+        String key = "dados/contaBancaria/" + numeroCC + ".json";
+        return driver.read(key).isPresent();
     }
 
     private void validarDuplicidade(ContaBancariaModel model) {

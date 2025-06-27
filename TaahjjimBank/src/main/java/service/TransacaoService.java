@@ -49,13 +49,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
     @Override
     public List<TransacaoModel> criar() {
         ValidationUtil.validar(this.model);
-
-        if (contaNaoExiste(this.model.getIdContaOrigem())) {
-            throw new IllegalArgumentException("Conta de origem não existe: " + this.model.getIdContaOrigem());
-        }
-        if (contaNaoExiste(this.model.getIdContaDestino())) {
-            throw new IllegalArgumentException("Conta de destino não existe: " + this.model.getIdContaDestino());
-        }
+        validarContas(this.model.getIdContaOrigem(), this.model.getIdContaDestino());
 
         String key1 = PATH + this.model.getIdContaOrigem() + ".json";
         List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
@@ -76,8 +70,20 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         return resultado;
     }
 
-    private boolean contaNaoExiste(UUID idConta) {
-        DriverS3<ContaBancariaModel> driver = new DriverS3<>("zupbankdatabase", ContaBancariaModel.class);
-        return !driver.read(idConta.toString() + ".json").isPresent();
+    private void validarContas(UUID idContaOrigem, UUID idContaDestino) {
+        // Instancia o service de conta bancária
+        ContaBancariaService contaBancariaService = new ContaBancariaService("zupbankdatabase", "");
+        List<ContaBancariaModel> contas = contaBancariaService.listar();
+
+        boolean contaOrigemExiste = contas.stream().anyMatch(conta -> conta.getId().equals(idContaOrigem));
+        boolean contaDestinoExiste = contas.stream().anyMatch(conta -> conta.getId().equals(idContaDestino));
+
+        if (!contaOrigemExiste) {
+            throw new IllegalArgumentException("Conta origem não existe: " + idContaOrigem);
+        }
+        if (!contaDestinoExiste) {
+            throw new IllegalArgumentException("Conta destino não existe: " + idContaDestino);
+        }
     }
+
 }

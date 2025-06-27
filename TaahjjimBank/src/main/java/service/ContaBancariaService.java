@@ -6,6 +6,8 @@ import model.ContaBancariaModel;
 import org.springframework.stereotype.Service;
 import util.ValidationUtil;
 
+import java.util.List;
+
 @Service
 public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
     private final DriverS3<ContaBancariaModel> driverS3;
@@ -41,4 +43,9 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
         driverS3.save(key, this.model);
         return this.model;
     }
+
+    public List<ContaBancariaModel> listar() {
+        return driverS3.readAll(PATH);
+    }
+
 }

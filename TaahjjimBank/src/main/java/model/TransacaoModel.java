@@ -8,11 +8,11 @@ import java.util.UUID;
 public class TransacaoModel {
     private UUID id;
 
-    @NotNull(message = "idContaOrigem é obrigatório")
-    private UUID idContaOrigem;
+    @NotNull(message = "numeroContaOrigem é obrigatório")
+    private String numeroContaOrigem;
 
-    @NotNull(message = "idContaDestino é obrigatório")
-    private UUID idContaDestino;
+    @NotNull(message = "numeroContaDestino é obrigatório")
+    private String numeroContaDestino;
 
     private LocalDateTime dataTransacao;
 
@@ -27,6 +27,7 @@ public class TransacaoModel {
     @NotNull(message = "tipoTransacao é obrigatório")
     private eTipoTransacao tipoTransacao;
 
+    @NotNull
     @NotBlank(message = "localidade é obrigatório")
     private String localidade;
 
@@ -37,16 +38,16 @@ public class TransacaoModel {
 
     @JsonCreator
     public TransacaoModel(
-            @JsonProperty("idContaOrigem") UUID idContaOrigem,
-            @JsonProperty("idContaDestino") UUID idContaDestino,
+            @JsonProperty("numeroContaOrigem") String numeroContaOrigem,
+            @JsonProperty("numeroContaDestino") String numeroContaDestino,
             @JsonProperty("dataAgendamento") LocalDateTime dataAgendamento,
             @JsonProperty("valorTransacao") double valorTransacao,
             @JsonProperty("tipoTransacao") eTipoTransacao tipoTransacao,
             @JsonProperty("localidade") String localidade,
             @JsonProperty("dispositivo") eDispositivo dispositivo) {
         this.id = UUID.randomUUID();
-        this.idContaOrigem = idContaOrigem;
-        this.idContaDestino = idContaDestino;
+        this.numeroContaOrigem = numeroContaOrigem;
+        this.numeroContaDestino = numeroContaDestino;
         this.dataTransacao = LocalDateTime.now();
         this.dataAgendamento = dataAgendamento;
         this.valorTransacao = valorTransacao;
@@ -63,20 +64,20 @@ public class TransacaoModel {
         this.id = id;
     }
 
-    public UUID getIdContaOrigem() {
-        return idContaOrigem;
+    public String getNumeroContaOrigem() {
+        return numeroContaOrigem;
     }
 
-    public void setIdContaOrigem(UUID idContaOrigem) {
-        this.idContaOrigem = idContaOrigem;
+    public void setNumeroContaOrigem(String numeroContaOrigem) {
+        this.numeroContaOrigem = numeroContaOrigem;
     }
 
-    public UUID getIdContaDestino() {
-        return idContaDestino;
+    public String getNumeroContaDestino() {
+        return numeroContaDestino;
     }
 
-    public void setIdContaDestino(UUID idContaDestino) {
-        this.idContaDestino = idContaDestino;
+    public void setNumeroContaDestino(String numeroContaDestino) {
+        this.numeroContaDestino = numeroContaDestino;
     }
 
     public LocalDateTime getDataTransacao() {

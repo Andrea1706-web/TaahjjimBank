@@ -60,14 +60,14 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
         String key1 = PATH + this.model.getNumeroContaOrigem() + ".json";
         List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada: " + key1));
+                .orElse(new ArrayList<>());
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);
         contaOrigemList.add(this.model);
         driverS3.saveList(key1, contaOrigemList);
 
         String key2 = PATH + this.model.getNumeroContaDestino() + ".json";
         List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
-                .orElseThrow(() -> new RuntimeException("Conta não encontrada: " + key2));
+                .orElse(new ArrayList<>());
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);
         contaDestinoList.add(this.model);
         driverS3.saveList(key2, contaDestinoList);

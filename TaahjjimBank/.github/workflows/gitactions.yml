@@ -1,0 +1,29 @@
+name: Check API Before Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  check-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Call API
+        id: call_api
+        run: |
+          response=$(curl -s -X POST "https://api.example.com/check" -H "Content-Type: application/json" -d '{"key":"value"}')
+          echo "response=$response" >> $GITHUB_ENV
+
+      - name: Evaluate API Response
+        id: evaluate_response
+        run: |
+          if [[ "$response" == "true" ]]; then
+            echo "API returned true. Proceeding..."
+          else
+            echo "API returned false. Failing the check..."
+            exit 1
+          fi

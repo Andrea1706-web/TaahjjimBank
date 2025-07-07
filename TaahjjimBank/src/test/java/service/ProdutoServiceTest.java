@@ -104,15 +104,15 @@ public class ProdutoServiceTest {
     @DisplayName("Lança exceção quando campos obrigatórios são nulos")
     void lançaExcecaoDeCamposObrigatoriosNulos() {
         String bodyJson = """
-            {
-                "nome": null,
-                "descricao": null,
-                "taxaAdministracao": null,
-                "grauRisco": null,
-                "categoria": null,
-                "tipoProduto": null
-            }
-            """;
+                {
+                    "nome": null,
+                    "descricao": null,
+                    "taxaAdministracao": null,
+                    "grauRisco": null,
+                    "categoria": null,
+                    "tipoProduto": null
+                }
+                """;
 
         ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
 
@@ -135,15 +135,15 @@ public class ProdutoServiceTest {
     @DisplayName("Cria produto mesmo com categoria nula pois esse campo é opcional")
     void criaProdutoComCategoriaNula() {
         String bodyJson = """
-            {
-                "nome": "Tesouro Direto Categoria Nula",
-                "descricao": "Outro investimento com descrição",
-                "taxaAdministracao": "0.10",
-                "grauRisco": "BAIXO",
-                "categoria": null,
-                "tipoProduto": "FUNDO_INVESTIMENTO"
-            }
-            """;
+                {
+                    "nome": "Tesouro Direto Categoria Nula",
+                    "descricao": "Outro investimento com descrição",
+                    "taxaAdministracao": "0.10",
+                    "grauRisco": "BAIXO",
+                    "categoria": null,
+                    "tipoProduto": "FUNDO_INVESTIMENTO"
+                }
+                """;
 
         ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
         ProdutoModel resultado = produtoService.criar();

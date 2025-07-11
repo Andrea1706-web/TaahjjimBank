@@ -36,6 +36,8 @@ public class TransacaoModel {
 
     private boolean ehFraude = false;
 
+    private eStatusTransacao statusTransacao;
+
     @JsonCreator
     public TransacaoModel(
             @JsonProperty("numeroContaOrigem") String numeroContaOrigem,
@@ -44,7 +46,8 @@ public class TransacaoModel {
             @JsonProperty("valorTransacao") double valorTransacao,
             @JsonProperty("tipoTransacao") eTipoTransacao tipoTransacao,
             @JsonProperty("localidade") String localidade,
-            @JsonProperty("dispositivo") eDispositivo dispositivo) {
+            @JsonProperty("dispositivo") eDispositivo dispositivo,
+            @JsonProperty("statusTransacao") eStatusTransacao statusTransacao){
         this.id = UUID.randomUUID();
         this.numeroContaOrigem = numeroContaOrigem;
         this.numeroContaDestino = numeroContaDestino;
@@ -54,6 +57,7 @@ public class TransacaoModel {
         this.tipoTransacao = tipoTransacao;
         this.localidade = localidade;
         this.dispositivo = dispositivo;
+        this.statusTransacao = statusTransacao;
     }
 
     public UUID getId() {
@@ -135,4 +139,12 @@ public class TransacaoModel {
     public void setEhFraude(boolean ehFraude) {
         this.ehFraude = ehFraude;
     }
+
+    public eStatusTransacao getStatusTransacao() {
+        return statusTransacao;
+    }
+    public void setStatusTransacao(eStatusTransacao statusTransacao) {
+        this.statusTransacao = statusTransacao;
+    }
+
 }

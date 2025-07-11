@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.TransacaoModel;
+import model.eStatusTransacao;
 import org.springframework.stereotype.Service;
 import util.ValidationUtil;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,27 +53,31 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
         ContaBancariaService contaService = new ContaBancariaService("zupbankdatabase", null);
 
-        // Validação de existência das contas
         if (!contaService.contaExiste(this.model.getNumeroContaOrigem())) {
             throw new IllegalArgumentException("Conta origem não existe: " + this.model.getNumeroContaOrigem());
         }
         if (!contaService.contaExiste(this.model.getNumeroContaDestino())) {
             throw new IllegalArgumentException("Conta destino não existe: " + this.model.getNumeroContaDestino());
         }
+        // verifica se é agendada ou não comparando apenas o dia
+        boolean isAgendada = model.getDataAgendamento().toLocalDate().isAfter(LocalDate.now());
+        String statusPath = isAgendada ? "agendada/" : "iniciada/";
+        // seta o status
+        this.model.setStatusTransacao(isAgendada ? eStatusTransacao.AGENDADA : eStatusTransacao.INICIADA);
 
-        String key1 = PATH + this.model.getNumeroContaOrigem() + ".json";
-        List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
-                .orElse(new ArrayList<>());
+        // Salvar na origem
+        String keyOrigem = PATH + statusPath + this.model.getNumeroContaOrigem() + ".json";
+        List<TransacaoModel> listaOrigem = driverS3.readList(keyOrigem, TransacaoModel.class).orElse(new ArrayList<>());
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-        contaOrigemList.add(this.model);
-        driverS3.saveList(key1, contaOrigemList);
+        listaOrigem.add(this.model);
+        driverS3.saveList(keyOrigem, listaOrigem);
 
-        String key2 = PATH + this.model.getNumeroContaDestino() + ".json";
-        List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
-                .orElse(new ArrayList<>());
+        // Salvar na destino
+        String keyDestino = PATH + statusPath + this.model.getNumeroContaDestino() + ".json";
+        List<TransacaoModel> listaDestino = driverS3.readList(keyDestino, TransacaoModel.class).orElse(new ArrayList<>());
         this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-        contaDestinoList.add(this.model);
-        driverS3.saveList(key2, contaDestinoList);
+        listaDestino.add(this.model);
+        driverS3.saveList(keyDestino, listaDestino);
 
         List<TransacaoModel> resultado = new ArrayList<>();
         resultado.add(this.model);

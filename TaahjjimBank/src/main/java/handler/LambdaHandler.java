@@ -73,6 +73,8 @@ public class LambdaHandler implements RequestHandler<Map<String, Object>, Map<St
             return new TransacaoService("zupbankdatabase", bodyJson);
         } else if (path.contains("usuario")) {
             return new UsuarioService("zupbankdatabase", bodyJson);
+        } else if (path.contains("login")) {
+            return new LoginService("zupbankdatabase", bodyJson);
         }
         return null;
     }

@@ -42,9 +42,20 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
     @Override
     public List<TransacaoModel> obter(String contaOrigem) {
-        String key = PATH + contaOrigem + ".json";
-        // Aqui você precisa ler uma lista de transações
-        return driverS3.readList(key, TransacaoModel.class).orElse(null);
+        String pathNormal = PATH + "transacao/" + contaOrigem + ".json";
+        String pathAgendada = PATH + "transacaoAgendada/" + contaOrigem + ".json";
+
+        List<TransacaoModel> transacoesNormais = driverS3.readList(pathNormal, TransacaoModel.class)
+                .orElse(new ArrayList<>());
+
+        List<TransacaoModel> transacoesAgendadas = driverS3.readList(pathAgendada, TransacaoModel.class)
+                .orElse(new ArrayList<>());
+
+        List<TransacaoModel> todasTransacoes = new ArrayList<>();
+        todasTransacoes.addAll(transacoesNormais);
+        todasTransacoes.addAll(transacoesAgendadas);
+
+        return todasTransacoes;
     }
 
     @Override
@@ -72,26 +83,26 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
             agendadas.add(this.model);
             driverS3.saveList(keyAgendada, agendadas);
             return List.of(this.model);
+        } else {
+            // LIQUIDAÇÃO IMEDIATA
+            // Salvar na origem
+            String key1 = PATH + statusPath + this.model.getNumeroContaOrigem() + ".json";
+            List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
+                    .orElse(new ArrayList<>());
+            this.model.setValorTransacao(this.model.getValorTransacao() * -1);
+            contaOrigemList.add(this.model);
+            driverS3.saveList(key1, contaOrigemList);
+
+            String key2 = PATH + statusPath + this.model.getNumeroContaDestino() + ".json";
+            List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
+                    .orElse(new ArrayList<>());
+            this.model.setValorTransacao(this.model.getValorTransacao() * -1);
+            contaDestinoList.add(this.model);
+            driverS3.saveList(key2, contaDestinoList);
+
+            List<TransacaoModel> resultado = new ArrayList<>();
+            resultado.add(this.model);
+            return resultado;
         }
-
-        // LIQUIDAÇÃO IMEDIATA
-        // Salvar na origem
-        String key1 = PATH + this.model.getNumeroContaOrigem() + ".json";
-        List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
-                .orElse(new ArrayList<>());
-        this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-        contaOrigemList.add(this.model);
-        driverS3.saveList(key1, contaOrigemList);
-
-        String key2 = PATH + this.model.getNumeroContaDestino() + ".json";
-        List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
-                .orElse(new ArrayList<>());
-        this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-        contaDestinoList.add(this.model);
-        driverS3.saveList(key2, contaDestinoList);
-
-        List<TransacaoModel> resultado = new ArrayList<>();
-        resultado.add(this.model);
-        return resultado;
     }
 }

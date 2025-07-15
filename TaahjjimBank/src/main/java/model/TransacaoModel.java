@@ -46,8 +46,7 @@ public class TransacaoModel {
             @JsonProperty("valorTransacao") double valorTransacao,
             @JsonProperty("tipoTransacao") eTipoTransacao tipoTransacao,
             @JsonProperty("localidade") String localidade,
-            @JsonProperty("dispositivo") eDispositivo dispositivo,
-            @JsonProperty("statusTransacao") eStatusTransacao statusTransacao){
+            @JsonProperty("dispositivo") eDispositivo dispositivo){
         this.id = UUID.randomUUID();
         this.numeroContaOrigem = numeroContaOrigem;
         this.numeroContaDestino = numeroContaDestino;
@@ -57,7 +56,7 @@ public class TransacaoModel {
         this.tipoTransacao = tipoTransacao;
         this.localidade = localidade;
         this.dispositivo = dispositivo;
-        this.statusTransacao = statusTransacao;
+        this.statusTransacao = null;
     }
 
     public UUID getId() {

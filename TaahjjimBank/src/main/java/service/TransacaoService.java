@@ -72,26 +72,26 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
             agendadas.add(this.model);
             driverS3.saveList(keyAgendada, agendadas);
             return List.of(this.model);
+        } else {
+            // LIQUIDAÇÃO IMEDIATA
+            // Salvar na origem
+            String key1 = PATH + statusPath + this.model.getNumeroContaOrigem() + ".json";
+            List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
+                    .orElse(new ArrayList<>());
+            this.model.setValorTransacao(this.model.getValorTransacao() * -1);
+            contaOrigemList.add(this.model);
+            driverS3.saveList(key1, contaOrigemList);
+
+            String key2 = PATH + statusPath + this.model.getNumeroContaDestino() + ".json";
+            List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
+                    .orElse(new ArrayList<>());
+            this.model.setValorTransacao(this.model.getValorTransacao() * -1);
+            contaDestinoList.add(this.model);
+            driverS3.saveList(key2, contaDestinoList);
+
+            List<TransacaoModel> resultado = new ArrayList<>();
+            resultado.add(this.model);
+            return resultado;
         }
-
-        // LIQUIDAÇÃO IMEDIATA
-        // Salvar na origem
-        String key1 = PATH + this.model.getNumeroContaOrigem() + ".json";
-        List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
-                .orElse(new ArrayList<>());
-        this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-        contaOrigemList.add(this.model);
-        driverS3.saveList(key1, contaOrigemList);
-
-        String key2 = PATH + this.model.getNumeroContaDestino() + ".json";
-        List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
-                .orElse(new ArrayList<>());
-        this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-        contaDestinoList.add(this.model);
-        driverS3.saveList(key2, contaDestinoList);
-
-        List<TransacaoModel> resultado = new ArrayList<>();
-        resultado.add(this.model);
-        return resultado;
     }
 }

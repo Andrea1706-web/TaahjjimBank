@@ -42,9 +42,20 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
     @Override
     public List<TransacaoModel> obter(String contaOrigem) {
-        String key = PATH + contaOrigem + ".json";
-        // Aqui você precisa ler uma lista de transações
-        return driverS3.readList(key, TransacaoModel.class).orElse(null);
+        String pathNormal = PATH + "transacao/" + contaOrigem + ".json";
+        String pathAgendada = PATH + "transacaoAgendada/" + contaOrigem + ".json";
+
+        List<TransacaoModel> transacoesNormais = driverS3.readList(pathNormal, TransacaoModel.class)
+                .orElse(new ArrayList<>());
+
+        List<TransacaoModel> transacoesAgendadas = driverS3.readList(pathAgendada, TransacaoModel.class)
+                .orElse(new ArrayList<>());
+
+        List<TransacaoModel> todasTransacoes = new ArrayList<>();
+        todasTransacoes.addAll(transacoesNormais);
+        todasTransacoes.addAll(transacoesAgendadas);
+
+        return todasTransacoes;
     }
 
     @Override

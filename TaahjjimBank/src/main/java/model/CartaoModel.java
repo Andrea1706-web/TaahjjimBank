@@ -24,18 +24,28 @@ public class CartaoModel {
     @NotBlank(message = "Número de conta é obrigatório")
     private String numeroConta;
 
+    @NotNull(message = "O campo liberadoAproximacao é obrigatório")
+    private boolean liberadoAproximacao;
+
+    @NotNull(message = "O campo liberadoModoCredito é obrigatório")
+    private boolean liberadoModoCredito;
+
     @JsonCreator
     public CartaoModel(
             @JsonProperty("numeroCartao") String numeroCartao,
             @JsonProperty("validade") String validade,
             @JsonProperty("codigo") String codigo,
-            @JsonProperty("numeroConta") String numeroConta
+            @JsonProperty("numeroConta") String numeroConta,
+            @JsonProperty("liberadoAproximacao") boolean liberadoAproximacao,
+            @JsonProperty("liberadoModoCredito") boolean liberadoModoCredito
     ) {
         this.id = UUID.randomUUID();
         this.numeroCartao = numeroCartao;
         this.validade = validade;
         this.codigo = codigo;
         this.numeroConta = numeroConta;
+        this.liberadoAproximacao = liberadoAproximacao;
+        this.liberadoModoCredito = liberadoModoCredito;
     }
 
     public UUID getId() {
@@ -72,5 +82,21 @@ public class CartaoModel {
 
     public void setNumeroConta(String numeroConta) {
         this.numeroConta = numeroConta;
+    }
+
+    public boolean isLiberadoAproximacao() {
+        return liberadoAproximacao;
+    }
+
+    public void setLiberadoAproximacao(boolean liberadoAproximacao) {
+        this.liberadoAproximacao = liberadoAproximacao;
+    }
+
+    public boolean isLiberadoModoCredito() {
+        return liberadoModoCredito;
+    }
+
+    public void setLiberadoModoCredito(boolean liberadoModoCredito) {
+        this.liberadoModoCredito = liberadoModoCredito;
     }
 }

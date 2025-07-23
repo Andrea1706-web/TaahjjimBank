@@ -132,4 +132,18 @@ public class DriverS3<T> {
             return Optional.empty();
         }
     }
+
+    public List<String> listObjectsNames(String prefix) {
+        ListObjectsV2Result result = s3Client.listObjectsV2(bucketName, prefix);
+        List<String> keys = new ArrayList<>();
+        for (S3ObjectSummary summary : result.getObjectSummaries()) {
+            keys.add(summary.getKey());
+        }
+        return keys;
+    }
+
+    public void deleteObject(String key) {
+        s3Client.deleteObject(bucketName, key);
+    }
+
 }

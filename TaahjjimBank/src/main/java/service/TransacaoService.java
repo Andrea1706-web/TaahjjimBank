@@ -1,5 +1,7 @@
 package service;
 
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -7,6 +9,7 @@ import model.TransacaoModel;
 import model.eStatusTransacao;
 import org.springframework.stereotype.Service;
 import util.ValidationUtil;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,4 +108,56 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
             return resultado;
         }
     }
+
+    public void filtrarTransacoesAgendadas(String filaLiquidacaoSqs) {
+        AmazonSQS sqsClient = AmazonSQSClientBuilder.defaultClient();
+        String queueUrl = sqsClient.getQueueUrl(filaLiquidacaoSqs).getQueueUrl();
+
+        String pathAgendadas = PATH + "transacaoAgendada/";
+        List<String> arquivosAgendados = driverS3.listObjectsNames(pathAgendadas); //lista o nome de todos os arquivos
+
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
+
+        for (String key : arquivosAgendados) {
+            // Lê a lista de transações do arquivo S3
+            List<TransacaoModel> transacoes = driverS3.readList(key, TransacaoModel.class).orElse(new ArrayList<>());
+
+            // Cria lista para armazenar as transações que serão liquidadas
+            List<TransacaoModel> transacoesParaLiquidadar = new ArrayList<>();
+
+            // Cria lista para armazenar as transações que ainda permanecem agendadas
+            List<TransacaoModel> transacoesPendentes = new ArrayList<>();
+
+            // percorre todas as transações do arquivo
+            for (TransacaoModel transacao : transacoes) {
+                // Verifica se a dataAgendamento é igual ou anterior ao momento atual
+                if (transacao.getDataAgendamento().isBefore(dataHoraAtual) || transacao.getDataAgendamento().isEqual(dataHoraAtual)) {
+                    transacao.setStatusTransacao(eStatusTransacao.INICIADA); // Marca a transação como iniciada para liquidação
+                    transacoesParaLiquidadar.add(transacao); // Adiciona na lista para liquidação
+                } else {
+                    transacoesPendentes.add(transacao); // Se ainda não chegou a data, mantém na lista das restantes
+                }
+            }
+
+            //PARA CADA TRANSACAO QUE SERA LIQUIDADA
+            for (TransacaoModel transacao : transacoesParaLiquidadar) {
+                try {
+                    // Converte a transação em JSON para enviar na fila SQS
+                    String msg = objectMapper.writeValueAsString(transacao);
+                    // Envia a mensagem para a fila SQS para processamento da liquidação
+                    sqsClient.sendMessage(new SendMessageRequest(queueUrl, msg));
+                } catch (Exception e) {
+                    System.err.println("Erro ao enviar SQS para transacao atual " + transacao.getId() + ": " + e.getMessage());
+                }
+            }
+
+            // Atualiza o arquivo no S3 com as transações restantes
+            if (transacoesPendentes.isEmpty()) {
+                driverS3.deleteObject(key); // apaga arquivo se não sobrou nada
+            } else {
+                driverS3.saveList(key, transacoesPendentes);
+            }
+        }
+    }
+
 }

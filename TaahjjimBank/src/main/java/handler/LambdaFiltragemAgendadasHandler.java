@@ -8,11 +8,12 @@ public class LambdaFiltragemAgendadasHandler implements RequestHandler<Object, S
 
     @Override
     public String handleRequest(Object input, Context context) {
-        TransacaoService transacaoService = new TransacaoService("zupbankdatabase", null);
+        String bucketAgendadas = System.getenv("BUCKET_NAME");
+        String filaAgendamento = System.getenv("FILA_LIQUIDACAO");
 
-        String filaSQS = "fila-liquidacao-transacao";
-        transacaoService.filtrarTransacoesAgendadas(filaSQS);
+        TransacaoService service = new TransacaoService(bucketAgendadas, null);
+        service.filtrarTransacoesAgendadas(filaAgendamento);
 
-        return "Filtragem concluída com sucesso.";
+        return "Filtragem concluída";
     }
 }

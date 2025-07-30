@@ -61,4 +61,9 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
             throw new IllegalArgumentException("Conta já existente: " + model.getNumeroCC());
         }
     }
+
+    public void salvar(ContaBancariaModel conta) {
+        String key = "dados/contaBancaria/" + conta.getNumeroCC() + ".json";
+        driverS3.save(key, conta);
+    }
 }

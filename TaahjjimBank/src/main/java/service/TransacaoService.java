@@ -116,7 +116,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         String pathAgendadas = PATH + "transacaoAgendada/";
         List<String> arquivosAgendados = driverS3.listObjectsNames(pathAgendadas); //lista o nome de todos os arquivos
 
-        LocalDateTime dataHoraAtual = LocalDateTime.now();
+        LocalDateTime dataAtual = LocalDateTime.now();
 
         for (String key : arquivosAgendados) {
             // Lê a lista de transações do arquivo S3
@@ -128,14 +128,13 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
             // Cria lista para armazenar as transações que ainda permanecem agendadas
             List<TransacaoModel> transacoesPendentes = new ArrayList<>();
 
-            // percorre todas as transações do arquivo
             for (TransacaoModel transacao : transacoes) {
-                // Verifica se a dataAgendamento é igual ou anterior ao momento atual
-                if (transacao.getDataAgendamento().isBefore(dataHoraAtual) || transacao.getDataAgendamento().isEqual(dataHoraAtual)) {
-                    transacao.setStatusTransacao(eStatusTransacao.INICIADA); // Marca a transação como iniciada para liquidação
+                // Verifica se a dataAgendamento é igual ao dia atual
+                if (transacao.getDataAgendamento().toLocalDate().isEqual(dataAtual.toLocalDate())) {
+                    transacao.setStatusTransacao(eStatusTransacao.INICIADA);
                     transacoesParaLiquidadar.add(transacao); // Adiciona na lista para liquidação
                 } else {
-                    transacoesPendentes.add(transacao); // Se ainda não chegou a data, mantém na lista das restantes
+                    transacoesPendentes.add(transacao);
                 }
             }
 
@@ -153,7 +152,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
             // Atualiza o arquivo no S3 com as transações restantes
             if (transacoesPendentes.isEmpty()) {
-                driverS3.deleteObject(key); // apaga arquivo se não sobrou nada
+                driverS3.deleteObject(key); //apaga arquivo se não sobrou nada
             } else {
                 driverS3.saveList(key, transacoesPendentes);
             }

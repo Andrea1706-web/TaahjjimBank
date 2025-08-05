@@ -5,6 +5,7 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import model.ContaBancariaModel;
 import model.TransacaoModel;
 import model.eStatusTransacao;
 import org.springframework.stereotype.Service;
@@ -30,10 +31,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
         if (body != null && !body.trim().isEmpty()) {
             try {
-                List<TransacaoModel> models = objectMapper.readValue(
-                        body,
-                        objectMapper.getTypeFactory().constructCollectionType(List.class, TransacaoModel.class)
-                );
+                List<TransacaoModel> models = objectMapper.readValue(body, objectMapper.getTypeFactory().constructCollectionType(List.class, TransacaoModel.class));
                 this.model = models.isEmpty() ? null : models.get(0);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Erro ao deserializar bodyJson", e);
@@ -48,11 +46,9 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         String pathNormal = PATH + "transacao/" + contaOrigem + ".json";
         String pathAgendada = PATH + "transacaoAgendada/" + contaOrigem + ".json";
 
-        List<TransacaoModel> transacoesNormais = driverS3.readList(pathNormal, TransacaoModel.class)
-                .orElse(new ArrayList<>());
+        List<TransacaoModel> transacoesNormais = driverS3.readList(pathNormal, TransacaoModel.class).orElse(new ArrayList<>());
 
-        List<TransacaoModel> transacoesAgendadas = driverS3.readList(pathAgendada, TransacaoModel.class)
-                .orElse(new ArrayList<>());
+        List<TransacaoModel> transacoesAgendadas = driverS3.readList(pathAgendada, TransacaoModel.class).orElse(new ArrayList<>());
 
         List<TransacaoModel> todasTransacoes = new ArrayList<>();
         todasTransacoes.addAll(transacoesNormais);
@@ -74,39 +70,67 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
             throw new IllegalArgumentException("Conta destino não existe: " + this.model.getNumeroContaDestino());
         }
 
-        // verifica se é agendada comparando a data
+        // Verifica se é agendada e salva no bucket sem liquidar
         boolean isAgendada = model.getDataAgendamento().toLocalDate().isAfter(LocalDate.now());
-        String statusPath = isAgendada ? "transacaoAgendada/" : "transacao/";
-        this.model.setStatusTransacao(isAgendada ? eStatusTransacao.AGENDADA : eStatusTransacao.CONCLUIDA);
-
-        // se for agendada, salva sem liquidar
         if (isAgendada) {
-            String keyAgendada = PATH + statusPath + this.model.getNumeroContaOrigem() + ".json";
+            this.model.setStatusTransacao(eStatusTransacao.AGENDADA);
+            String keyAgendada = PATH + "transacaoAgendada/" + this.model.getNumeroContaOrigem() + ".json";
             List<TransacaoModel> agendadas = driverS3.readList(keyAgendada, TransacaoModel.class).orElse(new ArrayList<>());
             agendadas.add(this.model);
             driverS3.saveList(keyAgendada, agendadas);
             return List.of(this.model);
         } else {
-            // LIQUIDAÇÃO IMEDIATA
-            // Salvar na origem
-            String key1 = PATH + statusPath + this.model.getNumeroContaOrigem() + ".json";
-            List<TransacaoModel> contaOrigemList = driverS3.readList(key1, TransacaoModel.class)
-                    .orElse(new ArrayList<>());
-            this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-            contaOrigemList.add(this.model);
-            driverS3.saveList(key1, contaOrigemList);
-
-            String key2 = PATH + statusPath + this.model.getNumeroContaDestino() + ".json";
-            List<TransacaoModel> contaDestinoList = driverS3.readList(key2, TransacaoModel.class)
-                    .orElse(new ArrayList<>());
-            this.model.setValorTransacao(this.model.getValorTransacao() * -1);
-            contaDestinoList.add(this.model);
-            driverS3.saveList(key2, contaDestinoList);
-
-            List<TransacaoModel> resultado = new ArrayList<>();
-            resultado.add(this.model);
-            return resultado;
+            // Liquida imediatamente
+            return liquidar(this.model, false);
         }
+    }
+
+    public List<TransacaoModel> liquidar(TransacaoModel transacao, boolean removerAgendada) {
+        ContaBancariaService contaService = new ContaBancariaService("zupbankdatabase", null);
+
+        if (removerAgendada) {
+            String keyAgendada = PATH + "transacaoAgendada/" + transacao.getNumeroContaOrigem() + ".json";
+            List<TransacaoModel> agendadas = driverS3.readList(keyAgendada, TransacaoModel.class).orElse(new ArrayList<>());
+            agendadas.removeIf(t -> t.getId().equals(transacao.getId()));
+            if (agendadas.isEmpty()) {
+                driverS3.deleteObject(keyAgendada);
+            } else {
+                driverS3.saveList(keyAgendada, agendadas);
+            }
+        }
+
+        // Atualiza status e data
+        transacao.setStatusTransacao(eStatusTransacao.CONCLUIDA);
+        transacao.setDataTransacao(java.time.LocalDateTime.now());
+
+        //salva extrato da origem (debito)
+        String keyOrigem = PATH + transacao.getNumeroContaOrigem() + ".json";
+        List<TransacaoModel> transacoesOrigem = driverS3.readList(keyOrigem, TransacaoModel.class).orElse(new ArrayList<>());
+        TransacaoModel transacaoOrigem = cloneTransacao(transacao);
+        transacaoOrigem.setValorTransacao(transacao.getValorTransacao() * -1);
+        transacoesOrigem.add(transacaoOrigem);
+        driverS3.saveList(keyOrigem, transacoesOrigem);
+
+        //salva extrato do destino (credito)
+        String keyDestino = PATH + transacao.getNumeroContaDestino() + ".json";
+        List<TransacaoModel> transacoesDestino = driverS3.readList(keyDestino, TransacaoModel.class).orElse(new ArrayList<>());
+        TransacaoModel transacaoDestino = cloneTransacao(transacao);
+        transacoesDestino.add(transacaoDestino);
+        driverS3.saveList(keyDestino, transacoesDestino);
+
+        //atualiza saldo na origem
+        ContaBancariaModel contaOrigem = contaService.obter(transacao.getNumeroContaOrigem());
+        if (contaOrigem == null) throw new RuntimeException("Conta origem não encontrada");
+        contaOrigem.setSaldo(contaOrigem.getSaldo() - transacao.getValorTransacao());
+        contaService.salvar(contaOrigem);
+
+        //atualiza saldo no destino
+        ContaBancariaModel contaDestino = contaService.obter(transacao.getNumeroContaDestino());
+        if (contaDestino == null) throw new RuntimeException("Conta destino não encontrada");
+        contaDestino.setSaldo(contaDestino.getSaldo() + transacao.getValorTransacao());
+        contaService.salvar(contaDestino);
+
+        return List.of(transacaoOrigem, transacaoDestino);
     }
 
     public void filtrarTransacoesAgendadas(String filaLiquidacaoSqs) {
@@ -138,7 +162,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
                 }
             }
 
-            //PARA CADA TRANSACAO QUE SERA LIQUIDADA
+            //Para cada transacao que sera liquidada
             for (TransacaoModel transacao : transacoesParaLiquidadar) {
                 try {
                     // Converte a transação em JSON para enviar na fila SQS
@@ -159,4 +183,11 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         }
     }
 
+    private TransacaoModel cloneTransacao(TransacaoModel original) {
+        TransacaoModel copia = new TransacaoModel(original.getNumeroContaOrigem(), original.getNumeroContaDestino(), original.getDataAgendamento(), original.getValorTransacao(), original.getTipoTransacao(), original.getLocalidade(), original.getDispositivo());
+        copia.setId(original.getId());
+        copia.setEhFraude(original.isEhFraude());
+        copia.setStatusTransacao(original.getStatusTransacao());
+        return copia;
+    }
 }

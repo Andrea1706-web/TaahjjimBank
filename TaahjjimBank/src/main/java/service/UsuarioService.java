@@ -3,6 +3,7 @@ package service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.UsuarioModel;
+import model.eTipoDocumento;
 import org.springframework.stereotype.Service;
 import util.ValidationUtil;
 
@@ -31,16 +32,19 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
     }
 
     @Override
-    public UsuarioModel obter(String username) {
-        String key = PATH + username + ".json";
+    public UsuarioModel obter(String nome) {
+        String key = PATH + nome + ".json";
         return driverS3.read(key).orElse(null);
     }
 
     @Override
     public UsuarioModel criar() {
         ValidationUtil.validar(this.model);
-        validarDuplicidade(this.model);
-        String key = PATH + this.model.getUsername() + ".json";
+        validarDuplicidadeDocumento(this.model);
+        validarDuplicidadeEmail(this.model);
+        validarCodEstabelecimentoObrigatorio(this.model);
+        validarDocumentoPorTipo(this.model);
+        String key = PATH + this.model.getNome() + ".json";
         driverS3.save(key, this.model);
         return this.model;
     }
@@ -49,12 +53,40 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
         return driverS3.readAll(PATH);
     }
 
-    private void validarDuplicidade(UsuarioModel model) {
+    private void validarDuplicidadeDocumento(UsuarioModel model) {
         List<UsuarioModel> usuarios = listar();
-        if (usuarios.stream().anyMatch(c -> c.getUsername().equalsIgnoreCase(model.getUsername()))) {
-            throw new IllegalArgumentException("Usuário já existe: " + model.getUsername());
+        if (usuarios.stream().anyMatch(c -> c.getDocumento().equalsIgnoreCase(model.getDocumento()))) {
+            throw new IllegalArgumentException("Documento já associado a um usuário: " + model.getDocumento());
         }
     }
 
+    private void validarDuplicidadeEmail(UsuarioModel model) {
+        List<UsuarioModel> usuarios = listar();
+        if (usuarios.stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(model.getEmail()))) {
+            throw new IllegalArgumentException("Email já associado a um usuário: " + model.getEmail());
+        }
+    }
+
+    private void validarCodEstabelecimentoObrigatorio(UsuarioModel model) {
+        if (model.getTipoDocumento() == eTipoDocumento.CNPJ) {
+            if (model.getCodEstabelecimento() == null || model.getCodEstabelecimento().trim().isEmpty()) {
+                throw new IllegalArgumentException("codEstabelecimento é obrigatório para usuários com tipoDocumento CNPJ");
+            }
+        }
+    }
+
+    private void validarDocumentoPorTipo(UsuarioModel model) {
+        if (model.getTipoDocumento() == eTipoDocumento.CPF) {
+            if (model.getDocumento() == null || model.getDocumento().length() != 11) {
+                throw new IllegalArgumentException("Documento deve ter exatamente 11 caracteres para CPF");
+            }
+        } else if (model.getTipoDocumento() == eTipoDocumento.CNPJ) {
+            if (model.getDocumento() == null || model.getDocumento().length() != 14) {
+                throw new IllegalArgumentException("Documento deve ter exatamente 14 caracteres para CNPJ");
+            }
+        }
+    }
 }
+
+
 

@@ -87,6 +87,26 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
     public List<TransacaoModel> liquidar(TransacaoModel transacao, boolean removerAgendada) {
         ContaBancariaService contaService = new ContaBancariaService("zupbankdatabase", null);
+        ContaBancariaModel contaOrigem = contaService.obter(transacao.getNumeroContaOrigem());
+        ContaBancariaModel contaDestino = contaService.obter(transacao.getNumeroContaDestino());
+
+        // conta inesxistente: rejeita e registra no extrato
+        if (contaOrigem == null || contaDestino == null) {
+            transacao.setStatusTransacao(eStatusTransacao.REJEITADA);
+            transacao.setDataTransacao(LocalDateTime.now());
+
+            String keyRejeitada = PATH + transacao.getNumeroContaOrigem() + ".json";
+            List<TransacaoModel> extrato = driverS3.readList(keyRejeitada, TransacaoModel.class).orElse(new ArrayList<>());
+            extrato.add(transacao);
+            driverS3.saveList(keyRejeitada, extrato);
+
+            return List.of(transacao);
+        }
+
+        //  Saldo insuficiente: envia para fila DLQ
+        if (contaOrigem.getSaldo() < transacao.getValorTransacao()) {
+            throw new RuntimeException("Saldo insuficiente para a transação: " + transacao.getId());
+        }
 
         if (removerAgendada) {
             String keyAgendada = PATH + "transacaoAgendada/" + transacao.getNumeroContaOrigem() + ".json";
@@ -119,14 +139,10 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         driverS3.saveList(keyDestino, transacoesDestino);
 
         //atualiza saldo na origem
-        ContaBancariaModel contaOrigem = contaService.obter(transacao.getNumeroContaOrigem());
-        if (contaOrigem == null) throw new RuntimeException("Conta origem não encontrada");
         contaOrigem.setSaldo(contaOrigem.getSaldo() - transacao.getValorTransacao());
         contaService.salvar(contaOrigem);
 
         //atualiza saldo no destino
-        ContaBancariaModel contaDestino = contaService.obter(transacao.getNumeroContaDestino());
-        if (contaDestino == null) throw new RuntimeException("Conta destino não encontrada");
         contaDestino.setSaldo(contaDestino.getSaldo() + transacao.getValorTransacao());
         contaService.salvar(contaDestino);
 

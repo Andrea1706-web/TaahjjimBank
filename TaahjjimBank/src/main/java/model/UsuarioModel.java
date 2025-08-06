@@ -7,35 +7,82 @@ import java.util.UUID;
 public class UsuarioModel {
 
     private final UUID id;
-    @NotNull(message = "Username é obrigatório")
-    @Pattern(regexp = ".{4,}", message = "Username deve ter no mínimo 4 caracteres")
-    private String username;
+    @NotNull(message = "Nome é obrigatório")
+    @Pattern(regexp = ".{4,}", message = "Nome deve ter no mínimo 4 caracteres")
+    private String nome;
+    @NotNull(message = "tipoDocumento é obrigatório")
+    private eTipoDocumento tipoDocumento;
+    @NotNull(message = "Documento é obrigatório")
+    @Pattern(
+            regexp = "^(?:(?!^(\\d)\\1{10}$)\\d{11})$|^(?:(?!^(\\d)\\2{13}$)\\d{14})$",
+            message = "Documento deve ser um CPF ou CNPJ válido"
+    )
+    private String documento;
+    @NotNull(message = "Email é obrigatório")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            message = "Email deve ser válido"
+    )
+    private String email;
     @NotNull(message = "Senha é obrigatória")
     @Pattern(
             regexp = "^(?=.*[A-Z]).{6,}$",
             message = "A senha deve ter no mínimo 6 caracteres e pelo menos uma letra maiúscula"
     )
     private String senha;
+    private String codEstabelecimento;
 
     @JsonCreator
     public UsuarioModel(
-            @JsonProperty("username") String username,
-            @JsonProperty("senha") String senha) {
+            @JsonProperty("nome") String nome,
+            @JsonProperty("tipoDocumento") eTipoDocumento tipoDocumento,
+            @JsonProperty("documento") String documento,
+            @JsonProperty("email") String email,
+            @JsonProperty("senha") String senha,
+            @JsonProperty("codEstabelecimento") String codEstabelecimento) {
         this.id = UUID.randomUUID();
-        this.username = username;
+        this.nome = nome;
+        this.tipoDocumento = tipoDocumento;
+        this.documento = documento;
+        this.email = email;
         this.senha = senha;
+        this.codEstabelecimento = codEstabelecimento;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getNome() {
+        return nome;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public eTipoDocumento getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(eTipoDocumento tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getSenha() {
@@ -44,6 +91,14 @@ public class UsuarioModel {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getCodEstabelecimento() {
+        return codEstabelecimento;
+    }
+
+    public void setCodEstabelecimento(String codEstabelecimento) {
+        this.codEstabelecimento = codEstabelecimento;
     }
 
 }

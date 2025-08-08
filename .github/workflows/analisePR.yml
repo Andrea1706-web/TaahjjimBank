@@ -27,7 +27,7 @@ jobs:
           th_response=$(curl \
             --request POST 'https://idm.stackspot.com/itau/oidc/oauth/token' \
             --header 'Content-Type: application/x-www-form-urlencoded' \
-            --header 'Authorization' \
+            --header 'Authorization:' \
             --data 'client_id=f7c15ec6-98d7-4dec-b2db-39db51bd9e46' \
             --data 'grant_type=client_credentials' \
             --data 'client_secret=357JeEbqdnzE1792Y8M49Mb57bvuZxXZ5VijPY335N1HYrVrWwPKsANnE1x6h3QM')

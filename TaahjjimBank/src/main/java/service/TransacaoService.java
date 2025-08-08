@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TransacaoService implements iCrudService<List<TransacaoModel>> {
     private final List<iTransacaoCommand> commands = List.of(new PixCommand(), new DebitoCommand()); //lista de comandos disponiveis
     private final DriverS3<TransacaoModel> driverS3;
@@ -34,7 +33,7 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
                     mapper.getTypeFactory().constructCollectionType(List.class, TransacaoModel.class));
             return lista.isEmpty() ? null : lista.get(0);
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao desserializar bodyJson", e);
+            throw new RuntimeException(MensagensErro.ERRO_DESERIALIZACAO, e);
         }
     }
 
@@ -66,6 +65,5 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
                 .orElseThrow(() -> new IllegalArgumentException(MensagensErro.TIPO_TRANSACAO_NAO_SUPORTADA));
 
         return cmd.executar(model, isAgendada, driverS3, contaService);
-
     }
 }

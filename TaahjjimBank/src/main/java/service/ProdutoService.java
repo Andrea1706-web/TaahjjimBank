@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ProdutoModel;
 import org.springframework.stereotype.Service;
 import service.interfaces.iListarService;
+import util.MensagensErro;
 import util.ValidationUtil;
+
 import java.util.List;
 
 @Service
@@ -24,7 +26,7 @@ public class ProdutoService implements iListarService {
             try {
                 this.model = objectMapper.readValue(bodyJson, ProdutoModel.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao desserializar JSON do Produto", e);
+                throw new RuntimeException(MensagensErro.ERRO_DESERIALIZACAO, e);
             }
         } else {
             this.model = null;
@@ -55,8 +57,8 @@ public class ProdutoService implements iListarService {
     private void validarDuplicidade(ProdutoModel model) {
         List<ProdutoModel> produtos = listar();
 
-         if (produtos.stream().anyMatch(p -> p.getNome().equalsIgnoreCase(model.getNome()))) {
-            throw new IllegalArgumentException("Nome já existente: " + model.getNome());
+        if (produtos.stream().anyMatch(p -> p.getNome().equalsIgnoreCase(model.getNome()))) {
+            throw new IllegalArgumentException(MensagensErro.PRODUTO_DUPLICADO + model.getNome());
         }
     }
 }

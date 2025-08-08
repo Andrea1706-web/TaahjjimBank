@@ -1,10 +1,14 @@
 name: Check API Before Merge
 
+
+
 on:
   pull_request:
     branches:
       - main
     types: [opened, synchronize]
+
+
 
 jobs:
   check-api-and-lint:
@@ -13,6 +17,8 @@ jobs:
       # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
+
+
 
       # Authenticate and get token
       - name: Authenticate and Get Token
@@ -24,12 +30,9 @@ jobs:
             --data-urlencode 'client_id=f7c15ec6-98d7-4dec-b2db-39db51bd9e46' \
             --data-urlencode 'grant_type=client_credentials' \
             --data-urlencode 'client_secret=357JeEbqdnzE1792Y8M49Mb57bvuZxXZ5VijPY335N1HYrVrWwPKsANnE1x6h3QM')
-#          access_token=$(echo $th_response | jq -r '.access_token')
-#          access_token=$(echo $th_response)
           echo $th_response
-               exit 1
-#          echo "access_token=$access_token" >> $GITHUB_ENV
-          
+          exit 1
+
       # Call API to start execution
       - name: Start API Execution
         id: start_execution
@@ -40,6 +43,8 @@ jobs:
             -d '{"message":"Validando pull request para a branch principal"}')
           execution_id=$(echo $response | jq -r '.executionID')
           echo "execution_id=$execution_id" >> $GITHUB_ENV
+      
+      
 
       # Monitor API Execution Status
       - name: Monitor API Execution
@@ -63,6 +68,8 @@ jobs:
             echo "Validation failed. Blocking PR merge."
             exit 1
           fi
+      
+      
 
       # Run lint check
       - name: Run Lint

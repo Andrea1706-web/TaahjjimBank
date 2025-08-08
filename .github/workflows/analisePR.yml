@@ -24,7 +24,7 @@ jobs:
       - name: Authenticate and Get Token
         id: authenticate
         run: |
-          th_response=$(curl
+          th_response=$(curl \
             --request POST 'https://idm.stackspot.com/itau/oidc/oauth/token' \
             --header 'Content-Type: application/x-www-form-urlencoded' \
             --data-urlencode 'client_id=f7c15ec6-98d7-4dec-b2db-39db51bd9e46' \

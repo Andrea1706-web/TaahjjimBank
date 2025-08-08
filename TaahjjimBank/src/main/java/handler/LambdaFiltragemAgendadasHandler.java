@@ -2,7 +2,9 @@ package handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import service.TransacaoService;
+import service.command.PixCommand;
+import model.TransacaoModel;
+import service.DriverS3;
 
 public class LambdaFiltragemAgendadasHandler implements RequestHandler<Object, String> {
 
@@ -11,8 +13,10 @@ public class LambdaFiltragemAgendadasHandler implements RequestHandler<Object, S
         String bucketAgendadas = System.getenv("BUCKET_NAME");
         String filaAgendamento = System.getenv("FILA_LIQUIDACAO");
 
-        TransacaoService service = new TransacaoService(bucketAgendadas, null);
-        service.filtrarTransacoesAgendadas(filaAgendamento);
+        DriverS3<TransacaoModel> driverS3 = new DriverS3<>(bucketAgendadas, TransacaoModel.class);
+        PixCommand pixCommand = new PixCommand();
+
+        pixCommand.filtrarTransacoesAgendadas(filaAgendamento, driverS3);
 
         return "Filtragem concluída";
     }

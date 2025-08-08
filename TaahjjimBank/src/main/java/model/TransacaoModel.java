@@ -2,10 +2,20 @@ package model;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.constraints.*;
+import model.enums.eDispositivo;
+import model.enums.eStatusTransacao;
+import model.enums.eTipoTransacao;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class TransacaoModel {
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "tipoTransacao")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TransacaoPagamentoDebito.class, name = "PIX"),
+        @JsonSubTypes.Type(value = TransacaoPagamentoDebito.class, name = "PAGAMENTO_DEBITO")
+})
+public abstract class TransacaoModel {
+
     private UUID id;
 
     @NotNull(message = "numeroContaOrigem é obrigatório")
@@ -27,26 +37,23 @@ public class TransacaoModel {
     @NotNull(message = "tipoTransacao é obrigatório")
     private eTipoTransacao tipoTransacao;
 
-    @NotNull
-    @NotBlank(message = "localidade é obrigatório")
+    @NotBlank(message = "localidade é obrigatória")
     private String localidade;
 
     @NotNull(message = "dispositivo é obrigatório")
     private eDispositivo dispositivo;
 
     private boolean ehFraude = false;
-
     private eStatusTransacao statusTransacao;
 
-    @JsonCreator
-    public TransacaoModel(
-            @JsonProperty("numeroContaOrigem") String numeroContaOrigem,
-            @JsonProperty("numeroContaDestino") String numeroContaDestino,
-            @JsonProperty("dataAgendamento") LocalDateTime dataAgendamento,
-            @JsonProperty("valorTransacao") double valorTransacao,
-            @JsonProperty("tipoTransacao") eTipoTransacao tipoTransacao,
-            @JsonProperty("localidade") String localidade,
-            @JsonProperty("dispositivo") eDispositivo dispositivo){
+    // Construtor base (usado pelas subclasses)
+    public TransacaoModel(String numeroContaOrigem,
+                          String numeroContaDestino,
+                          LocalDateTime dataAgendamento,
+                          Double valorTransacao,
+                          eTipoTransacao tipoTransacao,
+                          String localidade,
+                          eDispositivo dispositivo) {
         this.id = UUID.randomUUID();
         this.numeroContaOrigem = numeroContaOrigem;
         this.numeroContaDestino = numeroContaDestino;
@@ -56,7 +63,9 @@ public class TransacaoModel {
         this.tipoTransacao = tipoTransacao;
         this.localidade = localidade;
         this.dispositivo = dispositivo;
-        this.statusTransacao = null;
+    }
+
+    public TransacaoModel() {
     }
 
     public UUID getId() {
@@ -71,12 +80,12 @@ public class TransacaoModel {
         return numeroContaOrigem;
     }
 
-    public void setNumeroContaOrigem(String numeroContaOrigem) {
-        this.numeroContaOrigem = numeroContaOrigem;
-    }
-
     public String getNumeroContaDestino() {
         return numeroContaDestino;
+    }
+
+    public void setNumeroContaOrigem(String numeroContaOrigem) {
+        this.numeroContaOrigem = numeroContaOrigem;
     }
 
     public void setNumeroContaDestino(String numeroContaDestino) {
@@ -99,11 +108,11 @@ public class TransacaoModel {
         this.dataAgendamento = dataAgendamento;
     }
 
-    public double getValorTransacao() {
+    public Double getValorTransacao() {
         return valorTransacao;
     }
 
-    public void setValorTransacao(double valorTransacao) {
+    public void setValorTransacao(Double valorTransacao) {
         this.valorTransacao = valorTransacao;
     }
 
@@ -142,8 +151,12 @@ public class TransacaoModel {
     public eStatusTransacao getStatusTransacao() {
         return statusTransacao;
     }
+
     public void setStatusTransacao(eStatusTransacao statusTransacao) {
         this.statusTransacao = statusTransacao;
     }
+
+    public abstract void validarEspecifica(boolean isAgendada);
+
 
 }

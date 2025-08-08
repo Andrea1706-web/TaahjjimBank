@@ -5,6 +5,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import service.*;
+import service.interfaces.iCrudService;
+import service.interfaces.iListarService;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

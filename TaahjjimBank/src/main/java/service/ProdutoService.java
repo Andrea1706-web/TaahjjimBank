@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ProdutoModel;
 import org.springframework.stereotype.Service;
+import service.interfaces.iListarService;
 import util.ValidationUtil;
 import java.util.List;
 

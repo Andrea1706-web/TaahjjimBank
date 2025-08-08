@@ -7,6 +7,7 @@ import model.UsuarioModel;
 import org.springframework.stereotype.Service;
 import service.interfaces.iCrudService;
 import util.JwtUtil;
+import util.MensagensErro;
 import util.ValidationUtil;
 
 @Service
@@ -24,7 +25,7 @@ public class LoginService implements iCrudService<LoginModel> {
             try {
                 this.model = objectMapper.readValue(body, LoginModel.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao deserializar bodyJson", e);
+                throw new RuntimeException(MensagensErro.ERRO_DESERIALIZACAO, e);
             }
         } else {
             this.model = null;
@@ -45,7 +46,7 @@ public class LoginService implements iCrudService<LoginModel> {
         UsuarioModel usuario = usuarioService.obter(this.model.getUsername());
 
         if (usuario == null || !usuario.getSenha().equals(this.model.getSenha())) {
-            throw new IllegalArgumentException("Usuário ou senha inválidos");
+            throw new IllegalArgumentException(MensagensErro.USUARIO_OU_SENHA_INVALIDOS);
         }
 
         String token = JwtUtil.generateToken(usuario.getUsername());
@@ -53,5 +54,4 @@ public class LoginService implements iCrudService<LoginModel> {
 
         return this.model;
     }
-
 }

@@ -1,0 +1,80 @@
+name: Check API Before Merge
+
+
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize]
+
+
+
+jobs:
+  check-api-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+
+
+      # Authenticate and get token
+      - name: Authenticate and Get Token
+        id: authenticate
+        run: |
+          th_response=$(curl -v \
+            --http1.1 \
+            --request POST 'https://idm.stackspot.com/itau/oidc/oauth/token' \
+            --header 'Content-Type: application/x-www-form-urlencoded' \
+            --header 'User-Agent: Disgrama' \
+            --data 'client_id=f7c15ec6-98d7-4dec-b2db-39db51bd9e46' \
+            --data 'grant_type=client_credentials' \
+            --data 'client_secret=357JeEbqdnzE1792Y8M49Mb57bvuZxXZ5VijPY335N1HYrVrWwPKsANnE1x6h3QM')
+          echo $th_response
+          exit 1
+
+      # Call API to start execution
+      - name: Start API Execution
+        id: start_execution
+        run: |
+          response=$(curl -s -X POST "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/create-execution/validador-pr" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ env.access_token }}" \
+            -d '{"message":"Validando pull request para a branch principal"}')
+          execution_id=$(echo $response | jq -r '.executionID')
+          echo "execution_id=$execution_id" >> $GITHUB_ENV
+      
+      
+
+      # Monitor API Execution Status
+      - name: Monitor API Execution
+        id: monitor_execution
+        run: |
+          status=""
+          while [ "$status" != "COMPLETED" ]; do
+            response=$(curl -s -X GET "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/callback/${{ env.execution_id }}" \
+              -H "Authorization: Bearer ${{ env.access_token }}")
+            status=$(echo $response | jq -r '.progress.status')
+            echo "Current status: $status"
+            if [ "$status" == "FAILED" ]; then
+              echo "Execution failed."
+              exit 1
+            fi
+            sleep 3
+          done
+          result=$(echo $response | jq -r '.result')
+          echo "Execution completed. Result: $result"
+          if [ "$result" == "false" ]; then
+            echo "Validation failed. Blocking PR merge."
+            exit 1
+          fi
+      
+      
+
+      # Run lint check
+      - name: Run Lint
+        run: |
+          npm install
+          npm run lint

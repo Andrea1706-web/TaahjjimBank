@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
+import service.interfaces.iCrudService;
+import util.MensagensErro;
 import util.ValidationUtil;
 
 import java.util.List;

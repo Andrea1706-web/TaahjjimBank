@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import model.LoginModel;
 import model.UsuarioModel;
 import org.springframework.stereotype.Service;
+import service.interfaces.iCrudService;
 import util.JwtUtil;
 import util.ValidationUtil;
 

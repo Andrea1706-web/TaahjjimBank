@@ -3,6 +3,10 @@ package model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
+import model.enums.eCategoriaProduto;
+import model.enums.eGrauRisco;
+import model.enums.eTipoProduto;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 

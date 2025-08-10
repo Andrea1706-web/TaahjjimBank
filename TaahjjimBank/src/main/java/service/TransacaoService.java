@@ -16,6 +16,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Scanner;
 
 @Service
 public class TransacaoService implements iCrudService<List<TransacaoModel>> {
@@ -206,4 +210,42 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         copia.setStatusTransacao(original.getStatusTransacao());
         return copia;
     }
+
+    private void validarTransacaoComQuickCommand() {
+        String url = "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/create-execution/consultar-transacoes";
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"; // Substitua pelo token gerado
+
+        try {
+            // Configuração da conexão
+            URL endpoint = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) endpoint.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Authorization", "Bearer " + token);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            // Enviar a requisição
+            OutputStream os = connection.getOutputStream();
+            os.flush();
+            os.close();
+
+            // Ler a resposta
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                Scanner scanner = new Scanner(connection.getInputStream());
+                StringBuilder response = new StringBuilder();
+                while (scanner.hasNext()) {
+                    response.append(scanner.nextLine());
+                }
+                scanner.close();
+                System.out.println("Validação bem-sucedida: " + response.toString());
+            } else {
+                System.out.println("Erro na validação: " + responseCode + ", Detalhes: " + connection.getResponseMessage());
+            }
+            connection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

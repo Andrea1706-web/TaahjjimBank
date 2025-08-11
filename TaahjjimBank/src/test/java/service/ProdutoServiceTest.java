@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import util.MensagensErro;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -95,7 +96,7 @@ public class ProdutoServiceTest {
         ProdutoService produtoService = new ProdutoService("mockBucket", jsonDuplicado);
 
         IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, produtoService::criar);
-        assertEquals("Nome já existente: TesouroDireto", excecao.getMessage());
+        assertEquals(MensagensErro.PRODUTO_DUPLICADO + produtoDuplicado.getNome(), excecao.getMessage());
     }
 
     @Test

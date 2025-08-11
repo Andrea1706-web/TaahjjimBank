@@ -5,9 +5,9 @@ import io.cucumber.java.pt.E;
 import io.cucumber.java.pt.Então;
 import io.cucumber.java.pt.Quando;
 import model.ProdutoModel;
-import model.eCategoriaProduto;
-import model.eGrauRisco;
-import model.eTipoProduto;
+import model.enums.eCategoriaProduto;
+import model.enums.eGrauRisco;
+import model.enums.eTipoProduto;
 import service.DriverS3MockSetup;
 import service.ProdutoService;
 

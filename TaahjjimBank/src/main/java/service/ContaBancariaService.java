@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ContaBancariaModel;
 import org.springframework.stereotype.Service;
+import service.interfaces.iCrudService;
+import util.MensagensErro;
 import util.ValidationUtil;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
             try {
                 this.model = objectMapper.readValue(body, ContaBancariaModel.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao deserializar bodyJson", e);
+                throw new RuntimeException(MensagensErro.ERRO_DESERIALIZACAO, e);
             }
         } else {
             this.model = null;
@@ -58,7 +60,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
     private void validarDuplicidade(ContaBancariaModel model) {
         List<ContaBancariaModel> contas = listar();
         if (contas.stream().anyMatch(c -> c.getNumeroCC().equalsIgnoreCase(model.getNumeroCC()))) {
-            throw new IllegalArgumentException("Conta já existente: " + model.getNumeroCC());
+            throw new IllegalArgumentException(MensagensErro.CONTA_DUPLICADA + model.getNumeroCC());
         }
     }
 

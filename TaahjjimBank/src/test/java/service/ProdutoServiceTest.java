@@ -2,9 +2,9 @@ package service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.ProdutoModel;
-import model.eCategoriaProduto;
-import model.eGrauRisco;
-import model.eTipoProduto;
+import model.enums.eCategoriaProduto;
+import model.enums.eGrauRisco;
+import model.enums.eTipoProduto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,6 @@ public class ProdutoServiceTest {
     private List<ProdutoModel> listaProdutos;
     private String produtoValidoJson;
 
-    // 🔧 Setup mock antes de cada teste
     @BeforeEach
     void setup() {
         DriverS3MockSetup.startMock();
@@ -52,7 +51,6 @@ public class ProdutoServiceTest {
         produtoValidoJson = toJson(produto1);
     }
 
-    // 🔥 Finaliza o mock após cada teste
     @AfterEach
     void teardown() {
         DriverS3MockSetup.stopMock();

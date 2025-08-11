@@ -1,9 +1,9 @@
 package steps;
 
 import io.cucumber.java.pt.*;
-import model.eCategoriaProduto;
-import model.eGrauRisco;
-import model.eTipoProduto;
+import model.enums.eCategoriaProduto;
+import model.enums.eGrauRisco;
+import model.enums.eTipoProduto;
 import service.ProdutoService;
 import service.DriverS3MockSetup;
 import model.ProdutoModel;

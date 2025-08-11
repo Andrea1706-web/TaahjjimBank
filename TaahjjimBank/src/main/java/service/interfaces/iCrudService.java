@@ -1,4 +1,4 @@
-package service;
+package service.interfaces;
 
 public interface iCrudService<T> {
     T obter(String chave);

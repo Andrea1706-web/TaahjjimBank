@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.UsuarioModel;
 import org.springframework.stereotype.Service;
+import service.interfaces.iCrudService;
+import util.MensagensErro;
 import util.ValidationUtil;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
             try {
                 this.model = objectMapper.readValue(body, UsuarioModel.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao deserializar bodyJson", e);
+                throw new RuntimeException(MensagensErro.ERRO_DESERIALIZACAO, e);
             }
         } else {
             this.model = null;
@@ -52,7 +54,7 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
     private void validarDuplicidade(UsuarioModel model) {
         List<UsuarioModel> usuarios = listar();
         if (usuarios.stream().anyMatch(c -> c.getUsername().equalsIgnoreCase(model.getUsername()))) {
-            throw new IllegalArgumentException("Usuário já existe: " + model.getUsername());
+            throw new IllegalArgumentException(MensagensErro.USUARIO_DUPLICADO + model.getUsername());
         }
     }
 

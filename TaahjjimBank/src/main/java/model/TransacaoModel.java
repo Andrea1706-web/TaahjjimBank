@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "tipoTransacao")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = TransacaoPagamentoDebito.class, name = "PIX"),
+        @JsonSubTypes.Type(value = TransacaoPix.class, name = "PIX"),
         @JsonSubTypes.Type(value = TransacaoPagamentoDebito.class, name = "PAGAMENTO_DEBITO")
 })
 public abstract class TransacaoModel {

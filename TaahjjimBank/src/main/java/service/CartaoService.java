@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
+import service.interfaces.iCrudService;
+import util.MensagensErro;
 import util.ValidationUtil;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public class CartaoService implements iCrudService<CartaoModel> {
             try {
                 this.model = objectMapper.readValue(body, CartaoModel.class);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Erro ao deserializar bodyJson", e);
+                throw new RuntimeException(MensagensErro.ERRO_DESERIALIZACAO, e);
             }
         } else {
             this.model = null;
@@ -51,10 +53,10 @@ public class CartaoService implements iCrudService<CartaoModel> {
     private void validarDuplicidade(CartaoModel model) {
         List<CartaoModel> cartoes = driverS3.readAll(PATH);
         if (cartoes.stream().anyMatch(c -> c.getId().equals(model.getId()))) {
-            throw new IllegalArgumentException("ID já existente: " + model.getId());
+            throw new IllegalArgumentException(MensagensErro.CARTAO_ID_DUPLICADO + model.getId());
         }
         if (cartoes.stream().anyMatch(c -> c.getNumeroCartao().equalsIgnoreCase(model.getNumeroCartao()))) {
-            throw new IllegalArgumentException("Número do cartão já existente: " + model.getNumeroCartao());
+            throw new IllegalArgumentException(MensagensErro.CARTAO_NUMERO_DUPLICADO + model.getNumeroCartao());
         }
     }
 

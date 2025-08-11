@@ -13,4 +13,4 @@ Funcionalidade: Cadastrar um produto bancário
       | nome       | descricao           | taxaAdministracao | grauRisco | categoria  | tipoProduto        |
       | Fundo Alfa | Fundo de renda fixa | 0.15              | BAIXO     | RENDA_FIXA | FUNDO_INVESTIMENTO |
     Quando eu solicitar o cadastro de um produto com o mesmo nome "Fundo Alfa"
-    Então o serviço deve retornar um erro de duplicidade informando "Nome já existente"
+    Então o serviço deve retornar um erro de duplicidade informando "Produto com esse nome já cadastrado"

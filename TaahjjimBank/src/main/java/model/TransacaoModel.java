@@ -21,9 +21,6 @@ public abstract class TransacaoModel {
     @NotNull(message = "numeroContaOrigem é obrigatório")
     private String numeroContaOrigem;
 
-    @NotNull(message = "numeroContaDestino é obrigatório")
-    private String numeroContaDestino;
-
     private LocalDateTime dataTransacao;
 
     @NotNull(message = "dataAgendamento é obrigatória")
@@ -48,7 +45,6 @@ public abstract class TransacaoModel {
 
     // Construtor base (usado pelas subclasses)
     public TransacaoModel(String numeroContaOrigem,
-                          String numeroContaDestino,
                           LocalDateTime dataAgendamento,
                           Double valorTransacao,
                           eTipoTransacao tipoTransacao,
@@ -56,7 +52,6 @@ public abstract class TransacaoModel {
                           eDispositivo dispositivo) {
         this.id = UUID.randomUUID();
         this.numeroContaOrigem = numeroContaOrigem;
-        this.numeroContaDestino = numeroContaDestino;
         this.dataTransacao = LocalDateTime.now();
         this.dataAgendamento = dataAgendamento;
         this.valorTransacao = valorTransacao;
@@ -80,16 +75,9 @@ public abstract class TransacaoModel {
         return numeroContaOrigem;
     }
 
-    public String getNumeroContaDestino() {
-        return numeroContaDestino;
-    }
 
     public void setNumeroContaOrigem(String numeroContaOrigem) {
         this.numeroContaOrigem = numeroContaOrigem;
-    }
-
-    public void setNumeroContaDestino(String numeroContaDestino) {
-        this.numeroContaDestino = numeroContaDestino;
     }
 
     public LocalDateTime getDataTransacao() {

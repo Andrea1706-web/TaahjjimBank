@@ -29,6 +29,7 @@ public class PixCommand implements iTransacaoCommand {
                                          DriverS3<TransacaoModel> driverS3, ContaBancariaService contaService) {
 
         transacao.validarEspecifica(isAgendada);
+        TransacaoPix pix = (TransacaoPix) transacao;
 
         if (isAgendada) {
             String key = Consts.PATH_TRANSACAO_AGENDADA + transacao.getNumeroContaOrigem() + ".json";
@@ -38,8 +39,8 @@ public class PixCommand implements iTransacaoCommand {
             return List.of(transacao);
         }
 
-        String idContaOrigem = transacao.getNumeroContaOrigem();
-        String idContaDestino = transacao.getNumeroContaDestino();
+        String idContaOrigem = pix.getNumeroContaOrigem();
+        String idContaDestino = pix.getNumeroContaDestino();
 
         ContaBancariaModel contaOrigem = contaService.obter(idContaOrigem);
         if (contaOrigem == null) throw new RuntimeException(MensagensErro.CONTA_ORIGEM_NAO_ENCONTRADA);
@@ -127,6 +128,9 @@ public class PixCommand implements iTransacaoCommand {
             clone.setDataTransacao(pix.getDataTransacao());
             clone.setStatusTransacao(pix.getStatusTransacao());
             clone.setTipoTransacao(pix.getTipoTransacao());
+            clone.setLocalidade(pix.getLocalidade());
+            clone.setDispositivo(pix.getDispositivo());
+
             return clone;
         }
         throw new UnsupportedOperationException("Tipo de transação não suportado para clonagem");

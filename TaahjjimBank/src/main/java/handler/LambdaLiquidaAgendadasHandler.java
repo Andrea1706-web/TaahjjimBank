@@ -6,6 +6,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.TransacaoModel;
+import model.TransacaoPagamentoDebito;
+import model.TransacaoPix;
 import service.command.PixCommand;
 import service.ContaBancariaService;
 import service.DriverS3;
@@ -14,7 +16,13 @@ import java.util.List;
 
 public class LambdaLiquidaAgendadasHandler implements RequestHandler<SQSEvent, Void> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper;
+
+    public LambdaLiquidaAgendadasHandler() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerSubtypes(TransacaoPix.class, TransacaoPagamentoDebito.class);
+    }
 
     @Override
     public Void handleRequest(SQSEvent event, Context context) {
@@ -26,7 +34,9 @@ public class LambdaLiquidaAgendadasHandler implements RequestHandler<SQSEvent, V
 
         for (SQSEvent.SQSMessage message : event.getRecords()) {
             try {
-                TransacaoModel transacao = objectMapper.readValue(message.getBody(), TransacaoModel.class);
+                TransacaoModel transacao = objectMapper
+                        .readerFor(TransacaoModel.class)
+                        .readValue(message.getBody());
 
                 // Chama executar com isAgendada = false para liquidação imediata
                 List<TransacaoModel> resultado = pixCommand.executar(transacao, false, driverS3, contaService);
@@ -37,7 +47,6 @@ public class LambdaLiquidaAgendadasHandler implements RequestHandler<SQSEvent, V
                 throw new RuntimeException(e); // relança para a Lambda não deletar a mensagem da fila
             }
         }
-
         return null;
     }
 }

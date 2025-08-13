@@ -32,6 +32,7 @@ public class PixCommand implements iTransacaoCommand {
         TransacaoPix pix = (TransacaoPix) transacao;
 
         if (isAgendada) {
+            transacao.setStatusTransacao(eStatusTransacao.AGENDADA);
             String key = Consts.PATH_TRANSACAO_AGENDADA + transacao.getNumeroContaOrigem() + ".json";
             List<TransacaoModel> agendadas = driverS3.readList(key, TransacaoModel.class).orElse(new ArrayList<>());
             agendadas.add(transacao);
@@ -130,6 +131,7 @@ public class PixCommand implements iTransacaoCommand {
             clone.setTipoTransacao(pix.getTipoTransacao());
             clone.setLocalidade(pix.getLocalidade());
             clone.setDispositivo(pix.getDispositivo());
+            clone.setDataAgendamento(pix.getDataAgendamento());
 
             return clone;
         }

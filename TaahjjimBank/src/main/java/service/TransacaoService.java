@@ -2,6 +2,8 @@ package service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import model.TransacaoPagamentoDebito;
+import model.TransacaoPix;
 import service.command.DebitoCommand;
 import service.command.PixCommand;
 import model.TransacaoModel;
@@ -28,14 +30,19 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
     private TransacaoModel desserializarTransacao(String body) {
         if (body == null || body.isBlank()) return null;
         try {
-            ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            mapper.registerSubtypes(TransacaoPix.class, TransacaoPagamentoDebito.class);
+
             List<TransacaoModel> lista = mapper.readValue(body,
                     mapper.getTypeFactory().constructCollectionType(List.class, TransacaoModel.class));
+
             return lista.isEmpty() ? null : lista.get(0);
         } catch (Exception e) {
             throw new RuntimeException(MensagensErro.ERRO_DESERIALIZACAO, e);
         }
     }
+
 
     @Override
     public List<TransacaoModel> obter(String contaOrigem) {

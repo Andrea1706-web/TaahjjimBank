@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import model.UsuarioModel;
 import org.springframework.stereotype.Service;
 import service.interfaces.iCrudService;
-import util.MensagensErro;
-import util.ValidationUtil;
+import util.*;
 
 import java.util.List;
 
@@ -33,16 +32,17 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
     }
 
     @Override
-    public UsuarioModel obter(String username) {
-        String key = PATH + username + ".json";
+    public UsuarioModel obter(String nome) {
+        String key = PATH + nome + ".json";
         return driverS3.read(key).orElse(null);
     }
 
     @Override
     public UsuarioModel criar() {
         ValidationUtil.validar(this.model);
-        validarDuplicidade(this.model);
-        String key = PATH + this.model.getUsername() + ".json";
+        validarDuplicidadeDocumento(this.model);
+        validarDuplicidadeEmail(this.model);
+        String key = PATH + this.model.getNome() + ".json";
         driverS3.save(key, this.model);
         return this.model;
     }
@@ -51,10 +51,17 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
         return driverS3.readAll(PATH);
     }
 
-    private void validarDuplicidade(UsuarioModel model) {
+    private void validarDuplicidadeDocumento(UsuarioModel model) {
         List<UsuarioModel> usuarios = listar();
-        if (usuarios.stream().anyMatch(c -> c.getUsername().equalsIgnoreCase(model.getUsername()))) {
-            throw new IllegalArgumentException(MensagensErro.USUARIO_DUPLICADO + model.getUsername());
+        if (usuarios.stream().anyMatch(c -> c.getDocumento().equalsIgnoreCase(model.getDocumento()))) {
+            throw new IllegalArgumentException("Documento já associado a um usuário: " + model.getDocumento());
+        }
+    }
+
+    private void validarDuplicidadeEmail(UsuarioModel model) {
+        List<UsuarioModel> usuarios = listar();
+        if (usuarios.stream().anyMatch(c -> c.getEmail().equalsIgnoreCase(model.getEmail()))) {
+            throw new IllegalArgumentException("Email já associado a um usuário: " + model.getEmail());
         }
     }
 

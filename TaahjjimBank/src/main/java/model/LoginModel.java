@@ -1,31 +1,30 @@
 package model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.constraints.NotNull;
 
 public class LoginModel {
 
-    @NotNull(message = "Username é obrigatório")
-    private String username;
+    @NotNull(message = "email é obrigatório")
+    private String email;
     @NotNull(message = "Senha é obrigatória")
     private String senha;
     private String token;
 
     @JsonCreator
     public LoginModel(
-            @JsonProperty("username") String username,
+            @JsonProperty("email") String username,
             @JsonProperty("senha") String senha) {
-        this.username = username;
+        this.email = username;
         this.senha = senha;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getSenha() {

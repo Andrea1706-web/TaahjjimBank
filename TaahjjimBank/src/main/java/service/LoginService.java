@@ -2,13 +2,10 @@ package service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.LoginModel;
-import model.UsuarioModel;
+import model.*;
 import org.springframework.stereotype.Service;
 import service.interfaces.iCrudService;
-import util.JwtUtil;
-import util.MensagensErro;
-import util.ValidationUtil;
+import util.*;
 
 @Service
 public class LoginService implements iCrudService<LoginModel> {
@@ -33,8 +30,8 @@ public class LoginService implements iCrudService<LoginModel> {
     }
 
     @Override
-    public LoginModel obter(String username) {
-        String key = PATH + username + ".json";
+    public LoginModel obter(String email) {
+        String key = PATH + email + ".json";
         return driverS3.read(key).orElse(null);
     }
 
@@ -43,13 +40,13 @@ public class LoginService implements iCrudService<LoginModel> {
         ValidationUtil.validar(this.model);
 
         UsuarioService usuarioService = new UsuarioService("zupbankdatabase", null);
-        UsuarioModel usuario = usuarioService.obter(this.model.getUsername());
+        UsuarioModel usuario = usuarioService.obter(this.model.getEmail());
 
         if (usuario == null || !usuario.getSenha().equals(this.model.getSenha())) {
             throw new IllegalArgumentException(MensagensErro.USUARIO_OU_SENHA_INVALIDOS);
         }
 
-        String token = JwtUtil.generateToken(usuario.getUsername());
+        String token = JwtUtil.generateToken(usuario.getEmail());
         this.model.setToken(token);
 
         return this.model;

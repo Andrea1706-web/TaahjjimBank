@@ -46,8 +46,8 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
     @Override
     public List<TransacaoModel> obter(String contaOrigem) {
-        String pathNormal = Consts.PATH_TRANSACAO + contaOrigem + ".json";
-        String pathAgendada = Consts.PATH_TRANSACAO_AGENDADA + contaOrigem + ".json";
+        String pathNormal = Consts.PATH_BUCKET_TRANSACAO + contaOrigem + ".json";
+        String pathAgendada = Consts.PATH_BUCKET_TRANSACAO_AGENDADA + contaOrigem + ".json";
 
         List<TransacaoModel> transacoesNormais = driverS3.readList(pathNormal, TransacaoModel.class).orElse(new ArrayList<>());
 

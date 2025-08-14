@@ -49,7 +49,7 @@ public class DebitoCommand implements iTransacaoCommand {
         transacao.setDataTransacao(java.time.LocalDateTime.now());
 
         // Salva no extrato da origem
-        String keyOrigem = Consts.PATH_TRANSACAO + transacao.getNumeroContaOrigem() + ".json";
+        String keyOrigem = Consts.PATH_BUCKET_TRANSACAO + transacao.getNumeroContaOrigem() + ".json";
         List<TransacaoModel> transacoes = driverS3.readList(keyOrigem, TransacaoModel.class).orElse(new ArrayList<>());
         transacoes.add(transacao);
         driverS3.saveList(keyOrigem, transacoes);

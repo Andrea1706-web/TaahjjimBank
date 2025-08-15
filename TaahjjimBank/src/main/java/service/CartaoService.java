@@ -5,8 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import model.CartaoModel;
 import org.springframework.stereotype.Service;
 import service.interfaces.iCrudService;
-import util.MensagensErro;
-import util.ValidationUtil;
+import util.*;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ public class CartaoService implements iCrudService<CartaoModel> {
 
     private final DriverS3<CartaoModel> driverS3;
     private final ObjectMapper objectMapper;
-    private static final String PATH = "dados/cartao/";
     private final CartaoModel model;
 
     public CartaoService(String bucketName, String body) {
@@ -36,14 +34,14 @@ public class CartaoService implements iCrudService<CartaoModel> {
 
     @Override
     public CartaoModel obter(String numeroCartao) {
-        String key = PATH + numeroCartao + ".json";
+        String key = Consts.PATH_CARTAO + numeroCartao + ".json";
         return driverS3.read(key).orElse(null);
     }
 
     @Override
     public CartaoModel criar() {
         ValidationUtil.validar(this.model); // Valida o model antes de persistir
-        String key = PATH + this.model.getNumeroCartao() + ".json";
+        String key = Consts.PATH_CARTAO + this.model.getNumeroCartao() + ".json";
         validarDuplicidade(this.model);
         driverS3.save(key, model);
         return model;
@@ -51,7 +49,7 @@ public class CartaoService implements iCrudService<CartaoModel> {
 
     // Validação de duplicidade
     private void validarDuplicidade(CartaoModel model) {
-        List<CartaoModel> cartoes = driverS3.readAll(PATH);
+        List<CartaoModel> cartoes = driverS3.readAll(Consts.PATH_CARTAO);
         if (cartoes.stream().anyMatch(c -> c.getId().equals(model.getId()))) {
             throw new IllegalArgumentException(MensagensErro.CARTAO_ID_DUPLICADO + model.getId());
         }

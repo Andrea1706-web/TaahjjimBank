@@ -13,7 +13,6 @@ import java.util.List;
 public class UsuarioService implements iCrudService<UsuarioModel> {
     private final DriverS3<UsuarioModel> driverS3;
     private final ObjectMapper objectMapper;
-    private final String PATH = "dados/usuario/";
     private final UsuarioModel model;
 
     public UsuarioService(String bucketName, String body) {
@@ -33,7 +32,7 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
 
     @Override
     public UsuarioModel obter(String nome) {
-        String key = PATH + nome + ".json";
+        String key = Consts.PATH_USUARIO + nome + ".json";
         return driverS3.read(key).orElse(null);
     }
 
@@ -42,13 +41,13 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
         ValidationUtil.validar(this.model);
         validarDuplicidadeDocumento(this.model);
         validarDuplicidadeEmail(this.model);
-        String key = PATH + this.model.getNome() + ".json";
+        String key = Consts.PATH_USUARIO + this.model.getNome() + ".json";
         driverS3.save(key, this.model);
         return this.model;
     }
 
     public List<UsuarioModel> listar() {
-        return driverS3.readAll(PATH);
+        return driverS3.readAll(Consts.PATH_USUARIO);
     }
 
     private void validarDuplicidadeDocumento(UsuarioModel model) {

@@ -50,6 +50,7 @@ public class DebitoCommand implements iTransacaoCommand {
 
         // Salva no extrato da origem
         String keyOrigem = Consts.PATH_BUCKET_TRANSACAO + transacao.getNumeroContaOrigem() + ".json";
+
         List<TransacaoModel> transacoes = driverS3.readList(keyOrigem, TransacaoModel.class).orElse(new ArrayList<>());
         transacoes.add(transacao);
         driverS3.saveList(keyOrigem, transacoes);

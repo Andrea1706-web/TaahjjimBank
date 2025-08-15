@@ -59,6 +59,7 @@ public abstract class TransacaoModel {
     }
 
     public TransacaoModel() {
+        this.id = UUID.randomUUID();
     }
 
     public UUID getId() {

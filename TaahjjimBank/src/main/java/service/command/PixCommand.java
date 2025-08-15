@@ -33,7 +33,7 @@ public class PixCommand implements iTransacaoCommand {
 
         if (isAgendada) {
             transacao.setStatusTransacao(eStatusTransacao.AGENDADA);
-            String key = Consts.PATH_TRANSACAO_AGENDADA + transacao.getNumeroContaOrigem() + ".json";
+            String key = Consts.PATH_BUCKET_TRANSACAO_AGENDADA + transacao.getNumeroContaOrigem() + ".json";
             List<TransacaoModel> agendadas = driverS3.readList(key, TransacaoModel.class).orElse(new ArrayList<>());
             agendadas.add(transacao);
             driverS3.saveList(key, agendadas);
@@ -56,14 +56,14 @@ public class PixCommand implements iTransacaoCommand {
         transacao.setStatusTransacao(eStatusTransacao.CONCLUIDA);
         transacao.setDataTransacao(LocalDateTime.now());
 
-        String keyOrigem = Consts.PATH_TRANSACAO + idContaOrigem + ".json";
+        String keyOrigem = Consts.PATH_BUCKET_TRANSACAO + idContaOrigem + ".json";
         List<TransacaoModel> transacoesOrigem = driverS3.readList(keyOrigem, TransacaoModel.class).orElse(new ArrayList<>());
         TransacaoModel transacaoOrigem = cloneTransacao(transacao);
         transacaoOrigem.setValorTransacao(-transacao.getValorTransacao());
         transacoesOrigem.add(transacaoOrigem);
         driverS3.saveList(keyOrigem, transacoesOrigem);
 
-        String keyDestino = Consts.PATH_TRANSACAO + idContaDestino + ".json";
+        String keyDestino = Consts.PATH_BUCKET_TRANSACAO + idContaDestino + ".json";
         List<TransacaoModel> transacoesDestino = driverS3.readList(keyDestino, TransacaoModel.class).orElse(new ArrayList<>());
         TransacaoModel transacaoDestino = cloneTransacao(transacao);
         transacoesDestino.add(transacaoDestino);
@@ -83,7 +83,7 @@ public class PixCommand implements iTransacaoCommand {
         AmazonSQS sqsClient = AmazonSQSClientBuilder.defaultClient();
         String queueUrl = sqsClient.getQueueUrl(filaLiquidacaoSqs).getQueueUrl();
 
-        List<String> arquivosAgendados = driverS3.listObjectsNames(Consts.PATH_TRANSACAO_AGENDADA);
+        List<String> arquivosAgendados = driverS3.listObjectsNames(Consts.PATH_BUCKET_TRANSACAO_AGENDADA);
         LocalDateTime dataAtual = LocalDateTime.now();
 
         for (String key : arquivosAgendados) {

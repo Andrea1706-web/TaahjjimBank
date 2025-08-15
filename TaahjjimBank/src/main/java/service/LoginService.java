@@ -11,7 +11,6 @@ import util.*;
 public class LoginService implements iCrudService<LoginModel> {
     private final DriverS3<LoginModel> driverS3;
     private final ObjectMapper objectMapper;
-    private final String PATH = "dados/login/";
     private final LoginModel model;
 
     public LoginService(String bucketName, String body) {
@@ -31,7 +30,7 @@ public class LoginService implements iCrudService<LoginModel> {
 
     @Override
     public LoginModel obter(String email) {
-        String key = PATH + email + ".json";
+        String key = Consts.PATH_LOGIN + email + ".json";
         return driverS3.read(key).orElse(null);
     }
 
@@ -39,7 +38,7 @@ public class LoginService implements iCrudService<LoginModel> {
     public LoginModel criar() {
         ValidationUtil.validar(this.model);
 
-        UsuarioService usuarioService = new UsuarioService("zupbankdatabase", null);
+        UsuarioService usuarioService = new UsuarioService(Consts.BUCKET, null);
         UsuarioModel usuario = usuarioService.obter(this.model.getEmail());
 
         if (usuario == null || !usuario.getSenha().equals(this.model.getSenha())) {

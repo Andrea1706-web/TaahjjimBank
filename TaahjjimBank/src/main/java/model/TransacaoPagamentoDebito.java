@@ -14,6 +14,10 @@ public class TransacaoPagamentoDebito extends TransacaoModel {
     @NotBlank
     private String modalidadePagamento;
 
+    public TransacaoPagamentoDebito() {
+        this.setTipoTransacao(eTipoTransacao.PAGAMENTO_DEBITO);
+    }
+
     public String getReferenciaEstabelecimento() {
         return referenciaEstabelecimento;
     }

@@ -13,9 +13,9 @@ public class LoginModel {
 
     @JsonCreator
     public LoginModel(
-            @JsonProperty("email") String username,
+            @JsonProperty("email") String email,
             @JsonProperty("senha") String senha) {
-        this.email = username;
+        this.email = email;
         this.senha = senha;
     }
 

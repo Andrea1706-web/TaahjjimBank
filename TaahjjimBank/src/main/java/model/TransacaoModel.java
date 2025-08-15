@@ -2,9 +2,7 @@ package model;
 
 import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.constraints.*;
-import model.enums.eDispositivo;
-import model.enums.eStatusTransacao;
-import model.enums.eTipoTransacao;
+import model.enums.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

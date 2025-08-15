@@ -5,8 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import model.ContaBancariaModel;
 import org.springframework.stereotype.Service;
 import service.interfaces.iCrudService;
-import util.MensagensErro;
-import util.ValidationUtil;
+import util.*;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ import java.util.List;
 public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
     private final DriverS3<ContaBancariaModel> driverS3;
     private final ObjectMapper objectMapper;
-    private final String PATH = "dados/contaBancaria/";
     private final ContaBancariaModel model;
 
     public ContaBancariaService(String bucketName, String body) {
@@ -34,7 +32,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
 
     @Override
     public ContaBancariaModel obter(String numeroConta) {
-        String key = PATH + numeroConta + ".json";
+        String key = Consts.PATH_CONTA_BANCARIA + numeroConta + ".json";
         return driverS3.read(key).orElse(null);
     }
 
@@ -42,19 +40,13 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
     public ContaBancariaModel criar() {
         ValidationUtil.validar(this.model);
         validarDuplicidade(this.model);
-        String key = PATH + this.model.getNumeroCC() + ".json";
+        String key = Consts.PATH_CONTA_BANCARIA + this.model.getNumeroCC() + ".json";
         driverS3.save(key, this.model);
         return this.model;
     }
 
     public List<ContaBancariaModel> listar() {
-        return driverS3.readAll(PATH);
-    }
-
-    public boolean contaExiste(String numeroCC) {
-        DriverS3<ContaBancariaModel> driver = new DriverS3<>("zupbankdatabase", ContaBancariaModel.class);
-        String key = "dados/contaBancaria/" + numeroCC + ".json";
-        return driver.read(key).isPresent();
+        return driverS3.readAll(Consts.PATH_CONTA_BANCARIA);
     }
 
     private void validarDuplicidade(ContaBancariaModel model) {
@@ -65,7 +57,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
     }
 
     public void salvar(ContaBancariaModel conta) {
-        String key = "dados/contaBancaria/" + conta.getNumeroCC() + ".json";
+        String key = Consts.PATH_CONTA_BANCARIA + conta.getNumeroCC() + ".json";
         driverS3.save(key, conta);
     }
 }

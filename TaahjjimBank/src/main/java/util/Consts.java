@@ -9,6 +9,4 @@ public class Consts {
     public static final String PATH_CONTA_BANCARIA = "dados/contaBancaria/";
     public static final String PATH_CARTAO = "dados/cartao/";
     public static final String PATH_PRODUTO = "dados/produto/";
-
-
 }

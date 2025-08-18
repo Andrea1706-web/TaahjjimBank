@@ -31,8 +31,8 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
     }
 
     @Override
-    public UsuarioModel obter(String nome) {
-        String key = Consts.PATH_USUARIO + nome + ".json";
+    public UsuarioModel obter(String email) {
+        String key = Consts.PATH_USUARIO + email + ".json";
         return driverS3.read(key).orElse(null);
     }
 
@@ -41,7 +41,7 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
         ValidationUtil.validar(this.model);
         validarDuplicidadeDocumento(this.model);
         validarDuplicidadeEmail(this.model);
-        String key = Consts.PATH_USUARIO + this.model.getNome() + ".json";
+        String key = Consts.PATH_USUARIO + this.model.getEmail() + ".json";
         driverS3.save(key, this.model);
         return this.model;
     }

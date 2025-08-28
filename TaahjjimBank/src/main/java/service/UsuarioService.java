@@ -36,11 +36,6 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
         return driverS3.read(key).orElse(null);
     }
 
-    public UsuarioModel obterPorDocumento(String documento) {
-        String key = Consts.PATH_USUARIO + documento + ".json";
-        return driverS3.read(key).orElse(null);
-    }
-
     @Override
     public UsuarioModel criar() {
         ValidationUtil.validar(this.model);
@@ -68,5 +63,6 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
             throw new IllegalArgumentException("Email já associado a um usuário: " + model.getEmail());
         }
     }
+
 }
 

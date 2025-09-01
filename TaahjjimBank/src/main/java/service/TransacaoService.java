@@ -9,6 +9,7 @@ import model.ContaBancariaModel;
 import model.TransacaoModel;
 import model.eStatusTransacao;
 import org.springframework.stereotype.Service;
+import util.QuickCommandTransacoes;
 import util.ValidationUtil;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 
@@ -211,41 +212,32 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
         return copia;
     }
 
-    private void validarTransacaoComQuickCommand() {
-        String url = "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/create-execution/consultar-transacoes";
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"; // Substitua pelo token gerado
+    public class QuickCommandExample {
+        public static void main(String[] args) {
+            // Credenciais para autenticação
+            final String clientId = "c5213a2b-5277-46ed-84e0-df741c5b60f9";
+            final String clientSecret = "4P84pefz3U0T199irrUm9CZVly7vSHY4hmg84ey09A2qtLtGJeK03EPOKVYd9BY9";
 
-        try {
-            // Configuração da conexão
-            URL endpoint = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) endpoint.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Authorization", "Bearer " + token);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
+            // Instância da classe utilitária
+            QuickCommandTransacoes quickCommandTransacoes = new QuickCommandTransacoes(clientId, clientSecret);
 
-            // Enviar a requisição
-            OutputStream os = connection.getOutputStream();
-            os.flush();
-            os.close();
+            try {
+                // Payload para o QuickCommand
+                String payload = "{ \"data\": \"dados da transação\" }";
 
-            // Ler a resposta
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                Scanner scanner = new Scanner(connection.getInputStream());
-                StringBuilder response = new StringBuilder();
-                while (scanner.hasNext()) {
-                    response.append(scanner.nextLine());
-                }
-                scanner.close();
-                System.out.println("Validação bem-sucedida: " + response.toString());
-            } else {
-                System.out.println("Erro na validação: " + responseCode + ", Detalhes: " + connection.getResponseMessage());
+                // Executa o QuickCommand e obtém o executionId
+                String executionId = quickCommandTransacoes.executeQuickCommand(payload);
+                System.out.println("Execution ID: " + executionId);
+
+                // Monitora a execução do QuickCommand
+                String resultado = quickCommandTransacoes.monitorExecution(executionId, 60, 5);
+                System.out.println("Resultado da análise: " + resultado);
+            } catch (Exception e) {
+                System.err.println("Erro ao executar o QuickCommand: " + e.getMessage());
+                e.printStackTrace();
             }
-            connection.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
+
 
 }

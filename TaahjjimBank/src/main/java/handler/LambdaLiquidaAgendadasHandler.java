@@ -66,7 +66,7 @@ public class LambdaLiquidaAgendadasHandler implements RequestHandler<SQSEvent, V
                     NotificacaoDTO dto = new NotificacaoDTO();
                     dto.setTransacaoId(transacao.getId());
                     dto.setEmail(pagador.getEmail());
-                    dto.setNomeUsuario(pagador.getNome());
+                    dto.setNomeUsuario(pagador.getNomeCompleto());
                     dto.setValor(transacao.getValorTransacao());
                     dto.setNumeroContaOrigem(transacao.getNumeroContaOrigem());
                     dto.setSucesso(true);
@@ -91,7 +91,7 @@ public class LambdaLiquidaAgendadasHandler implements RequestHandler<SQSEvent, V
                         NotificacaoDTO dto = new NotificacaoDTO();
                         dto.setTransacaoId(transacao.getId());
                         dto.setEmail(pagador.getEmail());
-                        dto.setNomeUsuario(pagador.getNome());
+                        dto.setNomeUsuario(pagador.getNomeCompleto());
                         dto.setValor(transacao.getValorTransacao());
                         dto.setNumeroContaOrigem(transacao.getNumeroContaOrigem());
                         dto.setSucesso(false);

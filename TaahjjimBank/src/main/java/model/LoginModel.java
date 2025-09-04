@@ -5,26 +5,26 @@ import jakarta.validation.constraints.NotNull;
 
 public class LoginModel {
 
-    @NotNull(message = "email é obrigatório")
-    private String email;
+    @NotNull(message = "cpf é obrigatório")
+    private String cpf;
     @NotNull(message = "Senha é obrigatória")
     private String senha;
     private String token;
 
     @JsonCreator
     public LoginModel(
-            @JsonProperty("email") String email,
+            @JsonProperty("cpf") String cpf,
             @JsonProperty("senha") String senha) {
-        this.email = email;
+        this.cpf = cpf;
         this.senha = senha;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getSenha() {

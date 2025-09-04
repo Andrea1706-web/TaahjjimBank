@@ -46,7 +46,7 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
         ValidationUtil.validar(this.model);
         validarDuplicidadeDocumento(this.model);
         validarDuplicidadeEmail(this.model);
-        String key = Consts.PATH_USUARIO + this.model.getEmail() + ".json";
+        String key = Consts.PATH_USUARIO + this.model.getDocumento() + ".json";
         driverS3.save(key, this.model);
         return this.model;
     }

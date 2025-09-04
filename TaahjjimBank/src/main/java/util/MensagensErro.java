@@ -20,6 +20,7 @@ public class MensagensErro {
     public static final String CONTA_DESTINO_NAO_ENCONTRADA = "Conta destino não encontrada.";
     public static final String CONTA_DUPLICADA = "Conta bancária já cadastrada.";
     public static final String SALDO_INSUFICIENTE = "Saldo insuficiente para realizar a transação.";
+    public static final String CONTA_INEXISTENTE = "Conta bancária não existe";
 
     // Usuário / Login
     public static final String USUARIO_OU_SENHA_INVALIDOS = "Usuário ou senha inválidos.";

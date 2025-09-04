@@ -27,6 +27,14 @@ public class MensagensErro {
 
     // Produto
     public static final String PRODUTO_DUPLICADO = "Produto com esse nome já cadastrado.";
+
+    //Notificacao
+    public static final String ERRO_PROCESSAMENTO_SQS = "Erro ao processar mensagem SQS.";
+    public static final String ERRO_PREPARAR_NOTIFICACAO = "Erro ao preparar notificação de erro.";
+    public static final String ERRO_ENVIAR_NOTIFICACAO = "Falha ao enviar mensagem para fila de notificação.";
+    public static final String ERRO_SES_FROM_NAO_CONFIGURADO = "Configuração SES_FROM ausente.";
+    public static final String ERRO_PROCESSAR_NOTIFICACAO = "Erro ao processar notificação.";
+    public static final String ERRO_NOTIFICAR_TRANSACAO_LIQUIDADA = "Falha ao enviar notificação, mas liquidação foi concluída.";
 }
 
 

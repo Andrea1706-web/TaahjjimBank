@@ -51,19 +51,19 @@ public class NotificacaoEmailService {
 
         String bodyTxt = sucesso
                 ? String.format("Olá %s,%n%nSeu PIX agendado foi liquidado com sucesso.%nValor: R$ %.2f%nConta de origem: %s%nData: %s%n%nAtt,%n%s",
-                usuario.getNome(), tx.getValorTransacao(), tx.getNumeroContaOrigem(), LocalDateTime.now(), app)
+                usuario.getNomeCompleto(), tx.getValorTransacao(), tx.getNumeroContaOrigem(), LocalDateTime.now(), app)
                 : String.format("Olá %s,%n%nSeu PIX agendado NÃO foi liquidado.%nValor: R$ %.2f%nConta de origem: %s%nMotivo: %s%nData: %s%n%nAtt,%n%s",
-                usuario.getNome(), tx.getValorTransacao(), tx.getNumeroContaOrigem(), motivoErroOuVazio, LocalDateTime.now(), app);
+                usuario.getNomeCompleto(), tx.getValorTransacao(), tx.getNumeroContaOrigem(), motivoErroOuVazio, LocalDateTime.now(), app);
 
         String bodyHtml = sucesso
-                ? "<p>Olá <b>" + usuario.getNome() + "</b>,</p>"
+                ? "<p>Olá <b>" + usuario.getNomeCompleto() + "</b>,</p>"
                 + "<p>Seu PIX agendado foi <b>liquidado com sucesso</b>.</p>"
                 + "<ul>"
                 + "<li><b>Valor:</b> R$ " + String.format("%.2f", tx.getValorTransacao()) + "</li>"
                 + "<li><b>Conta de origem:</b> " + tx.getNumeroContaOrigem() + "</li>"
                 + "<li><b>Data:</b> " + LocalDateTime.now() + "</li>"
                 + "</ul><p>Att,<br/>" + app + "</p>"
-                : "<p>Olá <b>" + usuario.getNome() + "</b>,</p>"
+                : "<p>Olá <b>" + usuario.getNomeCompleto() + "</b>,</p>"
                 + "<p>Seu PIX agendado <b>não foi liquidado</b>.</p>"
                 + "<ul>"
                 + "<li><b>Valor:</b> R$ " + String.format("%.2f", tx.getValorTransacao()) + "</li>"

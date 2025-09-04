@@ -29,8 +29,8 @@ public class LoginService implements iCrudService<LoginModel> {
     }
 
     @Override
-    public LoginModel obter(String email) {
-        String key = Consts.PATH_LOGIN + email + ".json";
+    public LoginModel obter(String cpf) {
+        String key = Consts.PATH_LOGIN + cpf + ".json";
         return driverS3.read(key).orElse(null);
     }
 
@@ -39,7 +39,7 @@ public class LoginService implements iCrudService<LoginModel> {
         ValidationUtil.validar(this.model);
 
         UsuarioService usuarioService = new UsuarioService(Consts.BUCKET, null);
-        UsuarioModel usuario = usuarioService.obter(this.model.getEmail());
+        UsuarioModel usuario = usuarioService.obter(this.model.getCpf());
 
         if (usuario == null || !usuario.getSenha().equals(this.model.getSenha())) {
             throw new IllegalArgumentException(MensagensErro.USUARIO_OU_SENHA_INVALIDOS);

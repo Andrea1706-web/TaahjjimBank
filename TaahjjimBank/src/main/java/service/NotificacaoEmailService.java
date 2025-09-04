@@ -58,6 +58,7 @@ public class NotificacaoEmailService {
                 + "<li><b>Conta de origem:</b> " + dto.getNumeroContaOrigem() + "</li>"
                 + "<li><b>Data:</b> " + LocalDateTime.now() + "</li>"
                 + "</ul><p>Att,<br/>" + app + "</p>"
+
                 : "<p>Olá <b>" + dto.getNomeUsuario() + "</b>,</p>"
                 + "<p>Seu PIX agendado <b>não foi liquidado</b>.</p>"
                 + "<ul>"

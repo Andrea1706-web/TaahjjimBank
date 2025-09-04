@@ -43,8 +43,9 @@ public class CartaoService implements iCrudService<CartaoModel> {
         ValidationUtil.validar(this.model); // Valida o model antes de persistir
         String key = Consts.PATH_CARTAO + this.model.getNumeroCartao() + ".json";
         validarDuplicidade(this.model);
+        validarContaExistente(this.model.getNumeroConta());
         driverS3.save(key, model);
-        return model;
+        return this.model;
     }
 
     // Validação de duplicidade
@@ -55,6 +56,13 @@ public class CartaoService implements iCrudService<CartaoModel> {
         }
         if (cartoes.stream().anyMatch(c -> c.getNumeroCartao().equalsIgnoreCase(model.getNumeroCartao()))) {
             throw new IllegalArgumentException(MensagensErro.CARTAO_NUMERO_DUPLICADO + model.getNumeroCartao());
+        }
+    }
+
+    private void validarContaExistente(String numeroConta) {
+        ContaBancariaService contaService = new ContaBancariaService(Consts.BUCKET, null);
+        if (contaService.obter(numeroConta) == null) {
+            throw new IllegalArgumentException(MensagensErro.CONTA_INEXISTENTE + model.getNumeroConta());
         }
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.constraints.*;
 import model.enums.eTipoDocumento;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class UsuarioModel {
@@ -11,7 +12,18 @@ public class UsuarioModel {
     private final UUID id;
     @NotNull(message = "Nome é obrigatório")
     @Pattern(regexp = ".{4,}", message = "Nome deve ter no mínimo 4 caracteres")
-    private String nome;
+    private String nomeCompleto;
+    @NotNull(message = "dataNascimento é obrigatória")
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate dataNascimento;
+    @NotNull(message = "endereço é obrigatório")
+    private String endereco;
+    @NotNull(message = "telefone é obrigatório")
+    @Pattern(
+            regexp = "^\\d{11,12}$",
+            message = "Telefone deve conter 11 ou 12 dígitos numéricos, sem espaços e caracteres especiais"
+    )
+    private String telefone;
     @NotNull(message = "tipoDocumento é obrigatório")
     private eTipoDocumento tipoDocumento;
     @NotNull(message = "Documento é obrigatório")
@@ -35,13 +47,19 @@ public class UsuarioModel {
 
     @JsonCreator
     public UsuarioModel(
-            @JsonProperty("nome") String nome,
+            @JsonProperty("nomeCompleto") String nomeCompleto,
+            @JsonProperty("dataNascimento") LocalDate dataNascimento,
+            @JsonProperty("endereco") String endereco,
+            @JsonProperty("telefone") String telefone,
             @JsonProperty("tipoDocumento") eTipoDocumento tipoDocumento,
             @JsonProperty("documento") String documento,
             @JsonProperty("email") String email,
             @JsonProperty("senha") String senha) {
         this.id = UUID.randomUUID();
-        this.nome = nome;
+        this.nomeCompleto = nomeCompleto;
+        this.dataNascimento = dataNascimento;
+        this.endereco = endereco;
+        this.telefone = telefone;
         this.tipoDocumento = tipoDocumento;
         this.documento = documento;
         this.email = email;
@@ -52,12 +70,12 @@ public class UsuarioModel {
         return id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getNomeCompleto() {
+        return nomeCompleto;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNomeNomeCompleto(String nomeCompleto) {
+        this.nomeCompleto = nomeCompleto;
     }
 
     public eTipoDocumento getTipoDocumento() {
@@ -92,4 +110,27 @@ public class UsuarioModel {
         this.senha = senha;
     }
 
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
 }

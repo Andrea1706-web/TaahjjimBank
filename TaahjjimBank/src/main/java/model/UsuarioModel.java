@@ -13,9 +13,9 @@ public class UsuarioModel {
     @NotNull(message = "Nome é obrigatório")
     @Pattern(regexp = ".{4,}", message = "Nome deve ter no mínimo 4 caracteres")
     private String nomeCompleto;
-    @NotNull(message = "dataNascimento é obrigatória")
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private LocalDate dataNascimento;
+//    @NotNull(message = "dataNascimento é obrigatória")
+//    @JsonFormat(pattern = "dd-MM-yyyy")
+//    private LocalDate dataNascimento;
     @NotNull(message = "endereço é obrigatório")
     private String endereco;
     @NotNull(message = "telefone é obrigatório")
@@ -48,7 +48,7 @@ public class UsuarioModel {
     @JsonCreator
     public UsuarioModel(
             @JsonProperty("nomeCompleto") String nomeCompleto,
-            @JsonProperty("dataNascimento") LocalDate dataNascimento,
+//            @JsonProperty("dataNascimento") LocalDate dataNascimento,
             @JsonProperty("endereco") String endereco,
             @JsonProperty("telefone") String telefone,
             @JsonProperty("tipoDocumento") eTipoDocumento tipoDocumento,
@@ -57,7 +57,7 @@ public class UsuarioModel {
             @JsonProperty("senha") String senha) {
         this.id = UUID.randomUUID();
         this.nomeCompleto = nomeCompleto;
-        this.dataNascimento = dataNascimento;
+//        this.dataNascimento = dataNascimento;
         this.endereco = endereco;
         this.telefone = telefone;
         this.tipoDocumento = tipoDocumento;
@@ -110,13 +110,13 @@ public class UsuarioModel {
         this.senha = senha;
     }
 
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
+//    public LocalDate getDataNascimento() {
+//        return dataNascimento;
+//    }
+//
+//    public void setDataNascimento(LocalDate dataNascimento) {
+//        this.dataNascimento = dataNascimento;
+//    }
 
     public String getEndereco() {
         return endereco;

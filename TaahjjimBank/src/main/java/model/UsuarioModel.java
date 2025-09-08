@@ -7,6 +7,7 @@ import model.enums.eTipoDocumento;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UsuarioModel {
 
     private final UUID id;

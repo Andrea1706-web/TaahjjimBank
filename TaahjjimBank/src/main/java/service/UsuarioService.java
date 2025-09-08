@@ -2,6 +2,7 @@ package service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.UsuarioModel;
 import org.springframework.stereotype.Service;
 import service.interfaces.iCrudService;
@@ -18,6 +19,7 @@ public class UsuarioService implements iCrudService<UsuarioModel> {
     public UsuarioService(String bucketName, String body) {
         this.driverS3 = new DriverS3<>(bucketName, UsuarioModel.class);
         this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
 
         if (body != null && !body.trim().isEmpty()) {
             try {

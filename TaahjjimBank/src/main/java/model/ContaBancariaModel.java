@@ -6,19 +6,13 @@ import model.enums.eTipoConta;
 
 import jakarta.validation.constraints.*;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ContaBancariaModel {
 
     private final UUID id;
-    @NotNull(message = "Agencia é obrigatória")
     private int agencia;
-    @NotNull(message = "Número Conta bancária é obrigatório")
-    private String numeroCC;
-    @NotNull(message = "Saldo é obrigatório")
-    @Min(value = 0, message = "Saldo deve ser maior ou igual a zero")
-    @Max(value = 1000000, message = "Saldo não pode exceder 1.000.000")
+    private int numeroCC;
     private double saldo;
     @NotNull
     @Pattern(regexp = "\\d{11}", message = "CPF deve conter exatamente 11 dígitos")
@@ -28,15 +22,12 @@ public class ContaBancariaModel {
 
     @JsonCreator
     public ContaBancariaModel(
-            @JsonProperty("agencia") int agencia,
-            @JsonProperty("numeroCC") String numeroCC,
-            @JsonProperty("saldo") double saldo,
             @JsonProperty("cpf") String cpf,
             @JsonProperty("tipoConta") eTipoConta tipoConta) {
         this.id = UUID.randomUUID();
-        this.agencia = agencia;
-        this.numeroCC = numeroCC;
-        this.saldo = saldo;
+        this.agencia = 0075;
+        this.numeroCC = (int)(Math.random() * 90000) + 10000;
+        this.saldo = 0;
         this.cpf = cpf;
         this.tipoConta = tipoConta;
     }
@@ -53,11 +44,11 @@ public class ContaBancariaModel {
         this.agencia = agencia;
     }
 
-    public String getNumeroCC() {
+    public int getNumeroCC() {
         return numeroCC;
     }
 
-    public void setNumeroCC(String numeroCC) {
+    public void setNumeroCC(int numeroCC) {
         this.numeroCC = numeroCC;
     }
 
@@ -85,8 +76,4 @@ public class ContaBancariaModel {
         this.tipoConta = tipoConta;
     }
 
-    public boolean existeContaComId(UUID id, List<ContaBancariaModel> contas) {
-        if (id == null || contas == null) return false;
-        return contas.stream().anyMatch(conta -> conta.getId().equals(id));
-    }
 }

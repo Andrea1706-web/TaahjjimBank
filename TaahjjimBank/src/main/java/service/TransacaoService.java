@@ -72,4 +72,26 @@ public class TransacaoService implements iCrudService<List<TransacaoModel>> {
 
         return cmd.executar(model, isAgendada, driverS3, contaService);
     }
+
+     //Chamada do quick command analise de transações
+    public class QuickCommandTansacoes {
+    public static void main(String[] args) throws Exception {
+        final String clientId = "c5213a2b-5277-46ed-84e0-df741c5b60f9";
+        final String clientSecret = "4P84pefz3U0T199irrUm9CZVly7vSHY4hmg84ey09A2qtLtGJeK03EPOKVYd9BY9";
+
+        // URLs específicas do QuickCommand de análise de transações
+        String postUrl = "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/create-execution/analisatransacao";
+        String getUrlTemplate = "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/callback/%s";
+
+        QuickCommandUtil quickCommand = new QuickCommandUtil(clientId, clientSecret, postUrl, getUrlTemplate);
+
+        String payload = "{ \"data\": \"dados da transação\" }";
+
+        String executionId = quickCommand.executeQuickCommand(payload);
+        System.out.println("Execution ID: " + executionId);
+
+        String resultado = quickCommand.monitorExecution(executionId, 60, 5);
+        System.out.println("Resultado da análise: " + resultado);
+    }
+}
 }

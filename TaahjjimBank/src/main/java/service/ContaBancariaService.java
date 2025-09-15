@@ -51,7 +51,7 @@ public class ContaBancariaService implements iCrudService<ContaBancariaModel> {
 
     private void validarDuplicidade(ContaBancariaModel model) {
         List<ContaBancariaModel> contas = listar();
-        if (contas.stream().anyMatch(c -> c.getNumeroCC().equalsIgnoreCase(model.getNumeroCC()))) {
+        if (contas.stream().anyMatch(c -> c.getNumeroCC() == model.getNumeroCC())) {
             throw new IllegalArgumentException(MensagensErro.CONTA_DUPLICADA + model.getNumeroCC());
         }
     }

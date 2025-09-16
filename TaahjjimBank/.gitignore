@@ -34,6 +34,11 @@ build/
 
 # Terraform provider binaries and cache
 .terraform/
+infra/step-functions/terraform.tfstate
+infra/step-functions/terraform.tfstate.backup
+infra/step-functions/providers.tf
+infra/step-functions/.terraform.lock.hcl
+.terraform
 
 # Arquivos grandes
 *.exe

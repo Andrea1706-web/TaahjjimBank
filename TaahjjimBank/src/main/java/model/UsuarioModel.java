@@ -16,6 +16,9 @@ public class UsuarioModel {
     @NotNull(message = "dataNascimento é obrigatória")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dataNascimento;
+    @NotNull(message = "cep é obrigatório")
+    @Pattern(regexp = "^\\d{8}$", message = "CEP deve conter exatamente 8 dígitos numéricos")
+    private String cep;
     @NotNull(message = "endereço é obrigatório")
     private String endereco;
     @NotNull(message = "telefone é obrigatório")
@@ -49,6 +52,7 @@ public class UsuarioModel {
     public UsuarioModel(
             @JsonProperty("nomeCompleto") String nomeCompleto,
             @JsonProperty("dataNascimento") LocalDate dataNascimento,
+            @JsonProperty("cep") String cep,
             @JsonProperty("endereco") String endereco,
             @JsonProperty("telefone") String telefone,
             @JsonProperty("tipoDocumento") eTipoDocumento tipoDocumento,
@@ -58,6 +62,7 @@ public class UsuarioModel {
         this.id = UUID.randomUUID();
         this.nomeCompleto = nomeCompleto;
         this.dataNascimento = dataNascimento;
+        this.cep = cep;
         this.endereco = endereco;
         this.telefone = telefone;
         this.tipoDocumento = tipoDocumento;
@@ -74,7 +79,7 @@ public class UsuarioModel {
         return nomeCompleto;
     }
 
-    public void setNomeNomeCompleto(String nomeCompleto) {
+    public void setNomeCompleto(String nomeCompleto) {
         this.nomeCompleto = nomeCompleto;
     }
 
@@ -133,4 +138,13 @@ public class UsuarioModel {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
 }

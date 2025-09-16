@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Terraform provider binaries and cache
+.terraform/
+
+# Arquivos grandes
+*.exe

@@ -42,7 +42,7 @@
     },
     "TestePipeline": {
       "Type": "Task",
-      "Resource": "${lambda_testpipeline}",
+      "Resource": "${lambda_testepipeline}",
       "End": true
     }
   }

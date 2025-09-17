@@ -35,7 +35,8 @@ resource "aws_iam_role_policy" "sfn_policy" {
           var.lambda_await_upload,
           var.lambda_analise,
           var.lambda_criacaoconta,
-          var.lambda_notificacao
+          var.lambda_notificacao,
+          var.lambda_testepipeline
         ]
       },
       {

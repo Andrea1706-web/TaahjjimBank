@@ -114,3 +114,11 @@ resource "aws_sfn_state_machine" "open_account" {
     lambda_testepipeline = var.lambda_testepipeline,
   })
 }
+
+terraform {
+  backend "s3" {
+    bucket         = "taahjjimbank-terraform-state"
+    key            = "step-functions/terraform.tfstate"
+    region         = "sa-east-1"
+  }
+}

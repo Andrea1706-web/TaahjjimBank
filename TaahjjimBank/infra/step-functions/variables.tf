@@ -14,4 +14,3 @@ variable "lambda_await_upload" { type = string }
 variable "lambda_analise" { type = string }
 variable "lambda_criacaoconta" { type = string }
 variable "lambda_notificacao" { type = string }
-variable "lambda_testepipeline" { type = string }

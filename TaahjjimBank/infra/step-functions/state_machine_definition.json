@@ -38,6 +38,11 @@
     "NotificacaoCliente": {
       "Type": "Task",
       "Resource": "${lambda_notificacao}",
+      "Next": "TestePipeline"
+    },
+    "TestePipeline": {
+      "Type": "Task",
+      "Resource": "${lambda_testepipeline}",
       "End": true
     }
   }

@@ -109,6 +109,7 @@ resource "aws_sfn_state_machine" "open_account" {
     lambda_await_upload = var.lambda_await_upload,
     lambda_analise      = var.lambda_analise,
     lambda_criacaoconta = var.lambda_criacaoconta,
-    lambda_notificacao  = var.lambda_notificacao
+    lambda_notificacao  = var.lambda_notificacao,
+    lambda_testepipeline = var.lambda_testepipeline,
   })
 }

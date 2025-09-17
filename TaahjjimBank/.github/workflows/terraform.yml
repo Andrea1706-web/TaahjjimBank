@@ -35,7 +35,7 @@ jobs:
           aws-region: sa-east-1
 
       - name: Terraform Init
-        run: terraform -chdir=TaahjjimBank/infra/step-functions init
+        run: terraform -chdir=TaahjjimBank/infra/step-functions init -input=false
 
       - name: Terraform Validate
         run: terraform -chdir=TaahjjimBank/infra/step-functions validate

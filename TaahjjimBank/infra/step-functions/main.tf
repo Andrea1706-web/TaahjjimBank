@@ -110,6 +110,6 @@ resource "aws_sfn_state_machine" "open_account" {
     lambda_analise      = var.lambda_analise,
     lambda_criacaoconta = var.lambda_criacaoconta,
     lambda_notificacao  = var.lambda_notificacao,
-    lambda_testepipeline = var.lambda_testepipeline,
+    lambda_testpipeline = var.lambda_testpipeline,
   })
 }

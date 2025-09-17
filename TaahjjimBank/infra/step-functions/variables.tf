@@ -1,5 +1,5 @@
 variable "environment" {
-  default = "dev"
+  default = "hom"
 }
 
 data "aws_caller_identity" "current" {}

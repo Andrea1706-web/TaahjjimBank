@@ -4,4 +4,4 @@ lambda_await_upload  = "arn:aws:lambda:sa-east-1:430118845258:function:backendZu
 lambda_analise       = "arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank"
 lambda_criacaoconta  = "arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank"
 lambda_notificacao   = "arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank"
-lambda_testepipeline   = "arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank"
+lambda_testpipeline   = "arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank"

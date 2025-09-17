@@ -35,14 +35,15 @@ jobs:
           aws-region: sa-east-1
 
       - name: Terraform Init
-        run: terraform -chdir=infra init
+        run: terraform -chdir=TaahjjimBank/infra/step-functions init
 
       - name: Terraform Validate
-        run: terraform -chdir=infra validate
+        run: terraform -chdir=TaahjjimBank/infra/step-functions validate
 
       - name: Terraform Plan
-        run: terraform -chdir=infra plan -out=tfplan
+        run: terraform -chdir=TaahjjimBank/infra/step-functions plan -out=tfplan
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        run: terraform -chdir=infra apply -auto-approve tfplan
+        # if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/feature/step-function'
+        run: terraform -chdir=TaahjjimBank/infra/step-functions apply -auto-approve tfplan

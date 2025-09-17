@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/step-function
     paths:
       - 'infra/**'
       - '*.tf'
@@ -13,7 +12,6 @@ on:
   pull_request:
     branches:
       - main
-      - feature/step-function
 
 jobs:
   terraform:
@@ -44,6 +42,5 @@ jobs:
         run: terraform -chdir=TaahjjimBank/infra/step-functions plan -out=tfplan
 
       - name: Terraform Apply
-        # if: github.ref == 'refs/heads/main'
-        if: github.ref == 'refs/heads/feature/step-function'
+        if: github.ref == 'refs/heads/main'
         run: terraform -chdir=TaahjjimBank/infra/step-functions apply -auto-approve tfplan

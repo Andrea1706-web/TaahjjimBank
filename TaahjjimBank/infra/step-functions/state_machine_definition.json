@@ -1,0 +1,44 @@
+{
+  "Comment": "Fluxo de abertura de conta digital",
+  "StartAt": "RecepcaoDados",
+  "States": {
+    "RecepcaoDados": {
+      "Type": "Task",
+      "Resource": "${lambda_recepcao}",
+      "Next": "ValidacaoDados"
+    },
+    "ValidacaoDados": {
+      "Type": "Task",
+      "Resource": "${lambda_validacao}",
+      "Next": "WaitForDocuments"
+    },
+    "WaitForDocuments": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+      "Parameters": {
+        "FunctionName": "${lambda_await_upload}",
+        "Payload": {
+          "taskToken.$": "$$.Task.Token",
+          "cpf.$": "$.cpf"
+        }
+      },
+      "TimeoutSeconds": 86400,
+      "Next": "AnaliseDocumentos"
+    },
+    "AnaliseDocumentos": {
+      "Type": "Task",
+      "Resource": "${lambda_analise}",
+      "Next": "CriacaoConta"
+    },
+    "CriacaoConta": {
+      "Type": "Task",
+      "Resource": "${lambda_criacaoconta}",
+      "Next": "NotificacaoCliente"
+    },
+    "NotificacaoCliente": {
+      "Type": "Task",
+      "Resource": "${lambda_notificacao}",
+      "End": true
+    }
+  }
+}

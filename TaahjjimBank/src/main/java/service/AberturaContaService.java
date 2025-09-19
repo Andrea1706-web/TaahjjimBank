@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.AberturaContaModel;
+import service.interfaces.iCrudService;
 import util.*;
 
-public class AberturaContaService {
+public class AberturaContaService implements iCrudService<AberturaContaModel>  {
 
     private final DriverS3<AberturaContaModel> driverS3;
     private final ObjectMapper objectMapper;
@@ -28,7 +29,11 @@ public class AberturaContaService {
         }
     }
 
-    public void obter() {}
+    @Override
+    public AberturaContaModel obter(String cpf) {
+        String key = Consts.PATH_ABERTURA_CONTA + cpf + "/" + cpf + ".json";
+        return driverS3.read(key).orElse(null);
+    }
 
     public AberturaContaModel criar() {
         ValidationUtil.validar(this.model);

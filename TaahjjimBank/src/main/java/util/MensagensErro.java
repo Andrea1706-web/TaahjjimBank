@@ -15,12 +15,13 @@ public class MensagensErro {
     public static final String CARTAO_ID_DUPLICADO = "ID do cartão já existente.";
     public static final String CARTAO_NUMERO_DUPLICADO = "Número do cartão já existente.";
 
-    // Conta bancária
+    // Conta bancária / Abertura de conta
     public static final String CONTA_ORIGEM_NAO_ENCONTRADA = "Conta origem não encontrada.";
     public static final String CONTA_DESTINO_NAO_ENCONTRADA = "Conta destino não encontrada.";
     public static final String CONTA_DUPLICADA = "Conta bancária já cadastrada.";
     public static final String SALDO_INSUFICIENTE = "Saldo insuficiente para realizar a transação.";
     public static final String CONTA_INEXISTENTE = "Conta bancária não existe";
+    public static final String CPF_DUPLICADO = "Já existe uma solicitação de abertura de conta para esse CPF";
 
     // Usuário / Login
     public static final String USUARIO_OU_SENHA_INVALIDOS = "Usuário ou senha inválidos.";

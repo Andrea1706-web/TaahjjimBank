@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import model.AberturaContaModel;
+import model.ContaBancariaModel;
 import service.interfaces.iCrudService;
 import util.*;
+
+import java.util.List;
 
 public class AberturaContaService implements iCrudService<AberturaContaModel>  {
 
@@ -38,8 +41,25 @@ public class AberturaContaService implements iCrudService<AberturaContaModel>  {
     public AberturaContaModel criar() {
         ValidationUtil.validar(this.model);
         String cpf = this.model.getCpf();
+        validarDuplicidadeCpf(cpf);
+        validarDuplicidadeContaBancariaPorCpf(cpf);
         String key = Consts.PATH_ABERTURA_CONTA + cpf + "/" + cpf + ".json";
         driverS3.save(key, this.model);
         return this.model;
+    }
+
+    private void validarDuplicidadeCpf(String cpf) {
+        String key = Consts.PATH_ABERTURA_CONTA + cpf + "/" + cpf + ".json";
+        if (driverS3.read(key).isPresent()) {
+            throw new IllegalArgumentException(MensagensErro.CPF_DUPLICADO + model.getCpf());
+        }
+    }
+
+    private void validarDuplicidadeContaBancariaPorCpf(String cpf) {
+        ContaBancariaService contaBancariaService = new ContaBancariaService(Consts.BUCKET, null);
+        List<ContaBancariaModel> contas = contaBancariaService.listar();
+        if (contas.stream().anyMatch(c -> c.getCpf().equals(cpf))) {
+            throw new IllegalArgumentException(MensagensErro.CONTA_DUPLICADA + "Para o cpf: " + model.getCpf());
+        }
     }
 }

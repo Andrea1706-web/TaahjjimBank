@@ -48,6 +48,8 @@ public class LambdaAberturaContaHadler implements RequestHandler<Map<String, Obj
                 return criarResposta(201, objectMapper.writeValueAsString(novoObjeto));
             }
             return criarResposta(405, "Método HTTP não suportado");
+        } catch (IllegalArgumentException e) {
+            return criarResposta(409, e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             // Para log detalhado (stack trace completo):

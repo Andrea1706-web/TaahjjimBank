@@ -49,7 +49,7 @@ public class AberturaContaService implements iCrudService<AberturaContaModel>  {
     }
 
     private void validarDuplicidadeCpf(String cpf) {
-        String key = Consts.PATH_ABERTURA_CONTA + cpf;
+        String key = Consts.PATH_ABERTURA_CONTA + cpf + "/" + cpf + ".json";
         if (driverS3.read(key).isPresent()) {
             throw new IllegalArgumentException(MensagensErro.CPF_DUPLICADO + model.getCpf());
         }

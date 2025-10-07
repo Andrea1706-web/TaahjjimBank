@@ -79,5 +79,4 @@ public class LambdaAberturaContaHadler implements RequestHandler<Map<String, Obj
         response.put("isBase64Encoded", false);
         return response;
     }
-    /* teste pipeline */
 }

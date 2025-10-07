@@ -1,9 +1,9 @@
 name: Terraform CI/CD
-
 on:
   push:
     branches:
       - main
+      - infra/pipeline-update
     paths-ignore:
       - 'TaahjjimBank/**'
       - '!TaahjjimBank/infra/**'
@@ -11,6 +11,7 @@ on:
   pull_request:
     branches:
       - main
+      - infra/pipeline-update
     paths:
       - 'infra/**'
       - '*.tf'

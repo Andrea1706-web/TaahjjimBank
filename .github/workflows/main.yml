@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - infra/pipeline-update
 
 jobs:
   deploy:

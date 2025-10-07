@@ -10,27 +10,79 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: set up JDK
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'adopt'
-        java-version: '21'
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
 
-    - name: build with Maven
-      run: mvn clean package -f ./TaahjjimBank/pom.xml
-     
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: sa-east-1
+      - name: Build with Maven
+        run: mvn clean package -f ./TaahjjimBank/pom.xml
 
-    - name: Upload to S3
-      run: aws s3 cp TaahjjimBank/target/TaahjjimBank-0.0.1-SNAPSHOT.jar s3://zupbankdatabase/
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
 
-    - name: Deploy to AWS Lambda
-      run: aws lambda update-function-code --function-name backendZupBank --s3-bucket zupbankdatabase --s3-key TaahjjimBank-0.0.1-SNAPSHOT.jar
+      - name: Upload to S3
+        run: aws s3 cp TaahjjimBank/target/TaahjjimBank-0.0.1-SNAPSHOT.jar s3://zupbankdatabase/
+
+
+      # Deploy da Lambda principal 
+      - name: Deploy Lambda backendZupBank
+        run: |
+          aws lambda update-function-code \
+            --function-name backendZupBank \
+            --s3-bucket zupbankdatabase \
+            --s3-key TaahjjimBank-0.0.1-SNAPSHOT.jar
+
+      # Deploy condicional nas lambdas de transação
+      - name: Detectar alterações nas lambdas de transações agendadas
+        id: changed
+        uses: tj-actions/changed-files@v45
+        with:
+          files_yaml: |
+            filtrar:
+              - TaahjjimBank/src/main/java/handler/LambdaFiltragemAgendadasHandler.java
+              - TaahjjimBank/src/main/java/service/command/PixCommand.java
+              - TaahjjimBank/src/main/java/service/DriverS3.java
+              - TaahjjimBank/src/main/java/model/TransacaoModel.java
+              - TaahjjimBank/src/main/java/model/enums/eStatusTransacao.java
+              - TaahjjimBank/src/main/java/model/enums/eTipoTransacao.java
+              - TaahjjimBank/src/main/java/util/Consts.java
+            liquidar:
+              - TaahjjimBank/src/main/java/handler/LambdaLiquidaAgendadasHandler.java
+              - TaahjjimBank/src/main/java/service/command/PixCommand.java
+              - TaahjjimBank/src/main/java/service/DriverS3.java
+              - TaahjjimBank/src/main/java/service/ContaBancariaService.java
+              - TaahjjimBank/src/main/java/service/UsuarioService.java
+              - TaahjjimBank/src/main/java/service/NotificacaoEmailService.java
+              - TaahjjimBank/src/main/java/dto/NotificacaoDTO.java
+              - TaahjjimBank/src/main/java/model/TransacaoModel.java
+              - TaahjjimBank/src/main/java/model/TransacaoPix.java
+              - TaahjjimBank/src/main/java/model/TransacaoPagamentoDebito.java
+              - TaahjjimBank/src/main/java/model/enums/eStatusTransacao.java
+              - TaahjjimBank/src/main/java/model/enums/eTipoTransacao.java
+              - TaahjjimBank/src/main/java/util/MensagensErro.java
+              - TaahjjimBank/src/main/java/util/Consts.java
+
+      - name: Deploy Lambda filtrarTransacoesAgendadas
+        if: steps.changed.outputs.filtrar_any_changed == 'true'
+        run: |
+          aws lambda update-function-code \
+            --function-name filtrarTransacoesAgendadas \
+            --s3-bucket zupbankdatabase \
+            --s3-key TaahjjimBank-0.0.1-SNAPSHOT.jar
+
+      - name: Deploy Lambda liquidarTransacoesAgendadas
+        if: steps.changed.outputs.liquidar_any_changed == 'true'
+        run: |
+          aws lambda update-function-code \
+            --function-name liquidarTransacoesAgendadas \
+            --s3-bucket zupbankdatabase \
+            --s3-key TaahjjimBank-0.0.1-SNAPSHOT.jar

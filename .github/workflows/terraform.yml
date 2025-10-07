@@ -4,14 +4,17 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'TaahjjimBank/**'
+      - '!TaahjjimBank/infra/**'
+      - '!TaahjjimBank/infra/step-functions/**'
+  pull_request:
+    branches:
+      - main
     paths:
       - 'infra/**'
       - '*.tf'
       - 'TaahjjimBank/infra/step-functions/**'
-
-  pull_request:
-    branches:
-      - main
 
 jobs:
   terraform:

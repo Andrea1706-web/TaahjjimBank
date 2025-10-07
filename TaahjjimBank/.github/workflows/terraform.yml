@@ -1,6 +1,6 @@
 name: Terraform CI/CD
 
-oon:
+on:
   push:
     branches:
       - main

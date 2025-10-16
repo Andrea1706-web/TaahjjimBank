@@ -233,7 +233,17 @@
             <artifactId>aws-java-sdk-ses</artifactId>
             <version>1.12.573</version>
         </dependency>
-
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>textract</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+        
     </dependencies>
 
     <build>

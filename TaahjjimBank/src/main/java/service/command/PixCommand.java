@@ -12,6 +12,7 @@ import service.*;
 import service.interfaces.iTransacaoCommand;
 import util.Consts;
 import util.MensagensErro;
+import util.QuickCommandUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -136,5 +137,21 @@ public class PixCommand implements iTransacaoCommand {
             return clone;
         }
         throw new UnsupportedOperationException("Tipo de transação não suportado para clonagem");
+    }
+
+    public void rodarQCTransacao() {
+        String clientId = "fb197df9-4fe7-4ae9-8ae8-3052868dfb14";
+        String clientSecret = "xnxs3Yp6Q1O3EX838cpH9LwhMV8W82uYg27m9P3yddiRjQdft68V8XT5JJarnf2e";
+        QuickCommandUtil qcUtil = new QuickCommandUtil(
+                clientId,
+                clientSecret,
+                Consts.QUICK_COMMAD_ANALISA_TRANSACAO_POST_URL,
+                Consts.QUICK_COMMAND_GET_URL_TEMPLATE,
+                null
+        );
+        String payload = "{ \"input_data\": \"valor de entrada\" }";
+        String resultado = qcUtil.runQuickCommand(payload, 5, "completed");
+        System.out.println("Resultado do QC de Transação: " + resultado);
+
     }
 }

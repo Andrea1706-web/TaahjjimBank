@@ -8,6 +8,7 @@ import util.Consts;
 import service.ContaBancariaService;
 import service.DriverS3;
 import util.MensagensErro;
+import util.QuickCommandUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,5 +57,21 @@ public class DebitoCommand implements iTransacaoCommand {
         driverS3.saveList(keyOrigem, transacoes);
 
         return List.of(transacao);
+    }
+
+    public void rodarQCTransacao() {
+        String clientId = "fb197df9-4fe7-4ae9-8ae8-3052868dfb14";
+        String clientSecret = "xnxs3Yp6Q1O3EX838cpH9LwhMV8W82uYg27m9P3yddiRjQdft68V8XT5JJarnf2e";
+        QuickCommandUtil qcUtil = new QuickCommandUtil(
+                clientId,
+                clientSecret,
+                Consts.QUICK_COMMAD_ANALISA_TRANSACAO_POST_URL,
+                Consts.QUICK_COMMAND_GET_URL_TEMPLATE,
+                null
+        );
+        String payload = "{ \"input_data\": \"valor de entrada\" }";
+        String resultado = qcUtil.runQuickCommand(payload, 5, "completed");
+        System.out.println("Resultado do QC de Transação: " + resultado);
+
     }
 }

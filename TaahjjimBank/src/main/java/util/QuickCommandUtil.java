@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class QuickCommandUtil {
-    private static final String TOKEN_URL = "https://idm.stackspot.com/itau/oidc/oauth/token";
+    private static final String TOKEN_URL = "https://idm.stackspot.com/stackspot-freemium/oidc/oauth/token";
     private final String clientId;
     private final String clientSecret;
     private final String executionUrl;
@@ -119,30 +119,12 @@ public class QuickCommandUtil {
             throw new IllegalStateException("Token não gerado.");
         }
     }
+
+    // Executa e monitora o QuickCommand até o status desejado.
+    public String runQuickCommand(String payload, int interval, String stopStatus) throws IOException, InterruptedException {
+
+        String executionId = executeQuickCommand(payload);
+
+        return monitorExecution(executionId, interval, stopStatus);
+    }
 }
-
-
-/*
-
-EXEMPLO DE CHAMADA
-
-import util.QuickCommandUtil;
-import util.Consts;
-
-
-    public void rodarQCTransacao() {
-        String clientId = "c5213a2b-5277-46ed-84e0-df741c5b60f9";
-        String clientSecret = "4P84pefz3U0T199irrUm9CZVly7vSHY4hmg84ey09A2qtLtGJeK03EPOKVYd9BY9";
-        QuickCommandUtil qcUtil = new QuickCommandUtil(
-            clientId,
-            clientSecret,
-            Consts.QC_TRANSACAO_POST_URL,
-            Consts.QC_TRANSACAO_GET_URL_TEMPLATE,
-            null
-        );
-        String payload = "{ \"input_data\": \"valor de entrada\" }";
-        String resultado = qcUtil.runQuickCommand(payload, 5, "completed");
-        System.out.println("Resultado do QC de Transação: " + resultado);
-
-}
- */

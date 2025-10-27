@@ -47,6 +47,13 @@ public class DriverS3<T> {
         }
     }
 
+    public void saveFile(String key, InputStream inputStream, long contentLength, String contentType) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(contentLength);
+        metadata.setContentType(contentType); // Ex: "image/jpeg" ou "image/png"
+        s3Client.putObject(bucketName, key, inputStream, metadata);
+    }
+
     public Optional<T> read(String key) {
         try {
             S3Object s3Object = s3Client.getObject(bucketName, key);

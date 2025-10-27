@@ -1,0 +1,423 @@
+openapi: 3.0.1
+info:
+  title: zupbankapi
+  description: API de operações bancárias (conta, cartão, transações, produtos)
+  version: 2025-09-17T19:13:23Z
+servers:
+  - url: https://gth835eiyd.execute-api.sa-east-1.amazonaws.com/{basePath}
+    variables:
+      basePath:
+        default: dev
+paths:
+  /contabancaria:
+    post:
+      summary: Cria uma nova conta bancária
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContaBancariaModel'
+      responses:
+        '201':
+          description: Conta criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContaBancariaModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /contabancaria/{id}:
+    get:
+      summary: Busca conta bancária pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContaBancariaModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST    
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /cartao:
+    post:
+      summary: Cria um novo cartão vinculado à conta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartaoModel'
+      responses:
+        '201':
+          description: Cartão criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartaoModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /cartao/{id}:
+    get:
+      summary: Busca cartão pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cartão encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartaoModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST 
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /produto:
+    get:
+      summary: Lista todos os produtos disponíveis
+      responses:
+        '200':
+          description: Lista de produtos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProdutoModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST    
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+    post:
+      summary: Cadastra um novo produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProdutoModel'
+      responses:
+        '201':
+          description: Produto criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProdutoModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /produto/{id}:
+    get:
+      summary: Busca produto pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Produto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProdutoModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST    
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /transacao:
+    post:
+      summary: Cria uma nova transação
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransacaoModel'
+      responses:
+        '201':
+          description: Transação criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransacaoModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /transacao/{id}:
+    get:
+      summary: Busca transação pelo ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transação encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransacaoModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST    
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /transacao/pix:
+    post:
+      summary: Realiza uma transação Pix
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransacaoPix'
+      responses:
+        '201':
+          description: Pix realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransacaoPix'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /transacao/pagamento-debito:
+    post:
+      summary: Realiza uma transação de pagamento no débito
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransacaoPagamentoDebito'
+      responses:
+        '201':
+          description: Pagamento realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransacaoPagamentoDebito'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /login:
+    post:
+      summary: Autentica o usuário no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginModel'
+      responses:
+        '200':
+          description: Login efetuado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /usuario:
+    post:
+      summary: Cria um novo usuário
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioModel'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+  /aberturaConta:
+    post:
+      summary: Abre uma nova conta com dados completos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AberturaContaModel'
+      responses:
+        '201':
+          description: Conta aberta com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AberturaContaModel'
+      x-amazon-apigateway-integration:
+        uri: arn:aws:apigateway:sa-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:sa-east-1:430118845258:function:backendZupBank/invocations
+        httpMethod: POST
+        type: aws_proxy
+        passthroughBehavior: when_no_match
+
+components:
+  schemas:
+    ContaBancariaModel:
+      type: object
+      required: [cpf, tipoConta, id, agencia, numeroCC, saldo]
+      properties:
+        cpf: { type: string }
+        tipoConta:
+          type: string
+          enum: [UNICLASS, PERSONALITE, UNIVERSITARIA, BLUE]
+        id: { type: string, format: uuid }
+        agencia: { type: integer }
+        numeroCC: { type: integer }
+        saldo: { type: number }
+    CartaoModel:
+      type: object
+      required: [numeroCartao, validade, codigo, numeroConta, id]
+      properties:
+        numeroCartao: { type: string }
+        validade: { type: string }
+        codigo: { type: string }
+        numeroConta: { type: string }
+        id: { type: string, format: uuid }
+    ProdutoModel:
+      type: object
+      required: [nome, descricao, taxaAdministracao, grauRisco, categoria, tipoProduto, id]
+      properties:
+        nome: { type: string }
+        descricao: { type: string }
+        taxaAdministracao: { type: number }
+        grauRisco:
+          type: string
+          enum: [BAIXO, MEDIO, ALTO]
+        categoria:
+          type: string
+          enum: [RENDA_FIXA, RENDA_VARIAVEL, MULTI_MERCADO, CAMBIAL]
+        tipoProduto:
+          type: string
+          enum: [FUNDO_INVESTIMENTO, CREDITO_IMOBILIARIO]
+        id: { type: string, format: uuid }
+    TransacaoModel:
+      type: object
+      required: [id, numeroContaOrigem, dataTransacao, dataAgendamento, valorTransacao, tipoTransacao, localidade, dispositivo, ehFraude, statusTransacao]
+      properties:
+        id: { type: string, format: uuid }
+        numeroContaOrigem: { type: string }
+        dataTransacao:
+          type: array
+          items: { type: integer }
+        dataAgendamento: { type: string, format: date-time }
+        valorTransacao: { type: number }
+        tipoTransacao:
+          type: string
+          enum: [TRANS, SAQ, PAG, PIX, PAGAMENTO_DEBITO]
+        localidade: { type: string }
+        dispositivo:
+          type: string
+          enum: [MOBILE, COMPUTER]
+        ehFraude: { type: boolean }
+        statusTransacao:
+          type: string
+          enum: [INICIADA, AGENDADA, CONCLUIDA, REJEITADA, EXPIRADA, CANCELADA]
+    TransacaoPix:
+      allOf:
+        - $ref: '#/components/schemas/TransacaoModel'
+      type: object
+      properties:
+        numeroContaDestino: { type: string }
+    TransacaoPagamentoDebito:
+      allOf:
+        - $ref: '#/components/schemas/TransacaoModel'
+      type: object
+      properties:
+        referenciaEstabelecimento: { type: string }
+        modalidadePagamento: { type: string }
+    UsuarioModel:
+      type: object
+      required: [nomeCompleto, dataNascimento, cep, endereco, telefone, tipoDocumento, documento, email, senha, id]
+      properties:
+        nomeCompleto: { type: string }
+        dataNascimento: { type: string, format: date }
+        cep: { type: string }
+        endereco: { type: string }
+        telefone: { type: string }
+        tipoDocumento:
+          type: string
+          enum: [CPF]
+        documento: { type: string }
+        email: { type: string }
+        senha: { type: string }
+        id: { type: string, format: uuid }
+    LoginModel:
+      type: object
+      required: [cpf, senha, token]
+      properties:
+        cpf: { type: string }
+        senha: { type: string }
+        token: { type: string }
+    AberturaContaModel:
+      type: object
+      required: [nomeCompleto, dataNascimento, cpf, cep, endereco, email, telefone, idStepFunction]
+      properties:
+        nomeCompleto: { type: string }
+        dataNascimento: { type: string, format: date }
+        cpf: { type: string }
+        cep: { type: string }
+        endereco: { type: string }
+        email: { type: string }
+        telefone: { type: string }
+        idStepFunction: { type: integer }

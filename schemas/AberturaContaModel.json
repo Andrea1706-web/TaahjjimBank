@@ -1,0 +1,31 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:model:AberturaContaModel",
+  "properties" : {
+    "nomeCompleto" : {
+      "type" : "string"
+    },
+    "dataNascimento" : {
+      "type" : "string",
+      "format" : "date"
+    },
+    "cpf" : {
+      "type" : "string"
+    },
+    "cep" : {
+      "type" : "string"
+    },
+    "endereco" : {
+      "type" : "string"
+    },
+    "email" : {
+      "type" : "string"
+    },
+    "telefone" : {
+      "type" : "string"
+    },
+    "idStepFunction" : {
+      "type" : "integer"
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:model:TransacaoPagamentoDebito",
+  "properties" : {
+    "id" : {
+      "type" : "string",
+      "format" : "uuid"
+    },
+    "numeroContaOrigem" : {
+      "type" : "string"
+    },
+    "dataTransacao" : {
+      "type" : "array",
+      "items" : {
+        "type" : "integer"
+      }
+    },
+    "dataAgendamento" : {
+      "type" : "string",
+      "format" : "date-time"
+    },
+    "valorTransacao" : {
+      "type" : "number"
+    },
+    "tipoTransacao" : {
+      "type" : "string",
+      "enum" : [ "TRANS", "SAQ", "PAG", "PIX", "PAGAMENTO_DEBITO" ]
+    },
+    "localidade" : {
+      "type" : "string"
+    },
+    "dispositivo" : {
+      "type" : "string",
+      "enum" : [ "MOBILE", "COMPUTER" ]
+    },
+    "ehFraude" : {
+      "type" : "boolean"
+    },
+    "statusTransacao" : {
+      "type" : "string",
+      "enum" : [ "INICIADA", "AGENDADA", "CONCLUIDA", "REJEITADA", "EXPIRADA", "CANCELADA" ]
+    },
+    "referenciaEstabelecimento" : {
+      "type" : "string"
+    },
+    "modalidadePagamento" : {
+      "type" : "string"
+    }
+  }
+}

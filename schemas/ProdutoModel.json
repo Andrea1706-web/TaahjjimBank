@@ -1,0 +1,31 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:model:ProdutoModel",
+  "properties" : {
+    "nome" : {
+      "type" : "string"
+    },
+    "descricao" : {
+      "type" : "string"
+    },
+    "taxaAdministracao" : {
+      "type" : "number"
+    },
+    "grauRisco" : {
+      "type" : "string",
+      "enum" : [ "BAIXO", "MEDIO", "ALTO" ]
+    },
+    "categoria" : {
+      "type" : "string",
+      "enum" : [ "RENDA_FIXA", "RENDA_VARIAVEL", "MULTI_MERCADO", "CAMBIAL" ]
+    },
+    "tipoProduto" : {
+      "type" : "string",
+      "enum" : [ "FUNDO_INVESTIMENTO", "CREDITO_IMOBILIARIO" ]
+    },
+    "id" : {
+      "type" : "string",
+      "format" : "uuid"
+    }
+  }
+}

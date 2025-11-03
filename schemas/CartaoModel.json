@@ -1,0 +1,22 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:model:CartaoModel",
+  "properties" : {
+    "numeroCartao" : {
+      "type" : "string"
+    },
+    "validade" : {
+      "type" : "string"
+    },
+    "codigo" : {
+      "type" : "string"
+    },
+    "numeroConta" : {
+      "type" : "string"
+    },
+    "id" : {
+      "type" : "string",
+      "format" : "uuid"
+    }
+  }
+}

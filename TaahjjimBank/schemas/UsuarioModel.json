@@ -1,0 +1,39 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:model:UsuarioModel",
+  "properties" : {
+    "nomeCompleto" : {
+      "type" : "string"
+    },
+    "dataNascimento" : {
+      "type" : "string",
+      "format" : "date"
+    },
+    "cep" : {
+      "type" : "string"
+    },
+    "endereco" : {
+      "type" : "string"
+    },
+    "telefone" : {
+      "type" : "string"
+    },
+    "tipoDocumento" : {
+      "type" : "string",
+      "enum" : [ "CPF" ]
+    },
+    "documento" : {
+      "type" : "string"
+    },
+    "email" : {
+      "type" : "string"
+    },
+    "senha" : {
+      "type" : "string"
+    },
+    "id" : {
+      "type" : "string",
+      "format" : "uuid"
+    }
+  }
+}

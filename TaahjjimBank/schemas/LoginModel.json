@@ -1,0 +1,15 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:model:LoginModel",
+  "properties" : {
+    "cpf" : {
+      "type" : "string"
+    },
+    "senha" : {
+      "type" : "string"
+    },
+    "token" : {
+      "type" : "string"
+    }
+  }
+}

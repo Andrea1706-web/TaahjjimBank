@@ -1,0 +1,26 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:model:ContaBancariaModel",
+  "properties" : {
+    "cpf" : {
+      "type" : "string"
+    },
+    "tipoConta" : {
+      "type" : "string",
+      "enum" : [ "UNICLASS", "PERSONALITE", "UNIVERSITARIA", "BLUE" ]
+    },
+    "id" : {
+      "type" : "string",
+      "format" : "uuid"
+    },
+    "agencia" : {
+      "type" : "integer"
+    },
+    "numeroCC" : {
+      "type" : "integer"
+    },
+    "saldo" : {
+      "type" : "number"
+    }
+  }
+}

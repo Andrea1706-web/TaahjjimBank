@@ -2,14 +2,14 @@ locals {
   # Map de endpoints e se o cache deve ser ativado
   api_methods = {
     "contabancaria/POST"           = false
-    "contabancaria/{id}/GET"       = true
+    "contabancaria/{id}/GET"       = false
     "cartao/POST"                  = false
-    "cartao/{id}/GET"              = true
-    "produto/GET"                  = true
+    "cartao/{id}/GET"              = false
+    "produto/GET"                  = false
     "produto/POST"                 = false
-    "produto/{id}/GET"             = true
+    "produto/{id}/GET"             = false
     "transacao/POST"               = false
-    "transacao/{id}/GET"           = true
+    "transacao/{id}/GET"           = false
     "transacao/pix/POST"           = false
     "transacao/pagamento-debito/POST" = false
     "login/POST"                   = false

@@ -33,8 +33,8 @@ resource "aws_api_gateway_stage" "v1" {
   rest_api_id   = aws_api_gateway_rest_api.bank_api.id
   deployment_id = aws_api_gateway_deployment.bank_api_deployment.id
 
-  cache_cluster_enabled = true
-  cache_cluster_size    = "0.5"
+  # cache_cluster_enabled = true
+  # cache_cluster_size    = "0.5"
 
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gateway_logs.arn

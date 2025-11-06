@@ -1,0 +1,37 @@
+name: Build e Deploy Lambda (Textract)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/main/java/handler/LambdaAnaliseDocHandler.java' # Monitora apenas este arquivo
+      - 'pom.xml' # Inclua se dependências mudarem
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Build with Maven
+        run: mvn clean package -f ./TaahjjimBank/pom.xml
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: sa-east-1
+
+      - name: Upload to S3
+        run: aws s3 cp TaahjjimBank/target/TaahjjimBank-0.0.1-SNAPSHOT.jar s3://${{ secrets.AWS_S3_BUCKET }}/LambdaAnaliseDoc.jar
+

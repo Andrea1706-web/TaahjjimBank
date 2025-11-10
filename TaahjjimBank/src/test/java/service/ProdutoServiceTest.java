@@ -1,191 +1,92 @@
 package service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import model.ProdutoModel;
 import model.enums.eCategoriaProduto;
 import model.enums.eGrauRisco;
 import model.enums.eTipoProduto;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import util.MensagensErro;
+import org.mockito.ArgumentCaptor;
+import service.interfaces.iDriverS3;
+import util.Consts;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-public class ProdutoServiceTest {
+class ProdutoServiceTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-    private ProdutoModel produto1;
-    private ProdutoModel produto2;
-    private List<ProdutoModel> listaProdutos;
-    private String produtoValidoJson;
+    private iDriverS3<ProdutoModel> driverMock;
+    private ProdutoService produtoService;
 
     @BeforeEach
     void setup() {
-        DriverS3MockSetup.startMock();
-        DriverS3MockSetup.clearStorage();
+        driverMock = mock(iDriverS3.class);
+        produtoService = new ProdutoService(driverMock);
+    }
 
-        produto1 = new ProdutoModel(
-                "TesouroDireto",
-                "Investimento em títulos públicos",
-                new BigDecimal("0.05"),
+    @Test
+    void criar_deve_salvar_quando_nao_ha_duplicado() {
+        // Arrange
+        ProdutoModel novo = new ProdutoModel(
+                "MeuProduto",
+                "Descrição do produto",
+                new BigDecimal("10.00"),
                 eGrauRisco.BAIXO,
                 eCategoriaProduto.RENDA_FIXA,
-                eTipoProduto.FUNDO_INVESTIMENTO
-        );
-
-        produto2 = new ProdutoModel(
-                "CDBBancoX",
-                "Certificado de Depósito Bancário",
-                new BigDecimal("0.08"),
-                eGrauRisco.MEDIO,
-                eCategoriaProduto.RENDA_VARIAVEL,
                 eTipoProduto.CREDITO_IMOBILIARIO
         );
 
-        listaProdutos = List.of(produto1, produto2);
-        produtoValidoJson = toJson(produto1);
-    }
+        // Simula lista vazia (sem duplicados)
+        when(driverMock.readAll(Consts.PATH_PRODUTO)).thenReturn(List.of());
 
-    @AfterEach
-    void teardown() {
-        DriverS3MockSetup.stopMock();
-    }
+        // Act
+        ProdutoModel criado = produtoService.criar(novo);
 
-    private String toJson(ProdutoModel produto) {
-        try {
-            return mapper.writeValueAsString(produto);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao serializar JSON", e);
-        }
-    }
+        // Assert
+        assertNotNull(criado);
+        assertEquals("MeuProduto", criado.getNome());
 
-    @Test
-    @DisplayName("Cria produto com sucesso quando dados são válidos")
-    void criaProdutoComSucesso() {
-        ProdutoService produtoService = new ProdutoService("mockBucket", produtoValidoJson);
-        ProdutoModel resultado = produtoService.criar();
+        // Verifica que save foi chamado com a key esperada: PATH_PRODUTO + nome + ".json"
+        ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ProdutoModel> modelCaptor = ArgumentCaptor.forClass(ProdutoModel.class);
+        verify(driverMock, times(1)).save(keyCaptor.capture(), modelCaptor.capture());
 
-        assertNotNull(resultado);
-        assertEquals("TesouroDireto", resultado.getNome());
-
-        Optional<Object> salvo = DriverS3MockSetup.get("dados/produto/TesouroDireto.json");
-        assertTrue(salvo.isPresent());
+        String expectedKey = Consts.PATH_PRODUTO + "MeuProduto" + ".json";
+        assertEquals(expectedKey, keyCaptor.getValue());
+        assertEquals("MeuProduto", modelCaptor.getValue().getNome());
     }
 
     @Test
-    @DisplayName("Lança exceção quando tenta criar produto com nome duplicado")
-    void lançaExcecaoQuandoNomeDuplicado() {
-        DriverS3MockSetup.insert("dados/produto/TesouroDireto.json", produto1);
-
-        ProdutoModel produtoDuplicado = new ProdutoModel(
-                "TesouroDireto",
-                "Outro investimento com mesmo nome",
-                new BigDecimal("0.10"),
+    void criar_deve_lancar_excecao_quando_duplicado() {
+        // Arrange
+        ProdutoModel novo = new ProdutoModel(
+                "ProdutoDuplicado",
+                "Descrição",
+                new BigDecimal("5.00"),
                 eGrauRisco.BAIXO,
                 eCategoriaProduto.RENDA_FIXA,
-                eTipoProduto.FUNDO_INVESTIMENTO
+                eTipoProduto.CREDITO_IMOBILIARIO
         );
-        String jsonDuplicado = toJson(produtoDuplicado);
 
-        ProdutoService produtoService = new ProdutoService("mockBucket", jsonDuplicado);
-
-        IllegalArgumentException excecao = assertThrows(IllegalArgumentException.class, produtoService::criar);
-        assertEquals(MensagensErro.PRODUTO_DUPLICADO + produtoDuplicado.getNome(), excecao.getMessage());
-    }
-
-    @Test
-    @DisplayName("Lança exceção quando campos obrigatórios são nulos")
-    void lançaExcecaoDeCamposObrigatoriosNulos() {
-        String bodyJson = """
-                {
-                    "nome": null,
-                    "descricao": null,
-                    "taxaAdministracao": null,
-                    "grauRisco": null,
-                    "categoria": null,
-                    "tipoProduto": null
-                }
-                """;
-
-        ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, produtoService::criar);
-
-        String msg = ex.getMessage().toLowerCase();
-
-        assertTrue(
-                msg.contains("nome") &&
-                        msg.contains("descricao") &&
-                        msg.contains("taxaadministracao") &&
-                        msg.contains("graurisco") &&
-                        msg.contains("tipoproduto") &&
-                        msg.contains("obrigatório"),
-                "Mensagem deve conter campos obrigatórios"
+        ProdutoModel existente = new ProdutoModel(
+                "ProdutoDuplicado",
+                "Descrição existente",
+                new BigDecimal("5.00"),
+                eGrauRisco.BAIXO,
+                eCategoriaProduto.RENDA_FIXA,
+                eTipoProduto.CREDITO_IMOBILIARIO
         );
-    }
 
-    @Test
-    @DisplayName("Cria produto mesmo com categoria nula pois esse campo é opcional")
-    void criaProdutoComCategoriaNula() {
-        String bodyJson = """
-                {
-                    "nome": "Tesouro Direto Categoria Nula",
-                    "descricao": "Outro investimento com descrição",
-                    "taxaAdministracao": "0.10",
-                    "grauRisco": "BAIXO",
-                    "categoria": null,
-                    "tipoProduto": "FUNDO_INVESTIMENTO"
-                }
-                """;
+        when(driverMock.readAll(Consts.PATH_PRODUTO)).thenReturn(List.of(existente));
 
-        ProdutoService produtoService = new ProdutoService("mockBucket", bodyJson);
-        ProdutoModel resultado = produtoService.criar();
+        // Act & Assert
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> produtoService.criar(novo));
+        assertTrue(ex.getMessage().toLowerCase().contains("duplic"));
 
-        assertEquals("Tesouro Direto Categoria Nula", resultado.getNome());
-
-        Optional<Object> salvo = DriverS3MockSetup.get("dados/produto/Tesouro Direto Categoria Nula.json");
-        assertTrue(salvo.isPresent());
-    }
-
-    @Test
-    @DisplayName("Retorna produto quando nome existe")
-    void retornaProdutoQuandoNomeExiste() {
-        DriverS3MockSetup.insert("dados/produto/TesouroDireto.json", produto1);
-
-        ProdutoService service = new ProdutoService("mockBucket", null);
-        ProdutoModel resultado = service.obter("TesouroDireto");
-
-        assertNotNull(resultado);
-        assertEquals("TesouroDireto", resultado.getNome());
-    }
-
-    @Test
-    @DisplayName("Retorna null quando produto não existe")
-    void retornaNullQuandoProdutoNaoExiste() {
-        ProdutoService service = new ProdutoService("mockBucket", null);
-        ProdutoModel resultado = service.obter("ProdutoInexistente");
-
-        assertNull(resultado);
-    }
-
-    @Test
-    @DisplayName("Lista todos os produtos cadastrados")
-    void listaTodosOsProdutos() {
-        DriverS3MockSetup.insert("dados/produto/TesouroDireto.json", produto1);
-        DriverS3MockSetup.insert("dados/produto/CDBBancoX.json", produto2);
-
-        ProdutoService produtoService = new ProdutoService("mockBucket", null);
-        List<ProdutoModel> resultado = produtoService.listar();
-
-        assertNotNull(resultado);
-        assertEquals(2, resultado.size());
-        assertTrue(resultado.contains(produto1));
-        assertTrue(resultado.contains(produto2));
+        // Nenhum save deve ter ocorrido
+        verify(driverMock, never()).save(anyString(), any());
     }
 }

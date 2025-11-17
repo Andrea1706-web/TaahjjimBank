@@ -61,7 +61,7 @@ public class DebitoCommand implements iTransacaoCommand {
 
     public void rodarQCTransacao() {
         String clientId = "fb197df9-4fe7-4ae9-8ae8-3052868dfb14";
-        String clientSecret = "xnxs3Yp6Q1O3EX838cpH9LwhMV8W82uYg27m9P3yddiRjQdft68V8XT5JJarnf2e";
+        String clientSecret = "7HBb8zNXEOZClt613wDK0hA8ExkfGtmyd4Ml8a66I9CrF3BZEyx78TD01N6gEK63";
         QuickCommandUtil qcUtil = new QuickCommandUtil(
                 clientId,
                 clientSecret,

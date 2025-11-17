@@ -13,6 +13,6 @@ public class Consts {
 
 
     public static final String QUICK_COMMAD_ANALISA_TRANSACAO_POST_URL = "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/create-execution/consulta-de-transacoes";
-    public static final String QUICK_COMMAND_GET_URL_TEMPLATE = "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/callback/%s"; //trocar para nome generico
+    public static final String QUICK_COMMAND_GET_URL_TEMPLATE = "https://genai-code-buddy-api.stackspot.com/v1/quick-commands/callback/%s";
 
 }

@@ -11,4 +11,5 @@ public class Consts {
     public static final String PATH_CARTAO = "dados/cartao/";
     public static final String PATH_PRODUTO = "dados/produto/";
     public static final String PATH_ABERTURA_CONTA = "dados/aberturaContas/";
+    public static final String STEP_FUNCTION_ARN = "arn:aws:states:sa-east-1:430118845258:stateMachine:open-account-hom";
 }

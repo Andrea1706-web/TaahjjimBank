@@ -6,12 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import service.*;
 import service.interfaces.*;
+import software.amazon.awssdk.services.sfn.SfnClient;
+import software.amazon.awssdk.services.sfn.model.StartExecutionRequest;
+import software.amazon.awssdk.services.sfn.model.StartExecutionResponse;
 
 import java.io.*;
 import java.util.*;
 
 
 public class LambdaAberturaContaHadler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
+
+    private static final SfnClient sfnClient = SfnClient.create();
 
     @Override
     public Map<String, Object> handleRequest(Map<String, Object> event, Context context) {
@@ -44,8 +49,21 @@ public class LambdaAberturaContaHadler implements RequestHandler<Map<String, Obj
                 return criarResposta(200, objectMapper.writeValueAsString(resultado));
             }
             if ("POST".equalsIgnoreCase(httpMethod)) {
-                Object novoObjeto = service.criar();
-                return criarResposta(201, objectMapper.writeValueAsString(novoObjeto));
+                String input = (String) event.get("body");
+                String stateMachineArn = System.getenv("STEP_FUNCTION_ARN");
+
+                StartExecutionRequest request = StartExecutionRequest.builder()
+                        .stateMachineArn(stateMachineArn)
+                        .input(input)
+                        .build();
+
+                StartExecutionResponse response = sfnClient.startExecution(request);
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("executionArn", response.executionArn());
+                result.put("startDate", response.startDate().toString());
+
+                return criarResposta(201, objectMapper.writeValueAsString(result));
             }
             return criarResposta(405, "Método HTTP não suportado");
         } catch (IllegalArgumentException e) {

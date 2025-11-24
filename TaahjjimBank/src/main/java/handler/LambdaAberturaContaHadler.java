@@ -9,6 +9,7 @@ import service.interfaces.*;
 import software.amazon.awssdk.services.sfn.SfnClient;
 import software.amazon.awssdk.services.sfn.model.StartExecutionRequest;
 import software.amazon.awssdk.services.sfn.model.StartExecutionResponse;
+import util.Consts;
 
 import java.io.*;
 import java.util.*;
@@ -50,7 +51,7 @@ public class LambdaAberturaContaHadler implements RequestHandler<Map<String, Obj
             }
             if ("POST".equalsIgnoreCase(httpMethod)) {
                 String input = (String) event.get("body");
-                String stateMachineArn = System.getenv("STEP_FUNCTION_ARN");
+                String stateMachineArn = System.getenv(Consts.STEP_FUNCTION_ARN);
 
                 StartExecutionRequest request = StartExecutionRequest.builder()
                         .stateMachineArn(stateMachineArn)
